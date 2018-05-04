@@ -1,0 +1,13 @@
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\model\Message.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\access\http\controller\request\MessageController.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\kit\StringKit.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\data\dao\MessageDAO.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\exception\ExceptionHandler.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\access\http\controller\action\MessageAction.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\kit\TimeKit.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\data\mapper\MessageMapper.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\kit\HttpKit.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\annotation\CheckParams.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\kit\CheckParamsKit.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\kit\JsonKit.java
+D:\java-pro\com-inschos-message\src\main\java\com\inschos\message\kit\L.java
