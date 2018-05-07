@@ -2,12 +2,14 @@ package com.inschos.message.access.http.controller.action;
 
 import com.inschos.message.access.http.controller.bean.BaseRequest;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
+import com.inschos.message.access.http.controller.request.MsgInboxController;
 import com.inschos.message.data.dao.MsgInboxDAO;
 import com.inschos.message.kit.JsonKit;
 import com.inschos.message.model.MsgInbox;
 import com.inschos.message.model.MsgRec;
 import com.inschos.message.model.MsgSys;
 import com.inschos.message.model.MsgUpdate;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class MsgInboxAction extends BaseAction {
     @Autowired
     private MsgInboxDAO msgInboxDAO;
-
+    private static final Logger logger = Logger.getLogger(MsgInboxController.class);
     /**
      * 站内信收件箱列表
      *
@@ -35,6 +37,9 @@ public class MsgInboxAction extends BaseAction {
         MsgRec msgRec = JsonKit.json2Bean(body, MsgRec.class);
         BaseRequest request = requst2Bean(msgRec.body, BaseRequest.class);
         BaseResponse response = new BaseResponse();
+        logger.info(body);
+        logger.info(request);
+        logger.info(response);
         return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
         //return msgInboxDAO.getMsgRecList(msgRec);
     }
