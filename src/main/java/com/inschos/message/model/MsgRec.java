@@ -4,6 +4,8 @@ public class MsgRec {
 
     public Page page;
 
+    public String body;
+
     public long id;
 
     public long msg_id;//'消息标识列'

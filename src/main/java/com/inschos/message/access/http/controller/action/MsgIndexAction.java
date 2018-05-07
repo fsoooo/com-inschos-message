@@ -1,6 +1,6 @@
 package com.inschos.message.access.http.controller.action;
 
-public class MsgIndexAction {
+public class MsgIndexAction extends BaseAction{
 
     /**
      * 发送站内信

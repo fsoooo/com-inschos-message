@@ -2,7 +2,7 @@ package com.inschos.message.model;
 
 public class MsgUpdate {
 
-    long msg_id;
+    public long msg_id;
 
-    String update_data;
+    public String update_data;
 }

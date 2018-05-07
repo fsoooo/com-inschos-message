@@ -19,23 +19,37 @@
         `id`,`name`
     </sql>
     <!--获取收件列表-->
-    <select id="getMsgRecList" parameterType="MsgRec">
-
+    <select id="getMsgRecList" parameterType="MsgRec" resultType="MsgRec">
+        select
+        <include refid="Base_Column_List"/>
+        from  demo
+        where `id`=#{id}
     </select>
     <!--获取收件列表-->
-    <select id="getMsgSysList" parameterType="MsgSys">
-
+    <select id="getMsgSysList" parameterType="MsgSys" resultType="MsgSys">
+        select
+        <include refid="Base_Column_List"/>
+        from  demo
+        where `id`=#{id}
     </select>
     <!--获取未接收列表-->
-    <select id="getMsgSysALL" parameterType="MsgSys">
-
+    <select id="getMsgSysALL" parameterType="MsgSys" resultType="MsgSys">
+        select
+        <include refid="Base_Column_List"/>
+        from  demo
+        where `id`=#{id}
     </select>
     <!--获取站内信详情，TODO 需要两表联查-->
-    <select id="getMsgInfo" parameterType="long">
-
+    <select id="getMsgInfo" parameterType="long" resultType="MsgSys">
+        select
+        <include refid="Base_Column_List"/>
+        from  demo
+        where `id`=#{id}
     </select>
     <!--更改收件箱站内信状态-->
-    <update id="updateMsgRec" parameterType="MsgUpdate" resultType="int">
-
+    <update id="updateMsgRec" parameterType="MsgUpdate">
+     update demo set
+              `name`=#{name}
+            where `id`=#{id}
     </update>
 </mapper>
