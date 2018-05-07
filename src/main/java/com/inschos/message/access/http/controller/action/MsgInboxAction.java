@@ -1,6 +1,17 @@
 package com.inschos.message.access.http.controller.action;
 
+import com.inschos.message.data.dao.MsgInboxDAO;
+import com.inschos.message.model.MsgInbox;
+import com.inschos.message.model.MsgRec;
+import com.inschos.message.model.MsgSys;
+import com.inschos.message.model.MsgUpdate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class MsgInboxAction {
+    @Autowired
+    private MsgInboxDAO msgInboxDAO;
     /**
      * 站内信收件箱列表
      * @access public
@@ -15,6 +26,9 @@ public class MsgInboxAction {
      * 匹配站内信系统表和站内信收件箱表，向用户收件箱里插入相应的数据，并修改站内信系统表的状态
      * todo 只要用户接收站内信，系统表就默认已经读取了，不在插入
      */
+    public MsgRec getMsgRecList(MsgRec msgRec){
+        return msgInboxDAO.getMsgRecList(msgRec);
+    }
 
 
     /**
@@ -26,7 +40,9 @@ public class MsgInboxAction {
      * @return json
      *
      */
-
+    public MsgSys getMsgSysList(MsgSys msgSys){
+        return msgInboxDAO.getMsgSysList(msgSys);
+    }
 
     /**
      * 站内信详情
@@ -34,7 +50,9 @@ public class MsgInboxAction {
      * @param $message_id |string  站内信id
      * @return json
      */
-
+    public MsgInbox getMsgInfo(long msg_id){
+        return msgInboxDAO.getMsgInfo(msg_id);
+    }
 
     /**
      * 操作站内信（收件箱 读取和删除）
@@ -44,4 +62,7 @@ public class MsgInboxAction {
      * @param $operate_type |string  操作类型:read 更改读取状态，del 更改删除状态
      * @return json
      */
+    public int updateMsgRec(MsgUpdate msgUpdate){
+        return msgInboxDAO.updateMsgRec(msgUpdate);
+    }
 }

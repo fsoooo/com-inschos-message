@@ -1,8 +1,8 @@
 package com.inschos.message.exception;
 
 
-import com.inschos.message.kit.CheckParamsKit;
-import com.inschos.message.kit.L;
+import com.inschos.message.annotation.CheckParamsKit;
+import com.inschos.message.assist.kit.L;
 import org.apache.log4j.DefaultThrowableRenderer;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;

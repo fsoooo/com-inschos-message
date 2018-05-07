@@ -1,12 +1,11 @@
-package com.inschos.message.annotation;
+package com.inschos.message.access.http.controller.annotation;
 
-import javax.print.DocFlavor;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static com.inschos.message.annotation.CheckParams.StringType.STRING;
+import static com.inschos.cloud.trading.annotation.CheckParams.StringType.STRING;
 
 /**
  * 创建日期：2018/4/3 on 11:20
