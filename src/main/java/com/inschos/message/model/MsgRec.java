@@ -2,6 +2,8 @@ package com.inschos.message.model;
 //站内信收件箱表
 public class MsgRec {
 
+    public Page page;
+
     public long id;
 
     public long msg_id;//'消息标识列'

@@ -6,7 +6,7 @@ public class MsgInboxAction {
      * @access public
      * @param $user_id|int  用户id
      * @param $user_type|string 用户类型:个人用户 3/代理人 2/企业用户 1/管理员
-     * @param $page|string  分页页码 （非必传，默认为1）
+     * @param $Page|string  分页页码 （非必传，默认为1）
      * @param $message_status|string  站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
      * @return json
      *
@@ -22,7 +22,7 @@ public class MsgInboxAction {
      * @access public
      * @param $user_id|int  用户id
      * @param $user_type|string 用户类型:个人用户 3/代理人 2/企业用户 1/管理员 0
-     * @param $page|string  分页页码 （非必传，默认为1）
+     * @param $Page|string  分页页码 （非必传，默认为1）
      * @return json
      *
      */

@@ -24,7 +24,7 @@ public class MsgModelAction {
     /**
      * 站内信模板列表
      * @access public
-     * @param page|string  分页页码，可为空，默认为1
+     * @param Page|string  分页页码，可为空，默认为1
      * @param model_status|string  模板状态（审核通过0/未通过1/已删除2）
      * @return json
      */

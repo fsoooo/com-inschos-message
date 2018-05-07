@@ -5,6 +5,8 @@ import javax.xml.soap.Text;
 //站内信系统表
 public class MsgSys {
 
+    public Page page;
+
     public long id;
 
     public String title;//'标题'
