@@ -1,5 +1,5 @@
 package com.inschos.message.data.mapper;
-import com.inschos.message.model.Message;
+import com.inschos.message.model.*;
 //todo 注意,这个是接口-interface
 //Mapper接口开发需要遵循以下规范：
 //1、Mapper.xml文件中的namespace与mapper接口的类路径相同。

@@ -1,13 +1,21 @@
 package com.inschos.message.access.http.controller.action;
 
+import com.inschos.message.access.http.controller.bean.BaseRequest;
+import com.inschos.message.access.http.controller.bean.BaseResponse;
+import com.inschos.message.access.http.controller.request.MsgModelController;
+import com.inschos.message.data.dao.*;
+import com.inschos.message.kit.JsonKit;
+import com.inschos.message.model.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MsgModelAction {
-    //@Autowired
-    //private ModelDao modelDao;
-
+public class MsgModelAction extends BaseAction {
+    @Autowired
+    private MsgModelDAO msgModelDAO;
+    private Page page;
+    private static final Logger logger = Logger.getLogger(MsgModelController.class);
     /**
      * 添加站内信模板
      * @access public
@@ -17,9 +25,16 @@ public class MsgModelAction {
      * @param created_user_type|string  创建者类型
      * @return json
      */
-//    public String addModel(String model_name,String model_content,String created_user,String created_user_type) {
-//
-//    }
+    public String addMsgModel(String body) {
+        MsgModel msgModel = JsonKit.json2Bean(body, MsgModel.class);
+        if(msgModel!=null){
+            BaseRequest request = requst2Bean(msgModel.model_content, BaseRequest.class);
+            BaseResponse response = new BaseResponse();
+            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        }else{
+            return "params is empty";
+        }
+    }
 
     /**
      * 站内信模板列表
@@ -28,9 +43,16 @@ public class MsgModelAction {
      * @param model_status|string  模板状态（审核通过0/未通过1/已删除2）
      * @return json
      */
-//    public String listModel() {
-//
-//    }
+    public String listMsgModel(String body) {
+        Page page = JsonKit.json2Bean(body, Page.class);
+        if(page!=null){
+            BaseRequest request = requst2Bean(page.data, BaseRequest.class);
+            BaseResponse response = new BaseResponse();
+            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        }else{
+            return "params is empty";
+        }
+    }
 
     /**
      * 站内信模板详情
@@ -38,9 +60,16 @@ public class MsgModelAction {
      * @param model_code|string  模板代码
      * @return json
      */
-//    public String infoModel() {
-//
-//    }
+    public String infoMsgModel(String body) {
+        MsgModel msgModel = JsonKit.json2Bean(body, MsgModel.class);
+        if(page!=null){
+            BaseRequest request = requst2Bean(msgModel.model_code, BaseRequest.class);
+            BaseResponse response = new BaseResponse();
+            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        }else{
+            return "params is empty";
+        }
+    }
 
     /**
      * 站内信模板操作（审核、删除）
@@ -51,7 +80,14 @@ public class MsgModelAction {
      * @param user_type|string  操作人类型（只有业管可以审核和删除）
      * @return json
      */
-//    public String operateModel() {
-//
-//    }
+    public String updateMsgModel(String body) {
+        MsgModelUpdate msgModelUpdate = JsonKit.json2Bean(body, MsgModelUpdate.class);
+        if(msgModelUpdate!=null){
+            BaseRequest request = requst2Bean(msgModelUpdate.update_data, BaseRequest.class);
+            BaseResponse response = new BaseResponse();
+            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        }else{
+            return "params is empty";
+        }
+    }
 }
