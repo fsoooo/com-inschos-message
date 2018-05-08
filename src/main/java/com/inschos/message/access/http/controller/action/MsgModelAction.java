@@ -26,13 +26,19 @@ public class MsgModelAction extends BaseAction {
      */
     public String addMsgModel(String body) {
         MsgModel msgModel = JsonKit.json2Bean(body, MsgModel.class);
-        if(msgModel!=null){
-            BaseRequest request = requst2Bean(msgModel.model_content, BaseRequest.class);
-            BaseResponse response = new BaseResponse();
-            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
-        }else{
-            return "params is empty";
+        BaseResponse response = new BaseResponse();
+        if(msgModel==null){
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
+        //获取传进来的参数
+        MsgModel request = requst2Bean(msgModel.model_content, MsgModel.class);
+        logger.info(msgModel);
+        logger.info(request);
+        logger.info(msgModel.model_code);
+        logger.info(msgModel.model_name);
+        logger.info(msgModel.model_content);
+        int add_res = msgModelDAO.addMsgModel(msgModel);
+        return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
     }
 
     /**
