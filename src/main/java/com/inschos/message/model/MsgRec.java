@@ -22,4 +22,6 @@ public class MsgRec {
 
     public long updated_at;//'更新时间，毫秒'
 
+    public String channel_user_name;
+
 }

@@ -29,7 +29,6 @@ public class MsgInboxController {
     @ResponseBody
     public String listInbox(HttpServletRequest request) {
         String body = HttpKit.readRequestBody(request);
-        logger.info(body);
         return msgInboxAction.getMsgRecList(body);
     }
 
