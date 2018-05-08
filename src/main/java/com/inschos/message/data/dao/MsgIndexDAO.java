@@ -5,7 +5,9 @@ import com.inschos.message.data.mapper.MsgModelMapper;
 import com.inschos.message.model.MsgRec;
 import com.inschos.message.model.MsgSys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MsgIndexDAO {
     @Autowired
     private MsgIndexMapper msgIndexMapper;
