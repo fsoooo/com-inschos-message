@@ -84,4 +84,18 @@ public class MsgInboxDAO {
         return msgInboxMapper.updateMsgRec(msgUpdate);
     }
 
+    /**
+     * 收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
+     * @access public
+     * @param msg_id|消息标识列
+     * @param user_id|用户ID(收件人)
+     * @param user_type|发件人类型，个人用户1/企业用户2/管理员等3
+     * @param sys_status|消息状态：默认为未读0/已读1
+     * @return mixed
+     *
+     */
+    public int insertMsgRec(MsgRec msgRec){
+        return msgInboxMapper.insertMsgRec(msgRec);
+    }
+
 }

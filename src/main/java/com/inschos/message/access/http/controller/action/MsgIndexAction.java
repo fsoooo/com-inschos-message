@@ -28,7 +28,7 @@ public class MsgIndexAction extends BaseAction{
      * @param $send_time|string 发送时间 可空
      * @return json
      */
-    public String addMsgSys(String body){
+    public String addMessage(String body){
         MsgSys msgSys = JsonKit.json2Bean(body, MsgSys.class);
         if(msgSys!=null){
             BaseRequest request = requst2Bean(msgSys.type, BaseRequest.class);
