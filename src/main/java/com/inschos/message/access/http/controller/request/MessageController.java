@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 //定义请求方式
 //@RequestMapping(value = "/message",method = RequestMethod.POST)
 //@RequestMapping(value = "/message",method = RequestMethod.GET)
-@RequestMapping(value = "/message")
+@RequestMapping(value = "/message/test")
 public class MessageController {
 
     @Autowired
