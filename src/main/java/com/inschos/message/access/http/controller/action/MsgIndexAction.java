@@ -1,6 +1,18 @@
 package com.inschos.message.access.http.controller.action;
 
+
+import com.inschos.message.access.http.controller.bean.BaseRequest;
+import com.inschos.message.access.http.controller.bean.BaseResponse;
+import com.inschos.message.data.dao.MsgIndexDAO;
+import com.inschos.message.kit.JsonKit;
+import com.inschos.message.model.*;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class MsgIndexAction extends BaseAction{
+    @Autowired
+    private MsgIndexDAO msgIndexDAO;
+    private static final Logger logger = Logger.getLogger(MsgIndexAction.class);
 
     /**
      * 发送站内信
@@ -16,6 +28,16 @@ public class MsgIndexAction extends BaseAction{
      * @param $send_time|string 发送时间 可空
      * @return json
      */
+    public String addMsgSys(String body){
+        MsgSys msgSys = JsonKit.json2Bean(body, MsgSys.class);
+        if(msgSys!=null){
+            BaseRequest request = requst2Bean(msgSys.type, BaseRequest.class);
+            BaseResponse response = new BaseResponse();
+            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        }else{
+            return "params is empty";
+        }
+    }
 
     /**
      * 站内信发送详情
@@ -32,11 +54,29 @@ public class MsgIndexAction extends BaseAction{
      * @param $send_time|发送时间:默认为空。需要延时发送的，发送时间不为空
      * @return json
      */
+    public String sendMsgInfo(MsgSend msgSend){
+        if(msgSend!=null){
+            BaseRequest request = requst2Bean(msgSend.send_time, BaseRequest.class);
+            BaseResponse response = new BaseResponse();
+            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        }else{
+            return "params is empty";
+        }
+    }
 
     /**
      * 附件上传
      * @access private
-     * @param $file|resource 文件资源
+     * @param MsgAttachment|resource 文件资源
      * @return $attachment_path 文件上传URL
      */
+    public String attachmentUpload(MsgAttachment msgAttachment){
+        if(msgAttachment!=null){
+            BaseRequest request = requst2Bean(msgAttachment.file, BaseRequest.class);
+            BaseResponse response = new BaseResponse();
+            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        }else{
+            return "params is empty";
+        }
+    }
 }

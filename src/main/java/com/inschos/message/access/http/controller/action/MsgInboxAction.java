@@ -2,7 +2,6 @@ package com.inschos.message.access.http.controller.action;
 
 import com.inschos.message.access.http.controller.bean.BaseRequest;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
-import com.inschos.message.access.http.controller.request.MsgInboxController;
 import com.inschos.message.data.dao.MsgInboxDAO;
 import com.inschos.message.kit.JsonKit;
 import com.inschos.message.model.*;
@@ -15,7 +14,7 @@ public class MsgInboxAction extends BaseAction {
     @Autowired
     private MsgInboxDAO msgInboxDAO;
     private Page page;
-    private static final Logger logger = Logger.getLogger(MsgInboxController.class);
+    private static final Logger logger = Logger.getLogger(MsgInboxAction.class);
 
     /**
      * 站内信收件箱列表
