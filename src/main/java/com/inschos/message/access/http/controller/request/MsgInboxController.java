@@ -49,9 +49,9 @@ public class MsgInboxController {
     }
 
     //操作站内信
-    @RequestMapping("/operate/**")
+    @RequestMapping("/update/**")
     @ResponseBody
-    public String operateMessage(HttpServletRequest request) {
+    public String updateMessage(HttpServletRequest request) {
         String body = HttpKit.readRequestBody(request);
         return msgInboxAction.updateMsgRec(body);
     }
