@@ -11,15 +11,12 @@
     parameterType-指定输入参数的类型
     resultType-指定sql输出结果所映射的java对象类型-->
     <!--msg_model表查询字段-->
-    <sql id="Rec_Column_List">
-        `id`,`name`
-    </sql>
     <insert id="addMsgSys" parameterType="MsgModel">
-        insert into  demo (`name`)
+        insert into  demo(`name`)
         values(#{name})
     </insert>
     <insert id="insertMsgRec" parameterType="MsgModel">
-        insert into  demo (`name`)
+        insert into  demo(`name`)
         values(#{name})
     </insert>
 </mapper>

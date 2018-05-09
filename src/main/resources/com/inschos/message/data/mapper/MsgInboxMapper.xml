@@ -21,28 +21,28 @@
     <!--获取收件列表-->
     <select id="getMsgRecList" parameterType="MsgRec" resultType="MsgRec">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Rec_Column_List"/>
         from  demo
         where `id`=#{id}
     </select>
-    <!--获取收件列表-->
+    <!--获取发件箱列表-->
     <select id="getMsgSysList" parameterType="MsgSys" resultType="MsgSys">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Sys_Column_List"/>
         from  demo
         where `id`=#{id}
     </select>
     <!--获取未接收列表-->
     <select id="getMsgSysALL" parameterType="MsgSys" resultType="MsgSys">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Sys_Column_List"/>
         from  demo
         where `id`=#{id}
     </select>
     <!--获取站内信详情，TODO 需要两表联查-->
     <select id="getMsgInfo" parameterType="long" resultType="MsgSys">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Sys_Column_List"/>
         from  demo
         where `id`=#{id}
     </select>

@@ -22,9 +22,6 @@ public class MsgModelBean {
 
         public int state = 0;//'删除标识:默认为0，1未删除'
 
-        public long created_at;//'创建时间，毫秒'
-
-        public long updated_at;//'更新时间，毫秒'
     }
 
 

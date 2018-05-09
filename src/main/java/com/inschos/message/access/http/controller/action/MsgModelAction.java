@@ -2,13 +2,14 @@ package com.inschos.message.access.http.controller.action;
 
 import com.inschos.message.access.http.controller.bean.BaseRequest;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
+import com.inschos.message.access.http.controller.bean.MsgModelBean;
 import com.inschos.message.data.dao.*;
 import com.inschos.message.kit.JsonKit;
 import com.inschos.message.model.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import java.util.Date;
 @Component
 public class MsgModelAction extends BaseAction {
     @Autowired
@@ -26,20 +27,34 @@ public class MsgModelAction extends BaseAction {
      * @return json
      */
     public String addMsgModel(String body) {
-        MsgModel msgModel = JsonKit.json2Bean(body, MsgModel.class);
+        MsgModelBean.msgModelAdd msgModelAdd = JsonKit.json2Bean(body, MsgModelBean.msgModelAdd.class);
+        //获取传进来的参数
+        MsgModelBean.msgModelAdd request = requst2Bean(msgModelAdd.model_content, MsgModelBean.msgModelAdd.class);
         BaseResponse response = new BaseResponse();
-        if(msgModel==null){
+        //判空
+        if(msgModelAdd==null){
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        //获取传进来的参数
-        MsgModel request = requst2Bean(msgModel.model_content, MsgModel.class);
-        logger.info(msgModel);
-        logger.info(request);
-        logger.info(msgModel.model_code);
-        logger.info(msgModel.model_name);
-        logger.info(msgModel.model_content);
+        //获取当前时间戳(毫秒值)
+        long date = new Date().getTime();
+        //赋值
+        MsgModel msgModel = new MsgModel();
+        msgModel.model_code = msgModelAdd.model_code;
+        msgModel.model_name = msgModelAdd.model_name;
+        msgModel.model_content = msgModelAdd.model_content;
+        msgModel.created_user = msgModelAdd.created_user;
+        msgModel.created_user_type = msgModelAdd.created_user_type;
+        msgModel.status = msgModelAdd.status;
+        msgModel.state = msgModelAdd.state;
+        msgModel.created_at = date;
+        msgModel.updated_at = date;
+        //调用DAO
         int add_res = msgModelDAO.addMsgModel(msgModel);
-        return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        if(add_res==1){
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        }else{
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
     }
 
     /**
