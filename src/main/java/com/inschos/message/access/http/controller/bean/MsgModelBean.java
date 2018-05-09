@@ -1,5 +1,7 @@
 package com.inschos.message.access.http.controller.bean;
 
+import com.inschos.message.model.Page;
+
 public class MsgModelBean {
     //内部类-静态方法
     //添加站内信模板
@@ -30,6 +32,20 @@ public class MsgModelBean {
         public String model_code;//'模板代码'
 
         public int status;//'审核状态:默认为0审核中，1审核通过，2审核失败'
+    }
+
+    //站内信模板列表
+    public static class MsgModelList extends BaseRequest {
+
+        public Page page;//分页
+
+        public int model_status = 0;//模板状态（审核通过0/未通过1/已删除2）
+    }
+
+    //获取站内信模板详情
+    public static class MsgModelInfo extends BaseRequest{
+
+        public long model_code;
     }
 
 }
