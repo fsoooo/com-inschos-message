@@ -49,11 +49,16 @@ public class MsgModelAction extends BaseAction {
         msgModel.created_at = date;
         msgModel.updated_at = date;
         //调用DAO
+        //判断模板是否重复
+        MsgModel msgModelRepeat = msgModelDAO.getMsgModelRepeat(msgModel);
+        if(msgModelRepeat!=null){
+            return json(BaseResponse.CODE_FAILURE, "模板已存在，请检查模板名称", response);
+        }
         int add_res = msgModelDAO.addMsgModel(msgModel);
         if(add_res==1){
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            return json(BaseResponse.CODE_SUCCESS, "模板创建成功，等待审核", response);
         }else{
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "模板创建失败", response);
         }
     }
 

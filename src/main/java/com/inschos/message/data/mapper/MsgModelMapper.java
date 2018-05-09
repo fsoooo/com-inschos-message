@@ -7,6 +7,9 @@ public interface MsgModelMapper {
     int addMsgModel(MsgModel msgModel);//定义返回数据类型-整形-影响数据库行数
 
     //获取站内信模板列表
+    MsgModel getMsgModelRepeat(MsgModel msgModel);//定义返回数据类型-对象
+
+    //获取站内信模板列表
     MsgModel getMsgModelList(Page page);//定义返回数据类型-对象
 
     //获取站内信模板详情

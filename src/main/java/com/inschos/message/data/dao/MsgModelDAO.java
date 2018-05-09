@@ -31,6 +31,15 @@ public class MsgModelDAO {
     }
 
     /**
+     * 获取模板是否重复
+     * @param msgModel
+     * @return
+     */
+    public MsgModel getMsgModelRepeat(MsgModel msgModel){
+        return msgModelMapper.getMsgModelRepeat(msgModel);
+    }
+
+    /**
      * 模板列表查询
      * @access public
      * @param page|分页信息

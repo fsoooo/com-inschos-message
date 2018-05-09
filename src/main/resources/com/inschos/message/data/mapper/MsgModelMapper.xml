@@ -14,10 +14,26 @@
     <sql id="Base_Column_List">
         `id`,`model_code`,`model_name`,`model_content`,`created_user`,`created_user_type`,`status`,`state`,`created_at`,`updated_at`
     </sql>
+
+    <sql id="Repeat_Column_List">
+        `id`
+    </sql>
+
+    <!--添加模板-->
     <insert id="addMsgModel" parameterType="MsgModel">
         insert into  msg_model(`model_code`,`model_name`,`model_content`,`created_user`,`created_user_type`,`status`,`state`,`created_at`,`updated_at`)
         values(#{model_code},#{model_name},#{model_content},#{created_user},#{created_user_type},#{status},#{state},#{created_at},#{updated_at})
     </insert>
+
+    <!--获取模板重复 todo find-->
+    <select id="getMsgModelRepeat" parameterType="MsgModel" resultType="MsgModel">
+        select
+        <include refid="Repeat_Column_List"/>
+        from msg_model
+        where `model_name`=#{model_name}
+        limit 1
+    </select>
+
     <!--获取收件列表-->
     <select id="getMsgModelList" parameterType="MsgModel" resultType="MsgModel">
         select
