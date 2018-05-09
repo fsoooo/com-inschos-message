@@ -87,13 +87,21 @@ public class MsgModelAction extends BaseAction {
      * @return json
      */
     public String infoMsgModel(String body) {
-        MsgModel msgModel = JsonKit.json2Bean(body, MsgModel.class);
-        if(page!=null){
-            BaseRequest request = requst2Bean(msgModel.model_code, BaseRequest.class);
-            BaseResponse response = new BaseResponse();
-            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        MsgModelBean.msgModelInfo msgModelInfo = JsonKit.json2Bean(body, MsgModelBean.msgModelInfo.class);
+        //获取传进来的参数
+        MsgModelBean.msgModelInfo request = requst2Bean(msgModelInfo.model_code, MsgModelBean.msgModelInfo.class);
+        BaseResponse response = new BaseResponse();
+        //判空
+        if(msgModelInfo==null){
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        //调用DAO
+        MsgModel msgModel = msgModelDAO.getMsgModelInfo(msgModelInfo.model_code);
+        response.data = msgModel;
+        if(msgModel!=null){
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         }else{
-            return "params is empty";
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
     }
 

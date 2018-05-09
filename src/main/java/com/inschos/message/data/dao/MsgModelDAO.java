@@ -57,7 +57,7 @@ public class MsgModelDAO {
      * @return mixed
      *
      */
-    public MsgModel getMsgModelInfo(long model_code){
+    public MsgModel getMsgModelInfo(String model_code){
         return msgModelMapper.getMsgModelInfo(model_code);
     }
 

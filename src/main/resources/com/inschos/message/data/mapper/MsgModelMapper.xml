@@ -45,8 +45,8 @@
     <select id="getMsgModelInfo" parameterType="MsgModel" resultType="MsgModel">
         select
         <include refid="Base_Column_List"/>
-        from  demo
-        where `id`=#{id}
+        from  msg_model
+        limit 1
     </select>
     <!--更改收件箱站内信状态-->
     <update id="updateMsgModel" parameterType="MsgModel">

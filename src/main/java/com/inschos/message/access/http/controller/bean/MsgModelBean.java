@@ -36,7 +36,7 @@ public class MsgModelBean {
     //获取站内信模板详情
     public static class msgModelInfo extends BaseRequest {
 
-        public long model_code;//模板代码
+        public String model_code;//模板代码
     }
 
     //更新站内信状态
