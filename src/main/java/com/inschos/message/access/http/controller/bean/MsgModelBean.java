@@ -2,8 +2,9 @@ package com.inschos.message.access.http.controller.bean;
 
 import com.inschos.message.model.Page;
 
+//TODO 内部类-静态方法
 public class MsgModelBean {
-    //内部类-静态方法
+
     //添加站内信模板
     public static class msgModelAdd extends BaseRequest {
 
@@ -26,16 +27,9 @@ public class MsgModelBean {
         public long updated_at;//'更新时间，毫秒'
     }
 
-    //更新站内信状态
-    public static class MsgModelUpdate extends BaseRequest {
-
-        public String model_code;//'模板代码'
-
-        public int status;//'审核状态:默认为0审核中，1审核通过，2审核失败'
-    }
 
     //站内信模板列表
-    public static class MsgModelList extends BaseRequest {
+    public static class msgModelList extends BaseRequest {
 
         public Page page;//分页
 
@@ -43,9 +37,17 @@ public class MsgModelBean {
     }
 
     //获取站内信模板详情
-    public static class MsgModelInfo extends BaseRequest{
+    public static class msgModelInfo extends BaseRequest {
 
-        public long model_code;
+        public long model_code;//模板代码
+    }
+
+    //更新站内信状态
+    public static class msgModelUpdate extends BaseRequest {
+
+        public String model_code;//'模板代码'
+
+        public int status;//'审核状态:默认为0审核中，1审核通过，2审核失败'
     }
 
 }

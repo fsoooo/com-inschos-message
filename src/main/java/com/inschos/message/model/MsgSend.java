@@ -1,12 +1,10 @@
 package com.inschos.message.model;
 
-import javax.xml.soap.Text;
-
 public class MsgSend {
 
     public String title;//'标题'
 
-    public Text content;//'内容'
+    public String content;//'内容'
 
     public String attachment;//'附件，上传附件的URL,可为空'
 

@@ -1,7 +1,5 @@
 package com.inschos.message.model;
 
-import javax.xml.soap.Text;
-
 //站内信系统表
 public class MsgSys {
 
@@ -11,7 +9,7 @@ public class MsgSys {
 
     public String title;//'标题'
 
-    public Text content;//'内容'
+    public String content;//'内容'
 
     public String attachment;//'附件，上传附件的URL,可为空'
 
