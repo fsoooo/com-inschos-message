@@ -1,7 +1,5 @@
 package com.inschos.message.access.http.controller.bean;
 
-import com.inschos.message.model.Page;
-
 //TODO 内部类-静态方法
 public class MsgModelBean {
 
@@ -28,7 +26,7 @@ public class MsgModelBean {
     //站内信模板列表
     public static class msgModelList extends BaseRequest {
 
-        public Page page;//分页
+        public PageBean pageBean;//分页数据
 
         public int model_status = 0;//模板状态（审核通过0/未通过1/已删除2）
     }

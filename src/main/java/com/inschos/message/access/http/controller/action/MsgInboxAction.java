@@ -2,12 +2,16 @@ package com.inschos.message.access.http.controller.action;
 
 import com.inschos.message.access.http.controller.bean.BaseRequest;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
+import com.inschos.message.access.http.controller.bean.MsgInboxBean;
+import com.inschos.message.access.http.controller.bean.MsgModelBean;
 import com.inschos.message.data.dao.MsgInboxDAO;
 import com.inschos.message.kit.JsonKit;
 import com.inschos.message.model.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 @Component
 public class MsgInboxAction extends BaseAction {
@@ -32,19 +36,38 @@ public class MsgInboxAction extends BaseAction {
      * @access public
      */
     public String getMsgRecList(String body) {
-        MsgRec msgRec = JsonKit.json2Bean(body, MsgRec.class);
-        logger.info(msgRec);
-        if (msgRec != null) {
-            BaseRequest request = requst2Bean(msgRec.body, BaseRequest.class);
-            BaseResponse response = new BaseResponse();
-            logger.info(msgRec.channel_user_name);
-            logger.info(request);
-            logger.info(response);
-            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
-        } else {
-            return "body is empty";
+        MsgInboxBean.msgInboxList inboxList = JsonKit.json2Bean(body, MsgInboxBean.msgInboxList.class);
+        //获取传进来的参数
+        //MsgInboxBean.msgInboxList request = requst2Bean(inboxList.message_status, MsgModelBean.msgModelAdd.class);
+        BaseResponse response = new BaseResponse();
+        //判空
+        if(inboxList==null){
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        //return msgInboxDAO.getMsgRecList(msgRec);
+        //赋值
+//        MsgRec msgRec = new MsgRec();
+//        msgRec.page. = inboxList.pageBean.pageSize;
+//        msgRec.page = inboxList.pageBean.lastId;
+//        msgRec.page = inboxList.pageBean.pageNum;
+//        msgRec.page = inboxList.pageBean.pageTotal;
+//        msgRec.page = inboxList.pageBean.total;
+//        msgRec.page = inboxList.pageBean.listSize;
+
+//        msgRec.user_id = inboxList.user_id;
+//        msgRec.user_type = inboxList.user_type;
+//        msgRec.sys_status = inboxList.message_status;
+//        //调用DAO
+//        //判断模板是否重复
+//        MsgModel msgModelRepeat = msgModelDAO.getMsgModelRepeat(msgModel);
+//        if(msgModelRepeat!=null){
+//            return json(BaseResponse.CODE_FAILURE, "模板已存在，请检查模板名称", response);
+//        }
+//        int add_res = msgModelDAO.addMsgModel(msgModel);
+//        if(add_res==1){
+//            return json(BaseResponse.CODE_SUCCESS, "模板创建成功，等待审核", response);
+//        }else{
+            return json(BaseResponse.CODE_FAILURE, "模板创建失败", response);
+//        }
     }
 
 
