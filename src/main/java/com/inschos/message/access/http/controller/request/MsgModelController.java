@@ -1,6 +1,7 @@
 package com.inschos.message.access.http.controller.request;
 
 import com.inschos.message.access.http.controller.action.MsgModelAction;
+import com.inschos.message.annotation.GetActionBeanAnnotation;
 import com.inschos.message.assist.kit.HttpKit;
 import com.inschos.message.model.MsgModel;
 import org.apache.log4j.Logger;
@@ -34,6 +35,7 @@ public class MsgModelController
      * @param created_user_type   创建者类型
      * @return json
      */
+//    @GetActionBeanAnnotation
     @RequestMapping("/add/**")
     @ResponseBody
     public String addMsgModel(HttpServletRequest request){
