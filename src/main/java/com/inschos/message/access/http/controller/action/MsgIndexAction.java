@@ -4,7 +4,7 @@ package com.inschos.message.access.http.controller.action;
 import com.inschos.message.access.http.controller.bean.BaseRequest;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
 import com.inschos.message.data.dao.MsgIndexDAO;
-import com.inschos.message.kit.JsonKit;
+import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.model.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

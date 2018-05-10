@@ -2,7 +2,7 @@ package com.inschos.message.access.http.controller.request;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.inschos.message.access.http.controller.action.MsgInboxAction;
-import com.inschos.message.kit.HttpKit;
+import com.inschos.message.assist.kit.HttpKit;
 import com.inschos.message.model.MsgInbox;
 import com.inschos.message.model.MsgRec;
 import com.inschos.message.model.MsgSys;

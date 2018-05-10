@@ -1,7 +1,7 @@
 package com.inschos.message.access.http.controller.request;
 
 import com.inschos.message.access.http.controller.action.MsgIndexAction;
-import com.inschos.message.kit.HttpKit;
+import com.inschos.message.assist.kit.HttpKit;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
