@@ -46,8 +46,8 @@ public class MsgModelDAO {
      * @return mixed
      *
      */
-    public MsgModel getMsgModelList(Page page){
-        return msgModelMapper.getMsgModelList(page);
+    public MsgModel getMsgModelList(MsgModelList msgModelList){
+        return msgModelMapper.getMsgModelList(msgModelList);
     }
 
     /**

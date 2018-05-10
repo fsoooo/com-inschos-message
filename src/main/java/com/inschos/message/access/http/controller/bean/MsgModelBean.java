@@ -26,7 +26,11 @@ public class MsgModelBean {
     //站内信模板列表
     public static class msgModelList extends BaseRequest {
 
-        public PageBean pageBean;//分页数据
+        public long page_num;//分页数据
+
+        public long last_id;//分页数据
+
+        public int limit;//分页数据
 
         public int model_status = 0;//模板状态（审核通过0/未通过1/已删除2）
     }

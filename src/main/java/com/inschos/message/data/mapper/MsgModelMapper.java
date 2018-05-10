@@ -10,7 +10,7 @@ public interface MsgModelMapper {
     MsgModel getMsgModelRepeat(MsgModel msgModel);//定义返回数据类型-对象
 
     //获取站内信模板列表
-    MsgModel getMsgModelList(Page page);//定义返回数据类型-对象
+    MsgModel getMsgModelList(MsgModelList msgModelList);//定义返回数据类型-对象
 
     //获取站内信模板详情
     MsgModel getMsgModelInfo(String model_code);//定义返回数据类型-对象

@@ -68,19 +68,34 @@ public class MsgModelAction extends BaseAction {
     /**
      * 站内信模板列表
      * todo 还没写，暂时不知道分页怎么写
-     * @param Page         分页页码，可为空，默认为1
+     * @param page 当前页码 ，可不传，默认为1
+     * @param last_id 上一页最大id ，可不传，默认为
+     * @param limit 每页显示行数，可不传，默认为
      * @param model_status 模板状态（审核通过0/未通过1/已删除2）
      * @return json
      * @access public
      */
+
     public String listMsgModel(String body) {
-        Page page = JsonKit.json2Bean(body, Page.class);
-        if (page != null) {
-            BaseRequest request = requst2Bean(page.data, BaseRequest.class);
-            BaseResponse response = new BaseResponse();
-            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        MsgModelBean.msgModelList modelList = JsonKit.json2Bean(body, MsgModelBean.msgModelList.class);
+        //获取传进来的参数
+//        MsgModelBean.msgModelInfo request = requst2Bean(modellist.model_status, MsgModelBean.msgModelInfo.class);
+        BaseResponse response = new BaseResponse();
+        //判空
+        if (modelList == null) {
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        //调用DAO
+        MsgModelList msgModelList = new MsgModelList();
+        msgModelList.page.start = modelList.page_num;
+        msgModelList.page.lastId = modelList.last_id;
+        msgModelList.page.offset = modelList.limit;
+        msgModelList.msgModel.status = modelList.model_status;
+        MsgModel msgModel = msgModelDAO.getMsgModelList(msgModelList);
+        if (msgModel != null) {
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
-            return "params is empty";
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
     }
 

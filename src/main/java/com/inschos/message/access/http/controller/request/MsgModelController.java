@@ -46,8 +46,10 @@ public class MsgModelController
     /**
      * 站内信模板列表
      * @access public
-     * @param Page   分页页码，可为空，默认为1
-     * @param model_status   模板状态（审核通过0/未通过1/已删除2）
+     * @param page 当前页码 ，可不传，默认为1
+     * @param last_id 上一页最大id ，可不传，默认为
+     * @param limit 每页显示行数，可不传，默认为
+     * @param model_status 模板状态（审核通过0/未通过1/已删除2）
      * @return json
      */
     @RequestMapping("/list/**")
