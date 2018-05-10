@@ -49,9 +49,9 @@
         limit 1
     </select>
     <!--更改收件箱站内信状态-->
-    <update id="updateMsgModel" parameterType="MsgModel">
-     update demo set
-              `name`=#{name}
-            where `id`=#{id}
+    <update id="updateMsgModel" parameterType="MsgModelUpdate">
+     update msg_model set
+              `status`=#{status}
+            where `model_code`=#{model_code}
     </update>
 </mapper>

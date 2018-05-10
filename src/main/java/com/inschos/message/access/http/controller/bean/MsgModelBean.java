@@ -45,6 +45,10 @@ public class MsgModelBean {
         public String model_code;//'模板代码'
 
         public int status;//'审核状态:默认为0审核中，1审核通过，2审核失败'
+
+        public long user_id;//操作人id
+
+        public int user_type;//操作人类型（只有业管可以审核和删除）
     }
 
 }

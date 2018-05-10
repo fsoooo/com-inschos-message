@@ -72,7 +72,7 @@ public class MsgModelController
      * 站内信模板操作（审核、删除）
      * @access public
      * @param model_code   模板代码
-     * @param operate_code   操作代码（审核通过1，删除2）
+     * @param operate_code  '审核状态:默认为0审核中，1审核通过，2审核失败'
      * @param user_id   操作人id
      * @param user_type   操作人类型（只有业管可以审核和删除）
      * @return json

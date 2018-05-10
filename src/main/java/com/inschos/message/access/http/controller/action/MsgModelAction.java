@@ -115,13 +115,27 @@ public class MsgModelAction extends BaseAction {
      * @return json
      */
     public String updateMsgModel(String body) {
-        MsgModelUpdate msgModelUpdate = JsonKit.json2Bean(body, MsgModelUpdate.class);
-        if(msgModelUpdate!=null){
-            BaseRequest request = requst2Bean(msgModelUpdate.update_data, BaseRequest.class);
-            BaseResponse response = new BaseResponse();
-            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
+        MsgModelBean.msgModelUpdate msgModelUpdate = JsonKit.json2Bean(body, MsgModelBean.msgModelUpdate.class);
+        //获取传进来的参数
+        MsgModelBean.msgModelInfo request = requst2Bean(msgModelUpdate.model_code, MsgModelBean.msgModelInfo.class);
+        BaseResponse response = new BaseResponse();
+        //判空
+        if(msgModelUpdate==null){
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        if(msgModelUpdate.user_type!=1){//只有管理员才能操作站内信模板
+            return json(BaseResponse.CODE_FAILURE, "操作失败，没有权限", response);
+        }
+        //赋值
+        MsgModelUpdate modelUpdate = new MsgModelUpdate();
+        modelUpdate.model_code = msgModelUpdate.model_code;
+        modelUpdate.status = msgModelUpdate.status;
+        //调用DAO
+        int updateRes = msgModelDAO.updateMsgModel(modelUpdate);
+        if(updateRes!=0){
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         }else{
-            return "params is empty";
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
     }
 }
