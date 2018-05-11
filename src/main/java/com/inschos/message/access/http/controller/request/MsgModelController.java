@@ -36,11 +36,11 @@ public class MsgModelController
      * @param created_user_type   创建者类型
      * @return json
      */
+    @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("/add/**")
     @ResponseBody
-    public String addMsgModel(HttpServletRequest request){
-        String body = HttpKit.readRequestBody(request);
-        return msgModelAction.addMsgModel(body);
+    public String addMsgModel(ActionBean actionBean){
+        return msgModelAction.addMsgModel(actionBean);
     }
 
     /**
@@ -70,11 +70,11 @@ public class MsgModelController
      * @param model_code   模板代码
      * @return json
      */
+    @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("/info/**")
     @ResponseBody
-    public String infoMsgModel(HttpServletRequest request){
-        String body = HttpKit.readRequestBody(request);
-        return msgModelAction.infoMsgModel(body);
+    public String infoMsgModel(ActionBean actionBean){
+        return msgModelAction.infoMsgModel(actionBean);
     }
 
     /**
@@ -86,10 +86,10 @@ public class MsgModelController
      * @param user_type   操作人类型（只有业管可以审核和删除）
      * @return json
      */
+    @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("/update/**")
     @ResponseBody
-    public String updateMsgModel(HttpServletRequest request){
-        String body = HttpKit.readRequestBody(request);
-        return msgModelAction.updateMsgModel(body);
+    public String updateMsgModel(ActionBean actionBean){
+        return msgModelAction.updateMsgModel(actionBean);
     }
 }

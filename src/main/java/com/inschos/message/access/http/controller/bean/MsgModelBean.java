@@ -4,7 +4,7 @@ package com.inschos.message.access.http.controller.bean;
 public class MsgModelBean {
 
     //添加站内信模板
-    public static class msgModelAdd extends BaseRequest {
+    public static class addRequest extends BaseRequest {
 
         public String model_code;//'模板代码'
 
@@ -22,9 +22,8 @@ public class MsgModelBean {
 
     }
 
-
     //站内信模板列表
-    public static class msgModelList extends BaseRequest {
+    public static class listRequest extends BaseRequest {
 
         public String page_num;//分页数据
 
@@ -36,13 +35,13 @@ public class MsgModelBean {
     }
 
     //获取站内信模板详情
-    public static class msgModelInfo extends BaseRequest {
+    public static class infoRequest extends BaseRequest {
 
         public String model_code;//模板代码
     }
 
     //更新站内信状态
-    public static class msgModelUpdate extends BaseRequest {
+    public static class updateRequest extends BaseRequest {
 
         public String model_code;//'模板代码'
 
