@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class MsgModelAction extends BaseAction {
@@ -87,12 +88,13 @@ public class MsgModelAction extends BaseAction {
         }
         //调用DAO
         MsgModelList msgModelList = new MsgModelList();
-        msgModelList.page.start = modelList.page_num;
-        msgModelList.page.lastId = modelList.last_id;
-        msgModelList.page.offset = modelList.limit;
-        msgModelList.msgModel.status = modelList.model_status;
-        MsgModel msgModel = msgModelDAO.getMsgModelList(msgModelList);
-        if (msgModel != null) {
+        MsgModel msgModel = new MsgModel();
+        msgModelList.page = setPage(modelList.last_id, modelList.page_num, modelList.limit);
+        msgModel.status = modelList.model_status;
+        msgModelList.msgModel = msgModel;
+        List<MsgModel> msgModels = msgModelDAO.getMsgModelList(msgModelList);
+        response.data = msgModels;
+        if (msgModels != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);

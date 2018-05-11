@@ -5,6 +5,8 @@ import com.inschos.message.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 站内信模板处理数据访问对象（按功能划分DAO）
  * 模板添加（addModel），模板列表查询(getModelList)，模板详情查询(getModelInfo)，模板更新(updateModel)
@@ -46,7 +48,7 @@ public class MsgModelDAO {
      * @return mixed
      *
      */
-    public MsgModel getMsgModelList(MsgModelList msgModelList){
+    public List<MsgModel> getMsgModelList(MsgModelList msgModelList){
         return msgModelMapper.getMsgModelList(msgModelList);
     }
 
