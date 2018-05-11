@@ -1,6 +1,7 @@
 package com.inschos.message.access.http.controller.request;
 
 import com.inschos.message.access.http.controller.action.MsgModelAction;
+import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
 import com.inschos.message.assist.kit.HttpKit;
 import com.inschos.message.model.MsgModel;
@@ -35,7 +36,6 @@ public class MsgModelController
      * @param created_user_type   创建者类型
      * @return json
      */
-//    @GetActionBeanAnnotation
     @RequestMapping("/add/**")
     @ResponseBody
     public String addMsgModel(HttpServletRequest request){
@@ -52,12 +52,17 @@ public class MsgModelController
      * @param model_status 模板状态（审核通过0/未通过1/已删除2）
      * @return json
      */
+    @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("/list/**")
     @ResponseBody
-    public String listMsgModel(HttpServletRequest request){
-        String body = HttpKit.readRequestBody(request);
-        return msgModelAction.listMsgModel(body);
+//    public String listMsgModel(HttpServletRequest request){
+//        String body = HttpKit.readRequestBody(request);
+//        return msgModelAction.listMsgModel(body);
+//    }
+    public String listMsgModel(ActionBean actionBean){
+        return msgModelAction.listMsgModel(actionBean);
     }
+
 
     /**
      * 站内信模板详情

@@ -1,5 +1,6 @@
 package com.inschos.message.access.http.controller.action;
 
+import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.access.http.controller.bean.BaseRequest;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
 import com.inschos.message.access.http.controller.bean.MsgModelBean;
@@ -77,8 +78,8 @@ public class MsgModelAction extends BaseAction {
      * @access public
      */
 
-    public String listMsgModel(String body) {
-        MsgModelBean.msgModelList modelList = JsonKit.json2Bean(body, MsgModelBean.msgModelList.class);
+    public String listMsgModel(ActionBean actionBean) {
+        MsgModelBean.msgModelList modelList = JsonKit.json2Bean(actionBean.body, MsgModelBean.msgModelList.class);
         //获取传进来的参数
 //        MsgModelBean.msgModelInfo request = requst2Bean(modellist.model_status, MsgModelBean.msgModelInfo.class);
         BaseResponse response = new BaseResponse();
