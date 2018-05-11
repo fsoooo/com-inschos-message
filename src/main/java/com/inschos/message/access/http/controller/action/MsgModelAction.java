@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Component
 public class MsgModelAction extends BaseAction {
@@ -40,9 +41,10 @@ public class MsgModelAction extends BaseAction {
         }
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
+        String code  = getStringRandom(6);
         //赋值
         MsgModel msgModel = new MsgModel();
-        msgModel.model_code = request.model_code;
+        msgModel.model_code = code;
         msgModel.model_name = request.model_name;
         msgModel.model_content = request.model_content;
         msgModel.created_user = request.created_user;
@@ -153,5 +155,28 @@ public class MsgModelAction extends BaseAction {
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
+    }
+
+    /**
+     * 生成随机数字和字母
+     * @param length
+     * @return
+     */
+    public String getStringRandom(int length) {
+        String val = "";
+        Random random = new Random();
+        //参数length，表示生成几位随机数
+        for(int i = 0; i < length; i++) {
+            String charOrNum = random.nextInt(2) % 2 == 0 ? "char" : "num";
+            //输出字母还是数字
+            if( "char".equalsIgnoreCase(charOrNum) ) {
+                //输出是大写字母还是小写字母
+                int temp = random.nextInt(2) % 2 == 0 ? 65 : 97;
+                val += (char)(random.nextInt(26) + temp);
+            } else if( "num".equalsIgnoreCase(charOrNum) ) {
+                val += String.valueOf(random.nextInt(10));
+            }
+        }
+        return val;
     }
 }
