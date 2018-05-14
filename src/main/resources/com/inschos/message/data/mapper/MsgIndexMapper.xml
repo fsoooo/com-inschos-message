@@ -2,21 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- 命名空间，对sql进行分类化管理（sql隔离） -->
 <mapper namespace="com.inschos.message.data.mapper.MsgIndexMapper">
-    <!-- 在映射文件中配置sql语句 -->
-    <!-- 通过select执行查询，id用于标识映射文件中的sql(Statement-id)
+    <!--
+    在映射文件中配置sql语句
+    通过select执行查询，id用于标识映射文件中的sql(Statement-id)
     将sql语句封装到mappedstatement中
     #{}表示占位符，#{id}-id表示输入的参数，参数名称就是id,如如果输入参数是简单类型，#{}中的参数可以任意
     ${}拼接sql串，接收参数的内容，不加任何修饰，拼接在sql中(存在sql漏洞)
     ${}接收输入参数的内容，如果传入的类型是简单类型，${}中只能使用value
     parameterType-指定输入参数的类型
-    resultType-指定sql输出结果所映射的java对象类型-->
-    <!--msg_model表查询字段-->
-    <insert id="addMsgSys" parameterType="MsgModel">
-        insert into  demo(`name`)
-        values(#{name})
+    resultType-指定sql输出结果所映射的java对象类型
+    -->
+
+    <insert id="addMsgSys" parameterType="MsgSys">
+        insert into  msg_sys(`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`status`,`state`,`send_time`,`created_at`,`updated_at`)
+        values(#{title},#{content},#{attachment},#{type},#{from_id},#{from_type},#{to_id},#{to_type},#{status},#{state},#{send_time},#{created_at},#{updated_at})
     </insert>
-    <insert id="insertMsgRec" parameterType="MsgModel">
-        insert into  demo(`name`)
-        values(#{name})
-    </insert>
+
 </mapper>

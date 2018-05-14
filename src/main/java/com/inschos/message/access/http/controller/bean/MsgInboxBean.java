@@ -2,7 +2,7 @@ package com.inschos.message.access.http.controller.bean;
 
 public class MsgInboxBean {
     //站内信收件箱列表
-    public static class msgInboxList extends BaseRequest {
+    public static class inboxListRequest extends BaseRequest {
 
         public long user_id;//用户id
 
@@ -14,7 +14,7 @@ public class MsgInboxBean {
     }
 
     //站内信发件箱列表
-    public static class msgOutboxList extends BaseRequest {
+    public static class outboxListRequest extends BaseRequest {
 
         public long user_id;//用户id
 
@@ -25,13 +25,13 @@ public class MsgInboxBean {
     }
 
     //站内信详情
-    public static class msgInfo extends BaseRequest {
+    public static class msgInfoRequest extends BaseRequest {
 
         public long message_id;//站内信id
     }
 
     //操作站内信（收件箱 读取和删除）
-    public static class msgUpdate extends BaseRequest {
+    public static class msgUpdateRequest extends BaseRequest {
 
         public long message_id;//站内信id
 
