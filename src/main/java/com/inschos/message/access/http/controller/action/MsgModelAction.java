@@ -41,7 +41,7 @@ public class MsgModelAction extends BaseAction {
         }
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
-        String code  = getStringRandom(6);
+        String code = getStringRandom(6);
         //赋值
         MsgModel msgModel = new MsgModel();
         msgModel.model_code = code;
@@ -70,9 +70,10 @@ public class MsgModelAction extends BaseAction {
     /**
      * 站内信模板列表
      * todo 还没写，暂时不知道分页怎么写
-     * @param page 当前页码 ，可不传，默认为1
-     * @param last_id 上一页最大id ，可不传，默认为
-     * @param limit 每页显示行数，可不传，默认为
+     *
+     * @param page         当前页码 ，可不传，默认为1
+     * @param last_id      上一页最大id ，可不传，默认为
+     * @param limit        每页显示行数，可不传，默认为
      * @param model_status 模板状态（审核通过0/未通过1/已删除2）
      * @return json
      * @access public
@@ -159,6 +160,7 @@ public class MsgModelAction extends BaseAction {
 
     /**
      * 生成随机数字和字母
+     *
      * @param length
      * @return
      */
@@ -166,14 +168,14 @@ public class MsgModelAction extends BaseAction {
         String val = "";
         Random random = new Random();
         //参数length，表示生成几位随机数
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             String charOrNum = random.nextInt(2) % 2 == 0 ? "char" : "num";
             //输出字母还是数字
-            if( "char".equalsIgnoreCase(charOrNum) ) {
+            if ("char".equalsIgnoreCase(charOrNum)) {
                 //输出是大写字母还是小写字母
                 int temp = random.nextInt(2) % 2 == 0 ? 65 : 97;
-                val += (char)(random.nextInt(26) + temp);
-            } else if( "num".equalsIgnoreCase(charOrNum) ) {
+                val += (char) (random.nextInt(26) + temp);
+            } else if ("num".equalsIgnoreCase(charOrNum)) {
                 val += String.valueOf(random.nextInt(10));
             }
         }

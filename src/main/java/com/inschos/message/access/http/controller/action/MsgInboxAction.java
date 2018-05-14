@@ -20,10 +20,12 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 站内信收件箱列表
      *
-     * @param user_id        用户id
-     * @param user_type      用户类型:个人用户 3/代理人 2/企业用户 1/管理员
-     * @param Page           分页页码 （非必传，默认为1）
-     * @param message_status 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param user_id|int           用户id
+     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/管理员
+     * @param message_status|string 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param page                  当前页码 ，可不传，默认为1
+     * @param last_id               上一页最大id ，可不传，默认为
+     * @param limit                 每页显示行数，可不传，默认为
      * @return json
      * <p>
      * 业管可以查看所有人的站内信
@@ -36,7 +38,7 @@ public class MsgInboxAction extends BaseAction {
         MsgInboxBean.inboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.inboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
-        if(request==null){
+        if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         //赋值
@@ -61,7 +63,7 @@ public class MsgInboxAction extends BaseAction {
 //        if(add_res==1){
 //            return json(BaseResponse.CODE_SUCCESS, "模板创建成功，等待审核", response);
 //        }else{
-            return json(BaseResponse.CODE_FAILURE, "操作成功", response);
+        return json(BaseResponse.CODE_FAILURE, "操作成功", response);
 //        }
     }
 
@@ -69,9 +71,11 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 站内信发件箱列表
      *
-     * @param user_id   用户id
-     * @param user_type 用户类型:个人用户 3/代理人 2/企业用户 1/管理员 0
-     * @param Page      分页页码 （非必传，默认为1）
+     * @param user_id|int      用户id
+     * @param user_type|string 用户类型:个人用户 3/代理人 2/企业用户 1/管理员 0
+     * @param page             当前页码 ，可不传，默认为1
+     * @param last_id          上一页最大id ，可不传，默认为
+     * @param limit            每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
@@ -79,7 +83,7 @@ public class MsgInboxAction extends BaseAction {
         MsgInboxBean.outboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.outboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
-        if(request==null){
+        if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         return json(BaseResponse.CODE_FAILURE, "操作成功", response);
@@ -96,7 +100,7 @@ public class MsgInboxAction extends BaseAction {
         MsgInboxBean.msgInfoRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.msgInfoRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
-        if(request==null){
+        if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         return json(BaseResponse.CODE_FAILURE, "操作成功", response);
@@ -115,7 +119,7 @@ public class MsgInboxAction extends BaseAction {
         MsgInboxBean.msgUpdateRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.msgUpdateRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
-        if(request==null){
+        if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         return json(BaseResponse.CODE_FAILURE, "操作成功", response);

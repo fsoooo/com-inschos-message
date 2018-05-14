@@ -22,21 +22,22 @@ public class MsgIndexAction extends BaseAction {
     /**
      * 发送站内信
      *
-     * @param from      发件人id
-     * @param from_type 发件人类型:个人用户/企业用户/管理员等
-     * @param to        收件人id
-     * @param to_type   收件人类型;个人用户/企业用户/管理员等
-     * @param title     主题
-     * @param body      内容
-     * @param type      站内信类型
-     * @param file      附件 可空
-     * @param send_time 发送时间 可空
+     * @param title|标题
+     * @param content|内容
+     * @param attachment|附件:上传附件的URL,可为空
+     * @param type|站内信类型:系统通知、保单消息、理赔消息，其他（站内信分类，可为空）
+     * @param from_id|发件人ID
+     * @param from_type|发件人类型:个人用户1/企业用户2/管理员等3
+     * @param to_id|收件人id
+     * @param to_type|收件人类型:个人用户1/企业用户2/管理员等3
+     * @param status|读取状态:标识站内信是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
+     * @param send_time|发送时间:默认为空。需要延时发送的，发送时间不为空
      * @return json
      * @access public
      * TODO 站内信要素判断-05.14
-     * TODO 群发站内信判断-05.14
-     * TODO 延时发送判断-05.14
-     * TODO 上传文件-邮件附件-05.14
+     * TODO 群发站内信判断-05.14 管理员可以发送所有类型的消息，代理人可以给自己的客户群发消息，企业用户可以群发消息，个人用户只能发送私信
+     * TODO 延时发送判断-05.14  如果要延时发送站内信，定时触发机制？？？
+     * TODO 上传文件-邮件附件-05.14 前端请求-》消息模块文件上传接口-》返回key,前端带着key-》请求文件服务-》返回URL（或者 flag=true）,前端带着消息要素请求-》消息模块发送接口-》发送成功？？？待商定
      */
     public String addMessage(ActionBean actionBean) {
         MsgIndexBean request = JsonKit.json2Bean(actionBean.body, MsgIndexBean.class);
@@ -44,6 +45,12 @@ public class MsgIndexAction extends BaseAction {
         //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        if(request.title.isEmpty()||request.content.isEmpty()){
+            return json(BaseResponse.CODE_FAILURE, "title or content is empty", response);
+        }
+        if(request.from_id==0||request.from_type==0){
+            return json(BaseResponse.CODE_FAILURE, "from_id or from_type is empty", response);
         }
         if (request.to_user == null) {
             return json(BaseResponse.CODE_FAILURE, "to_user is empty", response);
@@ -80,32 +87,6 @@ public class MsgIndexAction extends BaseAction {
         }
         response.data = msgSendResList;
         return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-    }
-
-    /**
-     * 站内信发送详情
-     *
-     * @param title|标题
-     * @param content|内容
-     * @param attachment|附件:上传附件的URL,可为空
-     * @param type|站内信类型:系统通知、保单消息、理赔消息，其他（站内信分类，可为空）
-     * @param from_id|发件人ID
-     * @param from_type|发件人类型:个人用户1/企业用户2/管理员等3
-     * @param to_id|收件人id
-     * @param to_type|收件人类型:个人用户1/企业用户2/管理员等3
-     * @param status|读取状态:标识站内信是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
-     * @param send_time|发送时间:默认为空。需要延时发送的，发送时间不为空
-     * @return json
-     * @access private
-     */
-    public String sendMsgInfo(MsgSend msgSend) {
-        if (msgSend != null) {
-            BaseRequest request = requst2Bean(msgSend.send_time, BaseRequest.class);
-            BaseResponse response = new BaseResponse();
-            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
-        } else {
-            return "params is empty";
-        }
     }
 
     /**
