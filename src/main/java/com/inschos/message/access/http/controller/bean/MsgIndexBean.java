@@ -1,21 +1,34 @@
 package com.inschos.message.access.http.controller.bean;
 
+import java.util.List;
+
 public class MsgIndexBean {
-    //站内信收件箱列表
-    public long from;//发件人id
 
-    public int from_type;//发件人类型:个人用户/企业用户/管理员等
+    public String title;//'标题'
 
-    public MsgToBean msgToBean;//收件人id
+    public String content;//'内容'
 
-    public String title;//主题
+    public String attachment;//'附件，上传附件的URL,可为空'
 
-    public String body;//内容
+    public String type;//'站内信类型:系统通知、保单消息、理赔消息，其他（站内信分类，可为空）'
 
-    public String type;//站内信类型
+    public long from_id;//'发件人ID
 
-    public String file;// 附件 可空
+    public int from_type;//'发件人类型，个人用户1/企业用户2/管理员等3'
 
-    public String send_time;//发送时间 可空
+    public List<MsgToBean> to_user;
+
+    public int status;//'读取状态:标识站内信是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0'
+
+    public String send_time;//'发送时间:可为空。需要延时发送的，发送时间不为空'
+
+    public int state;//'删除标识:默认为0，1未删除'
+
+    public long created_at;//'创建时间，毫秒'
+
+    public long updated_at;//'更新时间，毫秒'
+
+
+
 
 }

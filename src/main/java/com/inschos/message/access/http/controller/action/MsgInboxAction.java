@@ -1,9 +1,6 @@
 package com.inschos.message.access.http.controller.action;
 
-import com.inschos.message.access.http.controller.bean.BaseRequest;
-import com.inschos.message.access.http.controller.bean.BaseResponse;
-import com.inschos.message.access.http.controller.bean.MsgInboxBean;
-import com.inschos.message.access.http.controller.bean.MsgModelBean;
+import com.inschos.message.access.http.controller.bean.*;
 import com.inschos.message.data.dao.MsgInboxDAO;
 import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.model.*;
@@ -35,13 +32,11 @@ public class MsgInboxAction extends BaseAction {
      * todo 只要用户接收站内信，系统表就默认已经读取了，不在插入
      * @access public
      */
-    public String getMsgRecList(String body) {
-        MsgInboxBean.msgInboxList inboxList = JsonKit.json2Bean(body, MsgInboxBean.msgInboxList.class);
-        //获取传进来的参数
-        //MsgInboxBean.msgInboxList request = requst2Bean(inboxList.message_status, MsgModelBean.msgModelAdd.class);
+    public String getMsgRecList(ActionBean actionBean) {
+        MsgInboxBean.inboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.inboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
-        if(inboxList==null){
+        if(request==null){
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         //赋值
@@ -66,7 +61,7 @@ public class MsgInboxAction extends BaseAction {
 //        if(add_res==1){
 //            return json(BaseResponse.CODE_SUCCESS, "模板创建成功，等待审核", response);
 //        }else{
-            return json(BaseResponse.CODE_FAILURE, "模板创建失败", response);
+            return json(BaseResponse.CODE_FAILURE, "操作成功", response);
 //        }
     }
 
@@ -80,12 +75,14 @@ public class MsgInboxAction extends BaseAction {
      * @return json
      * @access public
      */
-    public String getMsgSysList(String body) {
-        MsgSys msgSys = JsonKit.json2Bean(body, MsgSys.class);
-        BaseRequest request = requst2Bean(msgSys.type, BaseRequest.class);
+    public String getMsgSysList(ActionBean actionBean) {
+        MsgInboxBean.outboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.outboxListRequest.class);
         BaseResponse response = new BaseResponse();
-        return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
-        //return msgInboxDAO.getMsgSysList(msgSys);
+        //判空
+        if(request==null){
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        return json(BaseResponse.CODE_FAILURE, "操作成功", response);
     }
 
     /**
@@ -95,12 +92,14 @@ public class MsgInboxAction extends BaseAction {
      * @return json
      * @access public
      */
-    public String getMsgInfo(String body) {
-        MsgSys msgSys = JsonKit.json2Bean(body, MsgSys.class);
-        BaseRequest request = requst2Bean(msgSys.type, BaseRequest.class);
+    public String getMsgInfo(ActionBean actionBean) {
+        MsgInboxBean.msgInfoRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.msgInfoRequest.class);
         BaseResponse response = new BaseResponse();
-        return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
-        //return msgInboxDAO.getMsgInfo(msg_id);
+        //判空
+        if(request==null){
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        return json(BaseResponse.CODE_FAILURE, "操作成功", response);
     }
 
     /**
@@ -112,11 +111,13 @@ public class MsgInboxAction extends BaseAction {
      * @return json
      * @access public
      */
-    public String updateMsgRec(String body) {
-        MsgUpdate msgUpdate = JsonKit.json2Bean(body, MsgUpdate.class);
-        BaseRequest request = requst2Bean(msgUpdate.update_data, BaseRequest.class);
+    public String updateMsgRec(ActionBean actionBean) {
+        MsgInboxBean.msgUpdateRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.msgUpdateRequest.class);
         BaseResponse response = new BaseResponse();
-        return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
-        //return msgInboxDAO.updateMsgRec(msgUpdate);
+        //判空
+        if(request==null){
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        return json(BaseResponse.CODE_FAILURE, "操作成功", response);
     }
 }
