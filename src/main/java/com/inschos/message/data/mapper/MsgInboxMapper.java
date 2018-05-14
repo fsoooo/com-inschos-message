@@ -2,6 +2,8 @@ package com.inschos.message.data.mapper;
 
 import com.inschos.message.model.*;
 
+import java.util.List;
+
 //todo 注意,这个是接口-interface
 //Mapper接口开发需要遵循以下规范：
 //1、Mapper.xml文件中的namespace与mapper接口的类路径相同。
@@ -10,13 +12,16 @@ import com.inschos.message.model.*;
 //4、Mapper接口方法的输出参数类型和mapper.xml中定义的每个sql的resultType的类型相同
 public interface MsgInboxMapper {
     // 收件箱列表(getMsgRecList)MsgRec
-    MsgRec getMsgRecList(MsgRec msgRec);//定义返回数据类型-对象
+    List<MsgInbox> getMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
+
+    //收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
+    int insertMsgRec(MsgRec msgRec);//定义返回数据类型-整形-影响数据库行数
+
+    //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
+    List<MsgRec> getUserMsgRes(MsgRec msgRec);//定义返回数据类型-整形-影响数据库行数
 
     // 发件箱列表(getMsgSysList)
-    MsgSys getMsgSysList(MsgSys msgSys);//定义返回数据类型-对象
-
-    // 用户未接收信息查询(getMsgSysALL),
-    MsgSys getMsgSysALL(MsgSys msgSys);//定义返回数据类型-对象
+    List<MsgSys> getMsgSysList(MsgSys msgSys);//定义返回数据类型-集合
 
     // 站内信详情(getMsgInfo)
     MsgInbox getMsgInfo(long msg_id);//定义返回数据类型-对象
@@ -24,6 +29,5 @@ public interface MsgInboxMapper {
     // 删除/读取站内信(updateMsgRec)
     int updateMsgRec(MsgUpdate msgUpdate);//定义返回数据类型-整形-影响数据库行数
 
-    //收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
-    int insertMsgRec(MsgRec msgRec);//定义返回数据类型-整形-影响数据库行数
+
 }

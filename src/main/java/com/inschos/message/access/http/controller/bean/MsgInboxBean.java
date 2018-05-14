@@ -8,13 +8,15 @@ public class MsgInboxBean {
 
         public int user_type;//用户类型:个人用户 3/代理人 2/企业用户 1/管理员
 
+        public int message_status;//站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+
         public String page_num;//分页数据
 
         public String last_id;//分页数据
 
         public String limit;//分页数据
 
-        public int message_status;//站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+
     }
 
     //站内信发件箱列表
@@ -23,6 +25,8 @@ public class MsgInboxBean {
         public long user_id;//用户id
 
         public int user_type;//用户类型:个人用户 3/代理人 2/企业用户 1/管理员
+
+        public int message_status;//站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
 
         public String page_num;//分页数据
 

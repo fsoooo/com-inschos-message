@@ -10,21 +10,39 @@
     ${}接收输入参数的内容，如果传入的类型是简单类型，${}中只能使用value
     parameterType-指定输入参数的类型
     resultType-指定sql输出结果所映射的java对象类型-->
+
     <!--msg_rec表查询字段-->
     <sql id="Rec_Column_List">
-        `id`,`name`
+        `id`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`
     </sql>
     <!--msg_sys查询字段-->
     <sql id="Sys_Column_List">
-        `id`,`name`
+        `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`status`,`send_time`,`state`,`created_at`,`updated_at`
     </sql>
+
     <!--获取收件列表-->
-    <select id="getMsgRecList" parameterType="MsgRec" resultType="MsgRec">
-        select
-        <include refid="Rec_Column_List"/>
-        from  demo
-        where `id`=#{id}
+    <select id="getMsgRecList" parameterType="MsgRec" resultType="MsgInbox">
+        select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
+        from  msg_rec LEFT JOIN msg_sys ON msg_res.msg_id = msg_sys.id
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    id&gt;=(select id from msg_model where status=#{msgModel.status} AND state=1
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            AND state = 1
+            limit #{page.offset}
+        </where>
     </select>
+
     <!--获取发件箱列表-->
     <select id="getMsgSysList" parameterType="MsgSys" resultType="MsgSys">
         select
