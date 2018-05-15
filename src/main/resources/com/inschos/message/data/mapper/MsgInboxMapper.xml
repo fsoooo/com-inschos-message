@@ -22,7 +22,7 @@
     </sql>
 
     <!--获取收件列表-->
-    <select id="getMsgRecList" parameterType="MsgRec" resultMap="selectMsgRecAndSys">
+    <select id="findMsgRecList" parameterType="MsgRec" resultMap="selectMsgRecAndSys">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
         from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         <where>
@@ -62,7 +62,7 @@
     </resultMap>
 
     <!--获取未接收列表-->
-    <select id="getUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
+    <select id="findUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
         select `id`
         from  msg_sys
         where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 0
@@ -82,7 +82,7 @@
     </update>
 
     <!--获取发件箱列表-->
-    <select id="getMsgSysList" parameterType="MsgSys" resultType="MsgSys">
+    <select id="findMsgSysList" parameterType="MsgSys" resultType="MsgSys">
         select
         <include refid="Sys_Column_List"/>
         from  msg_sys
@@ -106,7 +106,7 @@
     </select>
 
     <!--获取站内信详情，TODO 需要两表联查-->
-    <select id="getMsgInfo" parameterType="MsgRec" resultMap="MsgRecAndSysInfo">
+    <select id="findMsgInfo" parameterType="MsgRec" resultMap="MsgRecAndSysInfo">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`,`msg_sys`.`content`,`msg_sys`.`attachment`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
         from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         where `msg_rec`.`id`=#{id}
@@ -132,7 +132,7 @@
     </resultMap>
 
     <!--获取发件箱详情-->
-    <select id="getMsgSysInfo" parameterType="MsgSys" resultType="MsgSys">
+    <select id="findMsgSysInfo" parameterType="MsgSys" resultType="MsgSys">
         select
         <include refid="Sys_Column_List"/>
         from   msg_sys

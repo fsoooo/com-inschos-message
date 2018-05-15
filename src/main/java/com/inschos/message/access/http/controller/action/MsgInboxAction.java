@@ -36,7 +36,7 @@ public class MsgInboxAction extends BaseAction {
      * todo 只要用户接收站内信，系统表就默认已经读取了，不在插入
      * @access public
      */
-    public String getMsgRecList(ActionBean actionBean) {
+    public String findMsgRecList(ActionBean actionBean) {
         MsgInboxBean.inboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.inboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
@@ -52,15 +52,15 @@ public class MsgInboxAction extends BaseAction {
         //根据user_type判断不同用户可以查看站内信类型
         switch (request.user_type) {
             case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-                List<MsgInbox> msgInboxManager = msgInboxDAO.getMsgRecList(msgRec);
+                List<MsgInbox> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxManager;
                 break;
             case 2://企业用户
-                List<MsgInbox> msgInboxCompany = msgInboxDAO.getMsgRecList(msgRec);
+                List<MsgInbox> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxCompany;
                 break;
             case 3://代理人用户
-                List<MsgInbox> msgInboxAgent = msgInboxDAO.getMsgRecList(msgRec);
+                List<MsgInbox> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxAgent;
                 break;
             case 4://个人用户-判断登录信息，再向收件箱表里插入数据
@@ -75,11 +75,11 @@ public class MsgInboxAction extends BaseAction {
                 logger.info(msgRec.page.start);
                 logger.info(msgRec.page.offset);
                 logger.info(msgRec.page.lastId);
-                List<MsgInbox> msgInboxPerson = msgInboxDAO.getMsgRecList(msgRec);
+                List<MsgInbox> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxPerson;
                 break;
             default:
-                List<MsgInbox> msgInboxs = msgInboxDAO.getMsgRecList(msgRec);
+                List<MsgInbox> msgInboxs = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxs;
                 break;
         }
@@ -110,7 +110,7 @@ public class MsgInboxAction extends BaseAction {
         MsgRec msgRec = new MsgRec();
         msgRec.user_id = user_id;
         msgRec.user_type = user_type;
-        List<MsgSys> MsgSys = msgInboxDAO.getUserMsgRes(msgRec);
+        List<MsgSys> MsgSys = msgInboxDAO.findUserMsgRes(msgRec);
         //判断集合是否为空
         if (null == MsgSys || MsgSys.size() == 0) {
             return json(BaseResponse.CODE_SUCCESS, "未查看消息为空", response);
@@ -150,7 +150,7 @@ public class MsgInboxAction extends BaseAction {
      * @return json
      * @access public
      */
-    public String getMsgSysList(ActionBean actionBean) {
+    public String findMsgSysList(ActionBean actionBean) {
         MsgInboxBean.outboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.outboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
@@ -163,7 +163,7 @@ public class MsgInboxAction extends BaseAction {
         msgSys.status = request.message_status;
         msgSys.from_id = request.user_id;
         msgSys.from_type = request.user_type;
-        List<MsgSys> msgOutboxs = msgInboxDAO.getMsgSysList(msgSys);
+        List<MsgSys> msgOutboxs = msgInboxDAO.findMsgSysList(msgSys);
         response.data = msgOutboxs;
         if (msgOutboxs != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
@@ -179,7 +179,7 @@ public class MsgInboxAction extends BaseAction {
      * @return json
      * @access public
      */
-    public String getMsgInfo(ActionBean actionBean) {
+    public String findMsgInfo(ActionBean actionBean) {
         MsgInboxBean.msgInfoRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.msgInfoRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
@@ -188,19 +188,20 @@ public class MsgInboxAction extends BaseAction {
         }
         MsgRec msgRec = new MsgRec();
         msgRec.id = request.message_id;
-        MsgRec msgInfo = msgInboxDAO.getMsgInfo(msgRec);
+        MsgRec msgInfo = msgInboxDAO.findMsgInfo(msgRec);
         response.data = msgInfo;
         if (msgInfo != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             MsgSys msgSys = new MsgSys();
             msgSys.id = request.message_id;
-            MsgSys msgSysInfo = msgInboxDAO.getMsgSysInfo(msgSys);
-            response.data = msgSysInfo;
+            MsgSys msgSysInfo = msgInboxDAO.findMsgSysInfo(msgSys);
             if (msgSysInfo != null) {
+                response.data = msgSysInfo;
                 return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
             } else {
-                return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+                response.data = "";
+                return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
             }
         }
     }

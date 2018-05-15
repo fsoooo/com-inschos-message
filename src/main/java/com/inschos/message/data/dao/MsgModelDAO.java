@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 站内信模板处理数据访问对象（按功能划分DAO）
- * 模板添加（addModel），模板列表查询(getModelList)，模板详情查询(getModelInfo)，模板更新(updateModel)
+ * 模板添加（addModel），模板列表查询(findModelList)，模板详情查询(findModelInfo)，模板更新(updateModel)
  */
 @Component
 public class MsgModelDAO {
@@ -37,8 +37,8 @@ public class MsgModelDAO {
      * @param msgModel
      * @return
      */
-    public MsgModel getMsgModelRepeat(MsgModel msgModel){
-        return msgModelMapper.getMsgModelRepeat(msgModel);
+    public MsgModel findMsgModelRepeat(MsgModel msgModel){
+        return msgModelMapper.findMsgModelRepeat(msgModel);
     }
 
     /**
@@ -48,8 +48,8 @@ public class MsgModelDAO {
      * @return mixed
      *
      */
-    public List<MsgModel> getMsgModelList(MsgModelList msgModelList){
-        return msgModelMapper.getMsgModelList(msgModelList);
+    public List<MsgModel> findMsgModelList(MsgModelList msgModelList){
+        return msgModelMapper.findMsgModelList(msgModelList);
     }
 
     /**
@@ -59,8 +59,8 @@ public class MsgModelDAO {
      * @return mixed
      *
      */
-    public MsgModel getMsgModelInfo(String model_code){
-        return msgModelMapper.getMsgModelInfo(model_code);
+    public MsgModel findMsgModelInfo(MsgModel msgModel){
+        return msgModelMapper.findMsgModelInfo(msgModel);
     }
 
     /**

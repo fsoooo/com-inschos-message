@@ -54,7 +54,7 @@ public class MsgInboxController {
     @RequestMapping("/list/inbox/**")
     @ResponseBody
     public String listInbox(ActionBean actionBean) {
-        return msgInboxAction.getMsgRecList(actionBean);
+        return msgInboxAction.findMsgRecList(actionBean);
     }
 
     /**
@@ -73,7 +73,7 @@ public class MsgInboxController {
     @RequestMapping("/list/outbox/**")
     @ResponseBody
     public String listOutbox(ActionBean actionBean) {
-        return msgInboxAction.getMsgSysList(actionBean);
+        return msgInboxAction.findMsgSysList(actionBean);
     }
 
     /**
@@ -87,7 +87,7 @@ public class MsgInboxController {
     @RequestMapping("/info/**")
     @ResponseBody
     public String infoMessage(ActionBean actionBean) {
-        return msgInboxAction.getMsgInfo(actionBean);
+        return msgInboxAction.findMsgInfo(actionBean);
     }
 
     /**

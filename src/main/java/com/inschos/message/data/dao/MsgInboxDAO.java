@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 站内信收件处理数据访问对象（按功能划分DAO）
- * 收件箱列表(getMsgRecList)，发件箱列表(getMsgSysList),用户未接收信息查询(getMsgSysALL),站内信详情（getMsgInfo），删除/读取站内信（updateMsgRec）
+ * 收件箱列表(findMsgRecList)，发件箱列表(findMsgSysList),用户未接收信息查询(findMsgSysALL),站内信详情（findMsgInfo），删除/读取站内信（updateMsgRec）
  * TODO  在DAO里传对象，需要判空！！！
  */
 @Component
@@ -28,8 +28,8 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgInbox> getMsgRecList(MsgRec msgRec) {
-        return msgInboxMapper.getMsgRecList(msgRec);
+    public List<MsgInbox> findMsgRecList(MsgRec msgRec) {
+        return msgInboxMapper.findMsgRecList(msgRec);
     }
 
     /**
@@ -66,8 +66,8 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgSys> getUserMsgRes(MsgRec msgRec) {
-        return msgInboxMapper.getUserMsgRes(msgRec);
+    public List<MsgSys> findUserMsgRes(MsgRec msgRec) {
+        return msgInboxMapper.findUserMsgRes(msgRec);
     }
 
     /**
@@ -81,8 +81,8 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgSys> getMsgSysList(MsgSys msgSys) {
-        return msgInboxMapper.getMsgSysList(msgSys);
+    public List<MsgSys> findMsgSysList(MsgSys msgSys) {
+        return msgInboxMapper.findMsgSysList(msgSys);
     }
 
     /**
@@ -92,8 +92,8 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public MsgSys getMsgSysInfo(MsgSys msgSys){
-        return msgInboxMapper.getMsgSysInfo(msgSys);
+    public MsgSys findMsgSysInfo(MsgSys msgSys){
+        return msgInboxMapper.findMsgSysInfo(msgSys);
     }
 
     /**
@@ -103,8 +103,8 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public MsgRec getMsgInfo(MsgRec msgRec) {
-        return msgInboxMapper.getMsgInfo(msgRec);
+    public MsgRec findMsgInfo(MsgRec msgRec) {
+        return msgInboxMapper.findMsgInfo(msgRec);
     }
 
     /**

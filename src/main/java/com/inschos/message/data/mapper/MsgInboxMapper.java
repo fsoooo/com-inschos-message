@@ -11,11 +11,11 @@ import java.util.List;
 //3、Mapper接口方法的输入参数类型和mapper.xml中定义的每个sql 的parameterType的类型相同
 //4、Mapper接口方法的输出参数类型和mapper.xml中定义的每个sql的resultType的类型相同
 public interface MsgInboxMapper {
-    // 收件箱列表(getMsgRecList)MsgRec
-    List<MsgInbox> getMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
+    // 收件箱列表(findMsgRecList)MsgRec
+    List<MsgInbox> findMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
 
     //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
-    List<MsgSys> getUserMsgRes(MsgRec msgRec);
+    List<MsgSys> findUserMsgRes(MsgRec msgRec);
 
     //收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
     int insertMsgRec(MsgRec msgRec);
@@ -23,20 +23,19 @@ public interface MsgInboxMapper {
     //更改系统消息读取状态
     int updateMsgSysStatus(MsgSys msgSys);
 
-    // 发件箱列表(getMsgSysList)
-    List<MsgSys> getMsgSysList(MsgSys msgSys);
+    // 发件箱列表(findMsgSysList)
+    List<MsgSys> findMsgSysList(MsgSys msgSys);
 
     //发件箱详情
-    MsgSys getMsgSysInfo(MsgSys msgSys);
+    MsgSys findMsgSysInfo(MsgSys msgSys);
 
-    // 站内信详情(getMsgInfo)
-    MsgRec getMsgInfo(MsgRec msgRec);
+    // 站内信详情(findMsgInfo)
+    MsgRec findMsgInfo(MsgRec msgRec);
 
     // 删除/读取站内信(updateMsgRec)
     int updateMsgRecStatus(MsgUpdate msgUpdate);
 
     // 删除/读取站内信(updateMsgRec)
     int updateMsgRecState(MsgUpdate msgUpdate);
-
 
 }

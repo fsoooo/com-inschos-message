@@ -55,7 +55,7 @@ public class MsgModelAction extends BaseAction {
         msgModel.updated_at = date;
         //调用DAO
         //判断模板是否重复
-        MsgModel msgModelRepeat = msgModelDAO.getMsgModelRepeat(msgModel);
+        MsgModel msgModelRepeat = msgModelDAO.findMsgModelRepeat(msgModel);
         if (msgModelRepeat != null) {
             return json(BaseResponse.CODE_FAILURE, "模板已存在，请检查模板名称", response);
         }
@@ -92,7 +92,7 @@ public class MsgModelAction extends BaseAction {
         MsgModel msgModel = new MsgModel();
         msgModel.status = request.model_status;
         msgModelList.msgModel = msgModel;
-        List<MsgModel> msgModels = msgModelDAO.getMsgModelList(msgModelList);
+        List<MsgModel> msgModels = msgModelDAO.findMsgModelList(msgModelList);
         response.data = msgModels;
         if (msgModels != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
@@ -116,9 +116,11 @@ public class MsgModelAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         //调用DAO
-        MsgModel msgModel = msgModelDAO.getMsgModelInfo(request.model_code);
-        response.data = msgModel;
-        if (msgModel != null) {
+        MsgModel msgModel = new MsgModel();
+        msgModel.model_code = request.model_code;
+        MsgModel modelInfo = msgModelDAO.findMsgModelInfo(msgModel);
+        response.data = modelInfo;
+        if (modelInfo != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
