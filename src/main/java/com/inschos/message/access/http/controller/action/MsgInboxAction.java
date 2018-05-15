@@ -25,7 +25,7 @@ public class MsgInboxAction extends BaseAction {
      * @param user_id|int           用户id
      * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
      * @param message_status|string 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
-     * @param page_num                  当前页码 ，可不传，默认为1
+     * @param page_num              当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为
      * @param limit                 每页显示行数，可不传，默认为
      * @return json
@@ -64,8 +64,17 @@ public class MsgInboxAction extends BaseAction {
                 response.data = msgInboxAgent;
                 break;
             case 4://个人用户-判断登录信息，再向收件箱表里插入数据
-                String insertRes = insertMsgRec(request.user_id, request.user_type);
-                logger.info(insertRes);
+                //TODO 判断登录
+                int loginStatus = 1;
+                if (loginStatus != 0) {
+                    String insertRes = insertMsgRec(request.user_id, request.user_type);
+                }
+                logger.info(msgRec.user_id);
+                logger.info(msgRec.user_type);
+                logger.info(msgRec.sys_status);
+                logger.info(msgRec.page.start);
+                logger.info(msgRec.page.offset);
+                logger.info(msgRec.page.lastId);
                 List<MsgInbox> msgInboxPerson = msgInboxDAO.getMsgRecList(msgRec);
                 response.data = msgInboxPerson;
                 break;
@@ -85,6 +94,7 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
      * TODO 传参统一用小驼峰命名规则
+     *
      * @param user_id|用户ID(收件人)
      * @param user_type|发件人类型，个人用户1/企业用户2/业管用户等
      * @return mixed
@@ -115,6 +125,12 @@ public class MsgInboxAction extends BaseAction {
             msgRec.created_at = date;
             msgRec.updated_at = date;
             int insertRes = msgInboxDAO.insertMsgRec(msgRec);
+            if (insertRes != 0) {
+                MsgSys updateSys = new MsgSys();
+                updateSys.id = sys.id;
+                updateSys.status = 1;
+                int updateRes = msgInboxDAO.updateMsgSysStatus(updateSys);
+            }
             //TODO  更改msg_sys消息读取状态
             insertResList.add(insertRes);
         }
@@ -170,12 +186,22 @@ public class MsgInboxAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        MsgInbox msgInbox = msgInboxDAO.getMsgInfo(request.message_id);
-        response.data = msgInbox;
-        if (msgInbox != null) {
+        MsgRec msgRec = new MsgRec();
+        msgRec.id = request.message_id;
+        MsgRec msgInfo = msgInboxDAO.getMsgInfo(msgRec);
+        response.data = msgInfo;
+        if (msgInfo != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            MsgSys msgSys = new MsgSys();
+            msgSys.id = request.message_id;
+            MsgSys msgSysInfo = msgInboxDAO.getMsgSysInfo(msgSys);
+            response.data = msgSysInfo;
+            if (msgSysInfo != null) {
+                return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            }
         }
     }
 
@@ -199,15 +225,15 @@ public class MsgInboxAction extends BaseAction {
         MsgUpdate msgUpdate = new MsgUpdate();
         msgUpdate.msg_id = request.message_id;
         msgUpdate.operate_id = request.operate_id;
-        if(request.operate_type=="read"){
+        if (request.operate_type == "read") {
             msgUpdate.operate_type = "sys_status";
             response.data = msgInboxDAO.updateMsgRecStatus(msgUpdate);
-        }else if(request.operate_type=="del"){
+        } else if (request.operate_type == "del") {
             msgUpdate.operate_type = "state";
             response.data = msgInboxDAO.updateMsgRecState(msgUpdate);
         }
 
-        if (response.data!=null) {
+        if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);

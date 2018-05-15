@@ -15,22 +15,28 @@ public interface MsgInboxMapper {
     List<MsgInbox> getMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
 
     //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
-    List<MsgSys> getUserMsgRes(MsgRec msgRec);//定义返回数据类型-整形-影响数据库行数
+    List<MsgSys> getUserMsgRes(MsgRec msgRec);
 
     //收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
-    int insertMsgRec(MsgRec msgRec);//定义返回数据类型-整形-影响数据库行数
+    int insertMsgRec(MsgRec msgRec);
+
+    //更改系统消息读取状态
+    int updateMsgSysStatus(MsgSys msgSys);
 
     // 发件箱列表(getMsgSysList)
-    List<MsgSys> getMsgSysList(MsgSys msgSys);//定义返回数据类型-集合
+    List<MsgSys> getMsgSysList(MsgSys msgSys);
+
+    //发件箱详情
+    MsgSys getMsgSysInfo(MsgSys msgSys);
 
     // 站内信详情(getMsgInfo)
-    MsgInbox getMsgInfo(long msg_id);//定义返回数据类型-对象
+    MsgRec getMsgInfo(MsgRec msgRec);
 
     // 删除/读取站内信(updateMsgRec)
-    int updateMsgRecStatus(MsgUpdate msgUpdate);//定义返回数据类型-整形-影响数据库行数
+    int updateMsgRecStatus(MsgUpdate msgUpdate);
 
     // 删除/读取站内信(updateMsgRec)
-    int updateMsgRecState(MsgUpdate msgUpdate);//定义返回数据类型-整形-影响数据库行数
+    int updateMsgRecState(MsgUpdate msgUpdate);
 
 
 }

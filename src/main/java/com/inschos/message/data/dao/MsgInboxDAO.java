@@ -47,6 +47,18 @@ public class MsgInboxDAO {
     }
 
     /**
+     * 收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
+     *
+     * @param id|消息标识列
+     * @param status|读取状态
+     * @return mixed
+     * @access public
+     */
+    public int updateMsgSysStatus(MsgSys msgSys) {
+        return msgInboxMapper.updateMsgSysStatus(msgSys);
+    }
+
+    /**
      * 用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
      *
      * @param user_id|用户ID(收件人)
@@ -54,7 +66,7 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgSys> getUserMsgRes(MsgRec msgRec){
+    public List<MsgSys> getUserMsgRes(MsgRec msgRec) {
         return msgInboxMapper.getUserMsgRes(msgRec);
     }
 
@@ -74,14 +86,25 @@ public class MsgInboxDAO {
     }
 
     /**
-     * 站内信详情查询
+     * 发件箱列表查询
      *
-     * @param msg_id|站内信id
+     * @param msg_id
      * @return mixed
      * @access public
      */
-    public MsgInbox getMsgInfo(long msg_id) {
-        return msgInboxMapper.getMsgInfo(msg_id);
+    public MsgSys getMsgSysInfo(MsgSys msgSys){
+        return msgInboxMapper.getMsgSysInfo(msgSys);
+    }
+
+    /**
+     * 站内信详情查询
+     *
+     * @param id|站内信id
+     * @return mixed
+     * @access public
+     */
+    public MsgRec getMsgInfo(MsgRec msgRec) {
+        return msgInboxMapper.getMsgInfo(msgRec);
     }
 
     /**
