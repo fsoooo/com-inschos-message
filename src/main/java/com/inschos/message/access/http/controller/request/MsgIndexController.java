@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping("/message")
+//TODO 路由统一也用小驼峰命名规则
 public class MsgIndexController {
 
     private static final Logger logger = Logger.getLogger(MsgModelController.class);
