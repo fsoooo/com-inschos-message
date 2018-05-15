@@ -15,6 +15,7 @@
     <sql id="Rec_Column_List">
         `id`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`
     </sql>
+
     <!--msg_sys查询字段-->
     <sql id="Sys_Column_List">
         `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`status`,`send_time`,`state`,`created_at`,`updated_at`
@@ -23,14 +24,14 @@
     <!--获取收件列表-->
     <select id="getMsgRecList" parameterType="MsgRec" resultType="MsgInbox">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
-        from  msg_rec LEFT JOIN msg_sys ON msg_res.msg_id = msg_sys.id
+        from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         <where>
             <choose>
                 <when test="page.lastId>0">
-                    id&gt;#{page.lastId}
+                    msg_rec.id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    id&gt;=(select id from msg_model where status=#{msgModel.status} AND state=1
+                    msg_rec.id&gt;=(select id from msg_rec where sys_status=#{MsgRec.sys_status} AND msg_rec.state=1
                     limit #{page.start},1
                     )
                 </when>
@@ -38,36 +39,66 @@
                     1=1
                 </otherwise>
             </choose>
-            AND state = 1
+            AND msg_rec.state = 1
             limit #{page.offset}
         </where>
     </select>
+
+    <!--获取未接收列表-->
+    <select id="getUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
+        select `id`
+        from  msg_sys
+        where `to_id`=#{user_id} AND `to_type`=#{user_type}
+    </select>
+
+    <!--收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）-->
+    <insert id="insertMsgRec" parameterType="MsgRec">
+        insert into  msg_rec(`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`)
+        values(#{msg_id},#{user_id},#{user_type},#{sys_status},#{state},#{created_at},#{updated_at})
+    </insert>
 
     <!--获取发件箱列表-->
     <select id="getMsgSysList" parameterType="MsgSys" resultType="MsgSys">
         select
         <include refid="Sys_Column_List"/>
-        from  demo
-        where `id`=#{id}
+        from  msg_sys
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    msg_sys.id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    msg_sys.id&gt;=(select id from msg_model where status=#{msgModel.status} AND msg_sys.state=1
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            AND msg_sys.state = 1
+            limit #{page.offset}
+        </where>
     </select>
-    <!--获取未接收列表-->
-    <select id="getMsgSysALL" parameterType="MsgSys" resultType="MsgSys">
-        select
-        <include refid="Sys_Column_List"/>
-        from  demo
-        where `id`=#{id}
-    </select>
+
     <!--获取站内信详情，TODO 需要两表联查-->
-    <select id="getMsgInfo" parameterType="long" resultType="MsgSys">
-        select
-        <include refid="Sys_Column_List"/>
-        from  demo
-        where `id`=#{id}
+    <select id="getMsgInfo" parameterType="long" resultType="MsgInbox">
+        select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
+        from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
+        where `msg_id`=#{msg_id}
     </select>
+
     <!--更改收件箱站内信状态-->
-    <update id="updateMsgRec" parameterType="MsgUpdate">
-     update demo set
-              `name`=#{name}
-            where `id`=#{id}
+    <update id="updateMsgRecStatus" parameterType="MsgUpdate">
+     update msg_rec set
+              `sys_status`=#{operate_id}
+            where `msg_id`=#{msg_id}
+    </update>
+
+    <!--更改收件箱站内信状态-->
+    <update id="updateMsgRecState" parameterType="MsgUpdate">
+     update msg_rec set
+              `state`=#{operate_id}
+            where `msg_id`=#{msg_id}
     </update>
 </mapper>

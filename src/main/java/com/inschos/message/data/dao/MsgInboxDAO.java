@@ -54,7 +54,7 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgRec> getUserMsgRes(MsgRec msgRec){
+    public List<MsgSys> getUserMsgRes(MsgRec msgRec){
         return msgInboxMapper.getUserMsgRes(msgRec);
     }
 
@@ -93,8 +93,22 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public int updateMsgRec(MsgUpdate msgUpdate) {
-        return msgInboxMapper.updateMsgRec(msgUpdate);
+    public int updateMsgRecStatus(MsgUpdate msgUpdate) {
+        return msgInboxMapper.updateMsgRecStatus(msgUpdate);
     }
+
+    /**
+     * 删除/读取站内信（update）
+     *
+     * @param msg_id|站内信id
+     * @param update_data|更新数据 ['deleted_at'=>time()] 删除
+     *                         ['sys_status'=>'1'] 标记已读
+     * @return mixed
+     * @access public
+     */
+    public int updateMsgRecState(MsgUpdate msgUpdate) {
+        return msgInboxMapper.updateMsgRecState(msgUpdate);
+    }
+
 
 }

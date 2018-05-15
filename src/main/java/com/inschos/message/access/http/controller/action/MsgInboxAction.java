@@ -100,14 +100,22 @@ public class MsgInboxAction extends BaseAction {
         MsgRec msgRec = new MsgRec();
         msgRec.user_id = user_id;
         msgRec.user_type = user_type;
-        List<MsgRec> msgRecs = msgInboxDAO.getUserMsgRes(msgRec);
+        List<MsgSys> MsgSys = msgInboxDAO.getUserMsgRes(msgRec);
         //判断集合是否为空
-        if (null == msgRecs || msgRecs.size() == 0) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        if (null == MsgSys || MsgSys.size() == 0) {
+            return json(BaseResponse.CODE_SUCCESS, "未查看消息为空", response);
         }
+        //获取当前时间戳(毫秒值)
+        long date = new Date().getTime();
         List insertResList = new ArrayList();
-        for (MsgRec rec : msgRecs) {
-            int insertRes = msgInboxDAO.insertMsgRec(rec);
+        for (MsgSys sys : MsgSys) {
+            msgRec.msg_id = sys.id;
+            msgRec.sys_status = 0;
+            msgRec.state = 0;
+            msgRec.created_at = date;
+            msgRec.updated_at = date;
+            int insertRes = msgInboxDAO.insertMsgRec(msgRec);
+            //TODO  更改msg_sys消息读取状态
             insertResList.add(insertRes);
         }
         response.data = insertResList;
@@ -191,9 +199,15 @@ public class MsgInboxAction extends BaseAction {
         MsgUpdate msgUpdate = new MsgUpdate();
         msgUpdate.msg_id = request.message_id;
         msgUpdate.operate_id = request.operate_id;
-        msgUpdate.operate_type = request.operate_type;
-        int updateRes = msgInboxDAO.updateMsgRec(msgUpdate);
-        if (updateRes != 0) {
+        if(request.operate_type=="read"){
+            msgUpdate.operate_type = "sys_status";
+            response.data = msgInboxDAO.updateMsgRecStatus(msgUpdate);
+        }else if(request.operate_type=="del"){
+            msgUpdate.operate_type = "state";
+            response.data = msgInboxDAO.updateMsgRecState(msgUpdate);
+        }
+
+        if (response.data!=null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);

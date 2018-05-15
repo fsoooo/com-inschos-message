@@ -14,11 +14,11 @@ public interface MsgInboxMapper {
     // 收件箱列表(getMsgRecList)MsgRec
     List<MsgInbox> getMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
 
+    //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
+    List<MsgSys> getUserMsgRes(MsgRec msgRec);//定义返回数据类型-整形-影响数据库行数
+
     //收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
     int insertMsgRec(MsgRec msgRec);//定义返回数据类型-整形-影响数据库行数
-
-    //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
-    List<MsgRec> getUserMsgRes(MsgRec msgRec);//定义返回数据类型-整形-影响数据库行数
 
     // 发件箱列表(getMsgSysList)
     List<MsgSys> getMsgSysList(MsgSys msgSys);//定义返回数据类型-集合
@@ -27,7 +27,10 @@ public interface MsgInboxMapper {
     MsgInbox getMsgInfo(long msg_id);//定义返回数据类型-对象
 
     // 删除/读取站内信(updateMsgRec)
-    int updateMsgRec(MsgUpdate msgUpdate);//定义返回数据类型-整形-影响数据库行数
+    int updateMsgRecStatus(MsgUpdate msgUpdate);//定义返回数据类型-整形-影响数据库行数
+
+    // 删除/读取站内信(updateMsgRec)
+    int updateMsgRecState(MsgUpdate msgUpdate);//定义返回数据类型-整形-影响数据库行数
 
 
 }
