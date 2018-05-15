@@ -24,7 +24,7 @@ public class MsgModelDAO {
      * @param model_content|模板详细内容
      * @param status|审核状态:默认为0审核中，1审核通过，2审核失败
      * @param created_user|创建用户id
-     * @param created_user_type|创建用户type:个人用户1/企业用户2/管理员等3
+     * @param created_user_type|创建用户type:个人用户1/企业用户2/业管用户等3
      * @return mixed
      *
      */

@@ -14,7 +14,7 @@ public class MsgIndexBean {
 
     public long from_id;//'发件人ID
 
-    public int from_type;//'发件人类型，个人用户1/企业用户2/管理员等3'
+    public int from_type;//'发件人类型，个人用户1/企业用户2/业管用户等3'
 
     public List<MsgToBean> to_user;
 

@@ -37,7 +37,7 @@ public class MsgInboxController {
      * 站内信收件箱列表
      *
      * @param user_id|int           用户id
-     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/管理员
+     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
      * @param message_status|string 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
      * @param page                  当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为
@@ -61,7 +61,7 @@ public class MsgInboxController {
      * 站内信发件箱列表
      *
      * @param user_id|int      用户id
-     * @param user_type|string 用户类型:个人用户 3/代理人 2/企业用户 1/管理员 0
+     * @param user_type|string 用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
      * @param page             当前页码 ，可不传，默认为1
      * @param last_id          上一页最大id ，可不传，默认为
      * @param limit            每页显示行数，可不传，默认为

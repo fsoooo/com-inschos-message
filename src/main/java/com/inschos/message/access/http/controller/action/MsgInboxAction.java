@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class MsgInboxAction extends BaseAction {
      * 站内信收件箱列表
      *
      * @param user_id|int           用户id
-     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/管理员
+     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
      * @param message_status|string 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
      * @param page                  当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为
@@ -41,6 +42,20 @@ public class MsgInboxAction extends BaseAction {
         //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        //根据user_type判断不同用户可以查看站内信类型
+        switch (request.user_type){
+            case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
+
+                break;
+            case 2://企业用户
+                break;
+            case 3://代理人用户
+                break;
+            case 4://个人用户-判断登录信息，再向收件箱表里插入数据
+                String insertRes = insertMsgRec(request.user_id,request.user_type);
+
+                break;
         }
         //调用DAO
         MsgRec msgRec = new MsgRec();
@@ -62,7 +77,7 @@ public class MsgInboxAction extends BaseAction {
      * 收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
      *
      * @param user_id|用户ID(收件人)
-     * @param user_type|发件人类型，个人用户1/企业用户2/管理员等
+     * @param user_type|发件人类型，个人用户1/企业用户2/业管用户等
      * @return mixed
      * @access public
      */
@@ -78,6 +93,15 @@ public class MsgInboxAction extends BaseAction {
         msgRec.user_type = user_type;
         List<MsgRec> msgRecs =  msgInboxDAO.getUserMsgRes(msgRec);
         //判断集合是否为空
+        if(null == msgRecs || msgRecs.size() ==0 ){
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        }
+        List insertResList = new ArrayList();
+        for (MsgRec rec : msgRecs) {
+            int insertRes =  msgInboxDAO.insertMsgRec(rec);
+            insertResList.add(insertRes);
+        }
+        response.data = insertResList;
         return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
     }
 
@@ -85,7 +109,7 @@ public class MsgInboxAction extends BaseAction {
      * 站内信发件箱列表
      *
      * @param user_id|int           用户id
-     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/管理员 0
+     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
      * @param message_status|string 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
      * @param page                  当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为

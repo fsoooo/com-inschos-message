@@ -6,7 +6,7 @@ public class MsgInboxBean {
 
         public long user_id;//用户id
 
-        public int user_type;//用户类型:个人用户 3/代理人 2/企业用户 1/管理员
+        public int user_type;//用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
 
         public int message_status;//站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
 
@@ -24,7 +24,7 @@ public class MsgInboxBean {
 
         public long user_id;//用户id
 
-        public int user_type;//用户类型:个人用户 3/代理人 2/企业用户 1/管理员
+        public int user_type;//用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
 
         public int message_status;//站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
 

@@ -27,17 +27,17 @@ public class MsgIndexAction extends BaseAction {
      * @param attachment|附件:上传附件的URL,可为空
      * @param type|站内信类型:系统通知、保单消息、理赔消息，其他（站内信分类，可为空）
      * @param from_id|发件人ID
-     * @param from_type|发件人类型:个人用户1/企业用户2/管理员等3
+     * @param from_type|发件人类型:个人用户1/企业用户2/业管用户等3
      * @param to_id|收件人id
-     * @param to_type|收件人类型:个人用户1/企业用户2/管理员等3
+     * @param to_type|收件人类型:个人用户1/企业用户2/业管用户等3
      * @param status|读取状态:标识站内信是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
      * @param send_time|发送时间:默认为空。需要延时发送的，发送时间不为空
      * @return json
      * @access public
      * TODO 站内信要素判断-05.14
-     * TODO 群发站内信判断-05.14 管理员可以发送所有类型的消息，代理人可以给自己的客户群发消息，企业用户可以群发消息，个人用户只能发送私信
+     * TODO 群发站内信判断-05.14 业管可以发送所有类型的消息，代理人可以给自己的客户群发消息，企业用户可以群发消息，个人用户只能发送私信
      * TODO 延时发送判断-05.14  如果要延时发送站内信，定时触发机制？？？
-     * TODO 上传文件-邮件附件-05.14 前端请求-》消息模块文件上传接口-》返回key,前端带着key-》请求文件服务-》返回URL（或者 flag=true）,前端带着消息要素请求-》消息模块发送接口-》发送成功？？？待商定
+     * TODO 上传文件-邮件附件-05.14 前端请求->请求文件服务->上传文件,返回key;前端消息要素(key)->发送消息接口->发送消息
      */
     public String addMessage(ActionBean actionBean) {
         MsgIndexBean request = JsonKit.json2Bean(actionBean.body, MsgIndexBean.class);
@@ -87,22 +87,5 @@ public class MsgIndexAction extends BaseAction {
         }
         response.data = msgSendResList;
         return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-    }
-
-    /**
-     * 附件上传
-     *
-     * @param MsgAttachment| 文件资源
-     * @return attachment_path 文件上传URL
-     * @access private
-     */
-    public String attachmentUpload(MsgAttachment msgAttachment) {
-        if (msgAttachment != null) {
-            BaseRequest request = requst2Bean(msgAttachment.file, BaseRequest.class);
-            BaseResponse response = new BaseResponse();
-            return json(BaseResponse.CODE_FAILURE, "业务完善中", response);
-        } else {
-            return "params is empty";
-        }
     }
 }

@@ -142,7 +142,7 @@ public class MsgModelAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if (request.user_type != 1) {//只有管理员才能操作站内信模板
+        if (request.user_type != 1) {//只有业管用户才能操作站内信模板
             return json(BaseResponse.CODE_FAILURE, "操作失败，没有权限", response);
         }
         //赋值

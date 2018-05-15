@@ -30,9 +30,9 @@ public class MsgIndexController {
      * 发送站内信
      *
      * @param $from|int         发件人id
-     * @param $from_type|string 发件人类型:个人用户/企业用户/管理员等
+     * @param $from_type|string 发件人类型:个人用户/企业用户/业管用户等
      * @param $to|array         收件人id
-     * @param $to_type|sting    收件人类型;个人用户/企业用户/管理员等
+     * @param $to_type|sting    收件人类型;个人用户/企业用户/业管用户等
      * @param $title|string     主题
      * @param $body|string      内容
      * @param $type|string      站内信类型

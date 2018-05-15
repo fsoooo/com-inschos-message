@@ -37,7 +37,7 @@ public class MsgInboxDAO {
      *
      * @param msg_id|消息标识列
      * @param user_id|用户ID(收件人)
-     * @param user_type|发件人类型，个人用户1/企业用户2/管理员等3
+     * @param user_type|发件人类型，个人用户1/企业用户2/业管用户等3
      * @param sys_status|消息状态：默认为未读0/已读1
      * @return mixed
      * @access public
@@ -50,7 +50,7 @@ public class MsgInboxDAO {
      * 用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
      *
      * @param user_id|用户ID(收件人)
-     * @param user_type|发件人类型，个人用户1/企业用户2/管理员等
+     * @param user_type|发件人类型，个人用户1/企业用户2/业管用户等
      * @return mixed
      * @access public
      */
