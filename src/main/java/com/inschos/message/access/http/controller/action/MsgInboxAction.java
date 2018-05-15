@@ -52,15 +52,15 @@ public class MsgInboxAction extends BaseAction {
         //根据user_type判断不同用户可以查看站内信类型
         switch (request.user_type) {
             case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-                List<MsgInbox> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxManager;
                 break;
             case 2://企业用户
-                List<MsgInbox> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxCompany;
                 break;
             case 3://代理人用户
-                List<MsgInbox> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxAgent;
                 break;
             case 4://个人用户-判断登录信息，再向收件箱表里插入数据
@@ -69,17 +69,11 @@ public class MsgInboxAction extends BaseAction {
                 if (loginStatus != 0) {
                     String insertRes = insertMsgRec(request.user_id, request.user_type);
                 }
-                logger.info(msgRec.user_id);
-                logger.info(msgRec.user_type);
-                logger.info(msgRec.sys_status);
-                logger.info(msgRec.page.start);
-                logger.info(msgRec.page.offset);
-                logger.info(msgRec.page.lastId);
-                List<MsgInbox> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxPerson;
                 break;
             default:
-                List<MsgInbox> msgInboxs = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxs = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxs;
                 break;
         }

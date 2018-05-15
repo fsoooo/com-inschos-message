@@ -28,7 +28,7 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgInbox> findMsgRecList(MsgRec msgRec) {
+    public List<MsgRec> findMsgRecList(MsgRec msgRec) {
         return msgInboxMapper.findMsgRecList(msgRec);
     }
 

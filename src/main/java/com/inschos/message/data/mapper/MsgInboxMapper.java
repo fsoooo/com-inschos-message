@@ -12,7 +12,7 @@ import java.util.List;
 //4、Mapper接口方法的输出参数类型和mapper.xml中定义的每个sql的resultType的类型相同
 public interface MsgInboxMapper {
     // 收件箱列表(findMsgRecList)MsgRec
-    List<MsgInbox> findMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
+    List<MsgRec> findMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
 
     //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
     List<MsgSys> findUserMsgRes(MsgRec msgRec);
