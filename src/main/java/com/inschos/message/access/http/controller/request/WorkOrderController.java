@@ -1,6 +1,7 @@
 package com.inschos.message.access.http.controller.request;
 
 import com.inschos.message.access.http.controller.action.WorkOrderAction;
+import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
 import com.inschos.message.assist.kit.HttpKit;
@@ -38,12 +39,8 @@ public class WorkOrderController {
     @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("/add/**")
     @ResponseBody
-    public String addWork(HttpServletRequest request){
-
-        BaseResponse response = new BaseResponse();
-
-        return workOrderAction.addWork(request);
-
+    public String addWork(ActionBean actionBean){
+        return workOrderAction.addWork(actionBean);
     }
 
 }
