@@ -22,6 +22,8 @@ public class WorkOrderBean {
 
         public String content; //工单内容
 
+        public String category_extra_name; //自定义分类名
+
         public int category_id; //工单分类
 
         public String addresseeUuid; //收件人uuid

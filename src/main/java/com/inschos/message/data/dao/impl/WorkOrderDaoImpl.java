@@ -2,6 +2,7 @@ package com.inschos.message.data.dao.impl;
 
 import com.inschos.message.data.dao.WorkOrderDao;
 import com.inschos.message.data.mapper.WorkOrderMapper;
+import com.inschos.message.model.MsgModel;
 import com.inschos.message.model.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -26,4 +27,12 @@ public class WorkOrderDaoImpl implements WorkOrderDao {
     public int findCount(WorkOrder search) {
         return search!=null?workOrderMapper.selectCount(search):0;
     }
+
+    @Override
+    public int insert(WorkOrder workOrder){
+        return workOrderMapper.insert(workOrder);
+    }
+
+
+
 }

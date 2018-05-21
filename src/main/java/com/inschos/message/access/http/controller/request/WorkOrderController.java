@@ -41,10 +41,8 @@ public class WorkOrderController {
     @GetActionBeanAnnotation
     @RequestMapping(value = "/add/**",method = RequestMethod.POST)
     @ResponseBody
-
     public String addWork(ActionBean actionBean){
         return workOrderAction.addWork(actionBean);
-
     }
 
     @GetActionBeanAnnotation

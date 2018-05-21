@@ -29,6 +29,9 @@ public class WorkOrder {
     /** 工单内容*/
     public String content;
 
+    /** 自定义分类名*/
+    public String category_extra_name;
+
     /** 分类id*/
     public long category_id;
 
