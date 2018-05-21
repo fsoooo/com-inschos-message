@@ -38,19 +38,12 @@ public class WorkOrderController {
      * @return json
      * @access public
      */
-//    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping(value = "/add/**",method = RequestMethod.POST)
     @ResponseBody
-    public String addWork(HttpServletRequest request){
 
-
-        Map map = request.getParameterMap();
-
-        String name = request.getParameter("name");
-
-        BaseResponse response = new BaseResponse();
-
-        return workOrderAction.addWork(request);
+    public String addWork(ActionBean actionBean){
+        return workOrderAction.addWork(actionBean);
 
     }
 
