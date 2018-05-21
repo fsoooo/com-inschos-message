@@ -5,6 +5,8 @@ package com.inschos.message.model;
  */
 public class WorkOrderCategory {
 
+    public final static int WRITABLE_OK = 1;
+
     /** */
     public long id;
 

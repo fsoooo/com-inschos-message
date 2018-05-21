@@ -1,8 +1,5 @@
 package com.inschos.message.access.http.controller.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.inschos.message.access.http.controller.bean.BaseResponse;
 import com.inschos.message.access.http.controller.bean.PageBean;
 import com.inschos.message.annotation.CheckParamsKit;
@@ -10,9 +7,22 @@ import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.assist.kit.StringKit;
 import com.inschos.message.model.Page;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BaseAction {
     public <T> T requst2Bean(String body, Class<T> clazz) {
-        return JsonKit.json2Bean(body, clazz);
+        T bean = JsonKit.json2Bean(body, clazz);
+        if(bean ==null){
+            try {
+                bean = clazz.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return bean;
     }
 
     public String json(int code, String message, BaseResponse response) {

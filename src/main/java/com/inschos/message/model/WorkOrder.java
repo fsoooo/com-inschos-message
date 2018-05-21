@@ -5,8 +5,23 @@ package com.inschos.message.model;
  */
 public class WorkOrder {
 
+
+    public final static int TYPE_MANAGER = 1;
+
+    public final static int TYPE_INS = 2;
+
+    public final static int STATUS_CLOSED = 2;
+
+    public final static int STATUS_CLOSE_NO = 1;
+
+    public final static int STATUS_HANDLE_WAITING = 1;
+    public final static int STATUS_HANDLE_ING = 2;
+    public final static int STATUS_HANDLE_DONE = 3;
+
     /** */
     public long id;
+
+    public String wo_num;
 
     /** 工单标题*/
     public String title;
@@ -44,5 +59,21 @@ public class WorkOrder {
     /** 删除标识 0删除 1未删除*/
     public int state;
 
+    public Page page;
 
+    public static String  getResult(int solveStatus){
+        String result ;
+        switch (solveStatus){
+            case 2:
+                result = "未解决";
+                break;
+            case 3:
+                result = "已解决";
+                break;
+            default:
+                result = "--";
+                break;
+        }
+        return result;
+    }
 }

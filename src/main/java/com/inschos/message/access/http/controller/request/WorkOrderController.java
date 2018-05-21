@@ -1,16 +1,19 @@
 package com.inschos.message.access.http.controller.request;
 
 import com.inschos.message.access.http.controller.action.WorkOrderAction;
+import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
-import com.inschos.message.assist.kit.HttpKit;
+import com.inschos.message.assist.kit.StringKit;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 
 /**
@@ -35,15 +38,35 @@ public class WorkOrderController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
-    @RequestMapping("/add/**")
+//    @GetActionBeanAnnotation(isCheckAccess = false)
+    @RequestMapping(value = "/add/**",method = RequestMethod.POST)
     @ResponseBody
     public String addWork(HttpServletRequest request){
+
+
+        Map map = request.getParameterMap();
+
+        String name = request.getParameter("name");
 
         BaseResponse response = new BaseResponse();
 
         return workOrderAction.addWork(request);
 
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/list/agent/my")
+    @ResponseBody
+    public String listOfAgentMy(ActionBean bean){
+        return workOrderAction.listOfAgentMy(bean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/list/tome/**")
+    @ResponseBody
+    public String listToMe(ActionBean bean){
+        String method = StringKit.splitLast(bean.url, "/");
+        return workOrderAction.listToMe(bean,method);
     }
 
 }
