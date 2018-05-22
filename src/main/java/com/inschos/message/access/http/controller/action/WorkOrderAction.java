@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -147,23 +146,23 @@ public class WorkOrderAction extends BaseAction {
         }
 
         //获取当前时间戳(毫秒值)
-        long date = new Date().getTime();
+        long date = TimeKit.currentTimeMillis();
 
         //赋值
         WorkOrder workOrder = new WorkOrder();
         workOrder.title = request.title;
         workOrder.content = request.content;
-        workOrder.category_id = request.category_id;
-        workOrder.category_extra_name = request.category_extra_name;
+        workOrder.category_id = request.categoryId;
+        workOrder.category_extra_name = request.categoryExtraName;
         workOrder.addressee_uuid = actionBean.managerUuid;
         workOrder.sender_uuid = actionBean.accountUuid;
-        workOrder.type = request.type; //工单类型  1 对业管的  2 业管对天眼的
-        workOrder.close_status = request.close_status;
-        workOrder.solve_status = request.solve_status;
-        workOrder.handle_status = request.handle_status;
+        workOrder.type = WorkOrder.TYPE_MANAGER;
+        workOrder.close_status = WorkOrder.STATUS_CLOSE_NO;
+        workOrder.solve_status = WorkOrder.STATUS_SOLVE_WEIFANKUI;
+        workOrder.handle_status = WorkOrder.STATUS_HANDLE_WAITING;
         workOrder.created_at = date;
         workOrder.updated_at = date;
-        workOrder.state = request.state;
+        workOrder.state = 1;
 
         //入库
         int add_res = workOrderDao.insert(workOrder);
