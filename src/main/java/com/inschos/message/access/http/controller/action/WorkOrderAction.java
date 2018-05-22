@@ -41,26 +41,7 @@ public class WorkOrderAction extends BaseAction {
     private WorkOrderCategoryDao workOrderCategoryDao;
 
 
-    /**
-     * 创建工单
-     *
-     * @param name     工单标题
-     * @param classify 类型
-     * @param content  内容
-     * @return json
-     * @access public
-     */
 
-
-    public String addWork(HttpServletRequest request) {
-        BaseResponse response = new BaseResponse();
-
-        if (request == null) {
-//            return json(BaseResponse.CODE_FAILURE,"params is empty",response);
-        }
-
-        return "not is int or long";
-    }
 
     public String listToMe(ActionBean bean,String method) {
         WorkOrderBean.WorkOrderListRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderListRequest.class);
@@ -142,10 +123,18 @@ public class WorkOrderAction extends BaseAction {
     }
 
 
+    /**
+     * 创建工单
+     *
+     * @param actionBean     工单
+     * @return json
+     * @access public
+     */
     public String addWork(ActionBean actionBean) {
         WorkOrderBean.addWork request = requst2Bean(actionBean.body,WorkOrderBean.addWork.class);
 
         BaseResponse response = new BaseResponse();
+
         //判空
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
@@ -159,8 +148,8 @@ public class WorkOrderAction extends BaseAction {
         WorkOrder workOrder = new WorkOrder();
         workOrder.title = request.title;
         workOrder.content = request.content;
-        workOrder.category_extra_name = request.category_extra_name;
         workOrder.category_id = request.category_id;
+        workOrder.category_extra_name = request.category_extra_name;
         workOrder.addressee_uuid = actionBean.managerUuid;
         workOrder.sender_uuid = actionBean.accountUuid;
         workOrder.type = request.type; //工单类型  1 对业管的  2 业管对天眼的
@@ -169,7 +158,8 @@ public class WorkOrderAction extends BaseAction {
         workOrder.handle_status = request.handle_status;
         workOrder.created_at = date;
         workOrder.updated_at = date;
-        System.out.println(request.title);
+        workOrder.state = request.state;
+
         //入库
         int add_res = workOrderDao.insert(workOrder);
         if (add_res == 1) {
