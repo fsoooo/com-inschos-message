@@ -319,6 +319,8 @@ public class WorkOrderAction extends BaseAction {
                     ChannelBean channel = channelClient.getChannel(String.valueOf(agent.channel_id));
                     if (channel != null) {
                         data.channelName = channel.name;
+                    }else{
+                        data.channelName = "";
                     }
                 }
                 data.senderName = agent.name;
