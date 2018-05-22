@@ -163,7 +163,7 @@
     </profiles>
 
     <build>
-        <finalName>file</finalName>
+        <finalName>message</finalName>
         <defaultGoal>compile</defaultGoal>
         <plugins>
             <plugin>
