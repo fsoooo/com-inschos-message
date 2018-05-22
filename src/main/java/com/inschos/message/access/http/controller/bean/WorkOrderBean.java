@@ -1,11 +1,42 @@
 package com.inschos.message.access.http.controller.bean;
 
+import com.inschos.message.annotation.CheckParams;
+
 import java.util.List;
 
 /**
  * Created by IceAnt on 2018/5/21.
  */
 public class WorkOrderBean {
+
+
+    public static class WorkOrderReplyRequest extends BaseRequest{
+
+        @CheckParams(stringType = CheckParams.StringType.NUMBER,maxLen = 20)
+        public String woId;
+        @CheckParams(stringType = CheckParams.StringType.STRING,maxLen = 500)
+        public String content;
+    }
+
+    public static class WorkOrderCommentRequest extends BaseRequest{
+
+        @CheckParams(stringType = CheckParams.StringType.NUMBER,maxLen = 20)
+        public String woId;
+        @CheckParams(stringType = CheckParams.StringType.NUMBER,maxLen = 11)
+        public String solveStatus ;
+    }
+
+    public static class WorkOrderGetRequest extends BaseRequest{
+
+        @CheckParams(stringType = CheckParams.StringType.NUMBER,maxLen = 20)
+        public String woId;
+
+    }
+
+    public static class WorkOrderGetResponse extends BaseResponse{
+        public WorkOrderData data;
+    }
+
 
     public static class WorkOrderListRequest extends BaseRequest{
 
@@ -16,13 +47,18 @@ public class WorkOrderBean {
         public List<WorkOrderData> data;
     }
 
+    public static class WOCategoryListResponse extends BaseResponse{
+        public List<WOCategoryData> data;
+    }
+
     public static class addWork extends BaseRequest{
 
+        @CheckParams(stringType = CheckParams.StringType.STRING,maxLen =100 )
         public String title; //工单标题
-
+        @CheckParams(stringType = CheckParams.StringType.STRING,maxLen =2000 )
         public String content; //工单内容
-
-        public int category_id; //工单分类
+        @CheckParams(maxLen =20)
+        public long category_id; //工单分类
 
         public String addresseeUuid; //收件人uuid
 
@@ -57,17 +93,36 @@ public class WorkOrderBean {
 
         public String categoryName;
 
-        public String submitTime;
+        public String submitTimeTxt;
 
         /** 1可评价 0 不可*/
         public int ratable;
 
         public String orderResult;
 
-        public String orderStatus;
+        public int orderStatus;
 
         public String orderStatusTxt;
 
+        public List<WOReplyData> replyList;
+
     }
 
+    public static class WOCategoryData {
+        public long id;
+
+        public String name;
+
+        public int writable;
+    }
+
+    public static class WOReplyData{
+
+        public String replyTimeTxt;
+
+        public String content;
+
+        public String replierName;
+
+    }
 }

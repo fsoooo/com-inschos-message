@@ -19,12 +19,26 @@
         where `id`=#{id}
     </update>
 
+    <update id="updateHandleStatus" parameterType="WorkOrder">
+        update work_order set
+          `handle_status`=#{handle_status},`close_status`=#{close_status},`updated_at`=#{updated_at}
+        where `id`=#{id}
+    </update>
+
+    <update id="updateSolveStatus" parameterType="WorkOrder">
+        update work_order set
+        `solve_status`=#{solve_status},`updated_at`=#{updated_at}
+        where `id`=#{id}
+    </update>
+
     <select id="selectOne" parameterType="long" resultType="WorkOrder">
         select
         <include refid="Base_Column_List"/>
         from work_order
         where `id`=#{id}
     </select>
+
+
 
     <select id="selectPage" parameterType="WorkOrder" resultType="WorkOrder">
         select

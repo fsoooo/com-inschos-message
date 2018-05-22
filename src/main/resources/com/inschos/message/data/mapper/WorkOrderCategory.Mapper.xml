@@ -26,4 +26,11 @@
         where `id`=#{id}
     </select>
 
+    <select id="selectAllValid"  resultType="WorkOrderCategory">
+        select
+        <include refid="Base_Column_List"/>
+        from work_order_category
+        where status = 1
+    </select>
+
 </mapper>

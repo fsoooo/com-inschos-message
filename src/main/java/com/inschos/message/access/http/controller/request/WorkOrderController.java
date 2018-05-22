@@ -62,4 +62,36 @@ public class WorkOrderController {
         return workOrderAction.listToMe(bean,method);
     }
 
+    @GetActionBeanAnnotation
+    @RequestMapping("/categoryList")
+    @ResponseBody
+    public String categoryList(ActionBean bean){
+        return workOrderAction.categoryList(bean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/reply")
+    @ResponseBody
+    public String reply(ActionBean bean){
+        return workOrderAction.reply(bean);
+    }
+
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/score")
+    @ResponseBody
+    public String score(ActionBean bean){
+        return workOrderAction.score(bean);
+    }
+
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/detail")
+    @ResponseBody
+    public String detail(ActionBean bean){
+        return workOrderAction.detail(bean);
+    }
+
+
+
 }

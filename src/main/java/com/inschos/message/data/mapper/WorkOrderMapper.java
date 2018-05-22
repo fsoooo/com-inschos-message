@@ -13,6 +13,10 @@ public interface WorkOrderMapper {
 
     int update(WorkOrder record);
 
+    int updateHandleCloseStatus(WorkOrder update);
+
+    int updateSolveStatus(WorkOrder update);
+
     WorkOrder selectOne(long id);
 
     /** 通过type 和 发送 、接收人 分页查询 |  可选查询值 handler close  */

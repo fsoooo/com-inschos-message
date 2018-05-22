@@ -26,4 +26,13 @@
         where `id`=#{id}
     </select>
 
+    <select id="selectAll" parameterType="long" resultType="WorkOrderReply">
+        select
+        <include refid="Base_Column_List"/>
+        from work_order_reply
+        where `work_order_id`=#{work_order_id}
+    </select>
+
+
+
 </mapper>

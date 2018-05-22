@@ -16,9 +16,6 @@ public class WorkOrderCategory {
     /** 0不可写 1可写入*/
     public int writable;
 
-    /** 自定义名*/
-    public String write_name;
-
     /** 创建时间*/
     public long created_at;
 

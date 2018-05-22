@@ -1,6 +1,7 @@
 package com.inschos.message.access.http.controller.action;
 
 import com.inschos.message.access.http.controller.bean.ActionBean;
+import com.inschos.message.access.http.controller.bean.BaseRequest;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
 import com.inschos.message.access.http.controller.bean.WorkOrderBean;
 import com.inschos.message.access.rpc.bean.AccountBean;
@@ -17,11 +18,11 @@ import com.inschos.message.data.dao.WorkOrderCategoryDao;
 import com.inschos.message.data.dao.WorkOrderDao;
 import com.inschos.message.model.WorkOrder;
 import com.inschos.message.model.WorkOrderCategory;
+import com.inschos.message.model.WorkOrderReply;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,26 +42,7 @@ public class WorkOrderAction extends BaseAction {
     private WorkOrderCategoryDao workOrderCategoryDao;
 
 
-    /**
-     * 创建工单
-     *
-     * @param name     工单标题
-     * @param classify 类型
-     * @param content  内容
-     * @return json
-     * @access public
-     */
 
-
-    public String addWork(HttpServletRequest request) {
-        BaseResponse response = new BaseResponse();
-
-        if (request == null) {
-//            return json(BaseResponse.CODE_FAILURE,"params is empty",response);
-        }
-
-        return "not is int or long";
-    }
 
     public String listToMe(ActionBean bean,String method) {
         WorkOrderBean.WorkOrderListRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderListRequest.class);
@@ -107,6 +89,11 @@ public class WorkOrderAction extends BaseAction {
 
         WorkOrderBean.WorkOrderListRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderListRequest.class);
         WorkOrderBean.WorkOrderListResponse response = new WorkOrderBean.WorkOrderListResponse();
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
 
         WorkOrder search = new WorkOrder();
         search.addressee_uuid = bean.managerUuid;
@@ -174,6 +161,134 @@ public class WorkOrderAction extends BaseAction {
         return "55858";
     }
 
+    public String categoryList(ActionBean bean){
+        BaseRequest request = requst2Bean(bean.body,BaseRequest.class);
+        WorkOrderBean.WOCategoryListResponse response = new WorkOrderBean.WOCategoryListResponse();
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        List<WorkOrderCategory> list = workOrderDao.findCategoryList();
+        List<WorkOrderBean.WOCategoryData> dataList = new ArrayList<>();
+        if(list!=null && !list.isEmpty()){
+            for (WorkOrderCategory category : list) {
+                WorkOrderBean.WOCategoryData data = new WorkOrderBean.WOCategoryData();
+                data.id = category.id;
+                data.name = category.name;
+                data.writable = category.writable;
+                dataList.add(data);
+            }
+        }
+        response.data = dataList;
+        return json(BaseResponse.CODE_SUCCESS,"获取成功",response);
+    }
+
+    public String reply(ActionBean bean){
+        WorkOrderBean.WorkOrderReplyRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderReplyRequest.class);
+        BaseResponse response = new BaseResponse();
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+        WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
+        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid) && workOrder.solve_status!=WorkOrder.STATUS_CLOSED){
+            WorkOrderReply reply = new WorkOrderReply();
+            reply.content = request.content;
+            reply.work_order_id = workOrder.id;
+            reply.replier_uuid = bean.accountUuid;
+            reply.created_at = TimeKit.currentTimeMillis();
+            if(workOrderDao.addReply(reply)>0){
+                return json(BaseResponse.CODE_SUCCESS,"回复成功",response);
+            }else{
+                return json(BaseResponse.CODE_FAILURE,"回复失败",response);
+            }
+        }
+        return json(BaseResponse.CODE_FAILURE,"回复失败",response);
+    }
+
+    public String score(ActionBean bean){
+
+        WorkOrderBean.WorkOrderCommentRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderCommentRequest.class);
+        BaseResponse response = new BaseResponse();
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+        WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
+        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
+
+            WorkOrder update = new WorkOrder();
+            update.id = workOrder.id;
+            update.solve_status = Integer.valueOf(request.solveStatus);
+            update.updated_at = TimeKit.currentTimeMillis();
+            if(workOrderDao.updateSolveStatus(update)>0){
+                return json(BaseResponse.CODE_SUCCESS,"反馈成功",response);
+            }else{
+                return json(BaseResponse.CODE_FAILURE,"反馈失败",response);
+            }
+        }
+        return json(BaseResponse.CODE_FAILURE,"反馈失败",response);
+
+    }
+
+    public String detail(ActionBean bean){
+        WorkOrderBean.WorkOrderGetRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderGetRequest.class);
+        WorkOrderBean.WorkOrderGetResponse response = new WorkOrderBean.WorkOrderGetResponse();
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+        WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
+        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
+
+            WorkOrderBean.WorkOrderData data = toData(workOrder, true, true);
+            data.orderStatus = workOrder.handle_status;
+            data.orderStatusTxt = WorkOrder.getHandle(workOrder.handle_status);
+
+            data.replyList = new ArrayList<>();
+
+            List<WorkOrderReply> replyList = workOrderDao.findReplyList(workOrder.id);
+            if(replyList!=null && !replyList.isEmpty()){
+                for (WorkOrderReply reply : replyList) {
+                    WorkOrderBean.WOReplyData replyData = new WorkOrderBean.WOReplyData();
+                    replyData.content = reply.content;
+                    replyData.replyTimeTxt = TimeKit.format("yyyy-MM-dd HH:mm",reply.created_at);
+                    if(reply.replier_uuid.equals(bean.managerUuid)){
+                        replyData.replierName = "管理员";
+                    }else{
+                        AgentJobBean agent = getAgent(bean.managerUuid, reply.replier_uuid);
+                        if(agent!=null){
+                            replyData.replierName = agent.name;
+                        }else{
+                            replyData.replierName = "提交者";
+                        }
+                    }
+
+                    data.replyList.add(replyData);
+                }
+            }
+            if(workOrder.solve_status!=WorkOrder.STATUS_SOLVE_WEIFANKUI){
+                data.orderResult = "问题"+data.orderResult;
+                if(bean.userType==3){
+                    data.orderResult = "提交人反馈："+data.orderResult;
+                }
+                data.ratable = 0;
+            }else{
+                if(bean.userType==4){
+                    data.ratable = 1;
+                }else{
+                    data.ratable = 0;
+                }
+            }
+
+            response.data = data;
+            return json(BaseResponse.CODE_SUCCESS,"获取成功",response);
+        }
+        return json(BaseResponse.CODE_FAILURE,"获取失败",response);
+    }
+
+
 
     private WorkOrderBean.WorkOrderData toData(WorkOrder order, boolean isGetUser,boolean isGetCategory) {
         WorkOrderBean.WorkOrderData data = new WorkOrderBean.WorkOrderData();
@@ -181,7 +296,7 @@ public class WorkOrderAction extends BaseAction {
         data.woNum = order.wo_num;
         data.title = order.title;
         data.content = order.content;
-        data.submitTime = TimeKit.format("yyyy-MM-dd HH:mm", order.created_at);
+        data.submitTimeTxt = TimeKit.format("yyyy-MM-dd HH:mm", order.created_at);
         data.orderResult = WorkOrder.getResult(order.solve_status);
         if (isGetUser) {
             AgentJobBean agent = getAgent(order.addressee_uuid, order.sender_uuid);
@@ -199,13 +314,19 @@ public class WorkOrderAction extends BaseAction {
             WorkOrderCategory category = workOrderCategoryDao.findOne(order.category_id);
             if(category!=null){
                 data.categoryName = category.name;
-                if(category.writable==WorkOrderCategory.WRITABLE_OK && !StringKit.isEmpty(category.write_name)){
-                    data.categoryName = data.categoryName+"["+category.write_name+"]";
+            }
+            if(!StringKit.isEmpty(order.category_extra_name)){
+                if(data.categoryName!=null){
+                    data.categoryName += "[" +order.category_extra_name+"]";
+                }else{
+                    data.categoryName = order.category_extra_name;
                 }
             }
         }
         return data;
     }
+
+
 
     private AgentJobBean getAgent(String managerUuid, String userUuid) {
         AccountBean accountBean = accountClient.findByUuid(userUuid);

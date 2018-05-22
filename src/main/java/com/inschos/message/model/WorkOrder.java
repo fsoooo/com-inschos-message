@@ -18,6 +18,12 @@ public class WorkOrder {
     public final static int STATUS_HANDLE_ING = 2;
     public final static int STATUS_HANDLE_DONE = 3;
 
+    public final static int STATUS_SOLVE_WEIFANKUI = 1;
+
+    public final static int STATUS_SOLVE_NO = 2;
+
+    public final static int STATUS_SOLVE_OK = 3;
+
     /** */
     public long id;
 
@@ -31,6 +37,9 @@ public class WorkOrder {
 
     /** 分类id*/
     public long category_id;
+
+    /** 自定义分类名 */
+    public String category_extra_name;
 
     /** 收件人 UUID*/
     public String addressee_uuid;
@@ -76,4 +85,25 @@ public class WorkOrder {
         }
         return result;
     }
+
+    public static String  getHandle(int handleStatus){
+        String result ;
+        switch (handleStatus){
+            case 1:
+                result = "待处理";
+                break;
+            case 2:
+                result = "处理中";
+                break;
+            case 3:
+                result = "已处理";
+                break;
+            default:
+                result = "--";
+                break;
+        }
+        return result;
+    }
+
+
 }
