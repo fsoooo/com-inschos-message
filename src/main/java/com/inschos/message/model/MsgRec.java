@@ -24,4 +24,6 @@ public class MsgRec {
 
     public String channel_user_name;
 
+    public MsgSys msgSys;
+
 }

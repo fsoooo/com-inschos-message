@@ -9,14 +9,18 @@ public interface MsgModelMapper {
     int addMsgModel(MsgModel msgModel);//定义返回数据类型-整形-影响数据库行数
 
     //获取站内信模板列表
-    MsgModel getMsgModelRepeat(MsgModel msgModel);//定义返回数据类型-对象
+    MsgModel findMsgModelRepeat(MsgModel msgModel);//定义返回数据类型-对象
 
     //获取站内信模板列表
-    List<MsgModel> getMsgModelList(MsgModelList msgModelList);//定义返回数据类型-对象
+    List<MsgModel> findMsgModelList(MsgModelList msgModelList);//定义返回数据类型-对象
 
     //获取站内信模板详情
-    MsgModel getMsgModelInfo(String model_code);//定义返回数据类型-对象
+    MsgModel findMsgModelInfo(MsgModel msgModel);//定义返回数据类型-对象
 
-    //更新站内信模板状态
+    //更新站内信模板
     int updateMsgModel(MsgModelUpdate msgModelUpdate);//定义返回数据类型-整形-影响数据库行数
+    //更新站内信模板-状态
+    int updateMsgModelStatus(MsgModelUpdate msgModelUpdate);//定义返回数据类型-整形-影响数据库行数
+    //更新站内信模板-类型
+    int updateMsgModelType(MsgModelUpdate msgModelUpdate);//定义返回数据类型-整形-影响数据库行数
 }

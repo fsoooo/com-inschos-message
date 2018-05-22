@@ -54,17 +54,18 @@ public class MsgInboxController {
     @RequestMapping("/list/inbox/**")
     @ResponseBody
     public String listInbox(ActionBean actionBean) {
-        return msgInboxAction.getMsgRecList(actionBean);
+        return msgInboxAction.findMsgRecList(actionBean);
     }
 
     /**
      * 站内信发件箱列表
      *
-     * @param user_id|int      用户id
-     * @param user_type|string 用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
-     * @param page             当前页码 ，可不传，默认为1
-     * @param last_id          上一页最大id ，可不传，默认为
-     * @param limit            每页显示行数，可不传，默认为
+     * @param user_id|int           用户id
+     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
+     * @param message_status|string 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param page                  当前页码 ，可不传，默认为1
+     * @param last_id               上一页最大id ，可不传，默认为
+     * @param limit                 每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
@@ -72,7 +73,7 @@ public class MsgInboxController {
     @RequestMapping("/list/outbox/**")
     @ResponseBody
     public String listOutbox(ActionBean actionBean) {
-        return msgInboxAction.getMsgSysList(actionBean);
+        return msgInboxAction.findMsgSysList(actionBean);
     }
 
     /**
@@ -86,7 +87,7 @@ public class MsgInboxController {
     @RequestMapping("/info/**")
     @ResponseBody
     public String infoMessage(ActionBean actionBean) {
-        return msgInboxAction.getMsgInfo(actionBean);
+        return msgInboxAction.findMsgInfo(actionBean);
     }
 
     /**

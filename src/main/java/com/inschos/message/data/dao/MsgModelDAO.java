@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 站内信模板处理数据访问对象（按功能划分DAO）
- * 模板添加（addModel），模板列表查询(getModelList)，模板详情查询(getModelInfo)，模板更新(updateModel)
+ * 模板添加（addModel），模板列表查询(findModelList)，模板详情查询(findModelInfo)，模板更新(updateModel)
  */
 @Component
 public class MsgModelDAO {
@@ -18,63 +18,96 @@ public class MsgModelDAO {
 
     /**
      * 添加站内信模板
-     * @access public
-     * @param model_code|模板名称  以一定规则生成，不重复
-     * @param model_name|模板名称
-     * @param model_content|模板详细内容
-     * @param status|审核状态:默认为0审核中，1审核通过，2审核失败
-     * @param created_user|创建用户id
-     * @param created_user_type|创建用户type:个人用户1/企业用户2/业管用户等3
-     * @return mixed
      *
+     * @param modelName       模板名称（不能一样）
+     * @param modelContent    模板内容
+     * @param modelType       模板类型
+     * @param createdUser     创建者姓名
+     * @param createdUserType 创建者类型
+     * @return json
+     * @access public
      */
-    public int addMsgModel(MsgModel msgModel){
+    public int addMsgModel(MsgModel msgModel) {
         return msgModelMapper.addMsgModel(msgModel);
     }
 
     /**
      * 获取模板是否重复
+     *
      * @param msgModel
      * @return
      */
-    public MsgModel getMsgModelRepeat(MsgModel msgModel){
-        return msgModelMapper.getMsgModelRepeat(msgModel);
+    public MsgModel findMsgModelRepeat(MsgModel msgModel) {
+        return msgModelMapper.findMsgModelRepeat(msgModel);
     }
 
     /**
-     * 模板列表查询
-     * @access public
-     * @param page|分页信息
-     * @return mixed
+     * 站内信模板列表
      *
+     * @param pageNum     当前页码 ，可不传，默认为1
+     * @param lastId      上一页最大id ，可不传，默认为
+     * @param limit       每页显示行数，可不传，默认为
+     * @param modelStatus 模板状态（审核通过0/未通过1/已删除2）
+     * @param modelSype   模板类型
+     * @return json
+     * @access public
      */
-    public List<MsgModel> getMsgModelList(MsgModelList msgModelList){
-        return msgModelMapper.getMsgModelList(msgModelList);
+    public List<MsgModel> findMsgModelList(MsgModelList msgModelList) {
+        return msgModelMapper.findMsgModelList(msgModelList);
     }
 
     /**
      * 模板详情查询
-     * @access public
-     * @param model_code|模板代号
-     * @return mixed
      *
+     * @param modelCode|模板代号
+     * @return mixed
+     * @access public
      */
-    public MsgModel getMsgModelInfo(String model_code){
-        return msgModelMapper.getMsgModelInfo(model_code);
+    public MsgModel findMsgModelInfo(MsgModel msgModel) {
+        return msgModelMapper.findMsgModelInfo(msgModel);
     }
 
     /**
-     * 更新站内信模板状态（update）
-     * @access public
-     * @param model_code|模板代号
-     * @param update_data|更新数据
-     * ['deleted_at'=>time()] 删除
-     * ['status'=>'1'] 审核通过
-     * @return mixed
+     * 站内信模板操作（审核、删除）
      *
+     * @param modelCode 模板代码
+     * @param status    模板状态（审核通过1，删除2）
+     * @param modelType 模板类型
+     * @param userId    操作人id
+     * @param userType  操作人类型（只有业管可以审核和删除）
+     * @return json
+     * @access public
      */
-    public int updateMsgModel(MsgModelUpdate msgModelUpdate){
+    public int updateMsgModel(MsgModelUpdate msgModelUpdate) {
         return msgModelMapper.updateMsgModel(msgModelUpdate);
+    }
+
+    /**
+     * 站内信模板更新
+     *
+     * @param modelCode 模板代码
+     * @param status    模板状态（审核通过1，删除2）
+     * @param userId    操作人id
+     * @param userType  操作人类型（只有业管可以审核和删除）
+     * @return json
+     * @access public
+     */
+    public int updateMsgModelStatus(MsgModelUpdate msgModelUpdate) {
+        return msgModelMapper.updateMsgModelStatus(msgModelUpdate);
+    }
+
+    /**
+     * 站内信模板更新
+     *
+     * @param modelCode 模板代码
+     * @param modelType 模板类型
+     * @param userId    操作人id
+     * @param userType  操作人类型（只有业管可以审核和删除）
+     * @return json
+     * @access public
+     */
+    public int updateMsgModelType(MsgModelUpdate msgModelUpdate) {
+        return msgModelMapper.updateMsgModelType(msgModelUpdate);
     }
 
 }

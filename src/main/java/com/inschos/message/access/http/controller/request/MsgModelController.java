@@ -29,10 +29,11 @@ public class MsgModelController {
     /**
      * 添加站内信模板
      *
-     * @param model_name        模板名称（不能一样）
-     * @param model_content     模板内容
-     * @param created_user      创建者姓名
-     * @param created_user_type 创建者类型
+     * @param modelName       模板名称（不能一样）
+     * @param modelContent    模板内容
+     * @param modelType       模板类型
+     * @param createdUser     创建者姓名
+     * @param createdUserType 创建者类型
      * @return json
      * @access public
      */
@@ -46,10 +47,11 @@ public class MsgModelController {
     /**
      * 站内信模板列表
      *
-     * @param page         当前页码 ，可不传，默认为1
-     * @param last_id      上一页最大id ，可不传，默认为
-     * @param limit        每页显示行数，可不传，默认为
-     * @param model_status 模板状态（审核通过0/未通过1/已删除2）
+     * @param pageNum     当前页码 ，可不传，默认为1
+     * @param lastId      上一页最大id ，可不传，默认为
+     * @param limit       每页显示行数，可不传，默认为
+     * @param modelStatus 模板状态（审核通过0/未通过1/已删除2）
+     * @param modelSype   模板类型
      * @return json
      * @access public
      */
@@ -64,7 +66,7 @@ public class MsgModelController {
     /**
      * 站内信模板详情
      *
-     * @param model_code 模板代码
+     * @param modelCode 模板代码
      * @return json
      * @access public
      */
@@ -78,10 +80,10 @@ public class MsgModelController {
     /**
      * 站内信模板操作（审核、删除）
      *
-     * @param model_code   模板代码
-     * @param operate_code '审核状态:默认为0审核中，1审核通过，2审核失败'
-     * @param user_id      操作人id
-     * @param user_type    操作人类型（只有业管可以审核和删除）
+     * @param modelCode   模板代码
+     * @param operateCode 操作代码（审核通过1，删除2）
+     * @param userId      操作人id
+     * @param userType    操作人类型（只有业管可以审核和删除）
      * @return json
      * @access public
      */

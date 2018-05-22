@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 站内信收件处理数据访问对象（按功能划分DAO）
- * 收件箱列表(getMsgRecList)，发件箱列表(getMsgSysList),用户未接收信息查询(getMsgSysALL),站内信详情（getMsgInfo），删除/读取站内信（updateMsgRec）
+ * 收件箱列表(findMsgRecList)，发件箱列表(findMsgSysList),用户未接收信息查询(findMsgSysALL),站内信详情（findMsgInfo），删除/读取站内信（updateMsgRec）
  * TODO  在DAO里传对象，需要判空！！！
  */
 @Component
@@ -28,8 +28,8 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgInbox> getMsgRecList(MsgRec msgRec) {
-        return msgInboxMapper.getMsgRecList(msgRec);
+    public List<MsgRec> findMsgRecList(MsgRec msgRec) {
+        return msgInboxMapper.findMsgRecList(msgRec);
     }
 
     /**
@@ -47,6 +47,18 @@ public class MsgInboxDAO {
     }
 
     /**
+     * 收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
+     *
+     * @param id|消息标识列
+     * @param status|读取状态
+     * @return mixed
+     * @access public
+     */
+    public int updateMsgSysStatus(MsgSys msgSys) {
+        return msgInboxMapper.updateMsgSysStatus(msgSys);
+    }
+
+    /**
      * 用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
      *
      * @param user_id|用户ID(收件人)
@@ -54,8 +66,8 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgSys> getUserMsgRes(MsgRec msgRec){
-        return msgInboxMapper.getUserMsgRes(msgRec);
+    public List<MsgSys> findUserMsgRes(MsgRec msgRec) {
+        return msgInboxMapper.findUserMsgRes(msgRec);
     }
 
     /**
@@ -69,19 +81,30 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgSys> getMsgSysList(MsgSys msgSys) {
-        return msgInboxMapper.getMsgSysList(msgSys);
+    public List<MsgSys> findMsgSysList(MsgSys msgSys) {
+        return msgInboxMapper.findMsgSysList(msgSys);
+    }
+
+    /**
+     * 发件箱列表查询
+     *
+     * @param msg_id
+     * @return mixed
+     * @access public
+     */
+    public MsgSys findMsgSysInfo(MsgSys msgSys){
+        return msgInboxMapper.findMsgSysInfo(msgSys);
     }
 
     /**
      * 站内信详情查询
      *
-     * @param msg_id|站内信id
+     * @param id|站内信id
      * @return mixed
      * @access public
      */
-    public MsgInbox getMsgInfo(long msg_id) {
-        return msgInboxMapper.getMsgInfo(msg_id);
+    public MsgRec findMsgInfo(MsgRec msgRec) {
+        return msgInboxMapper.findMsgInfo(msgRec);
     }
 
     /**

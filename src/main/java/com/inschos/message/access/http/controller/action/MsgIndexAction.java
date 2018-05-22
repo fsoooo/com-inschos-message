@@ -35,9 +35,14 @@ public class MsgIndexAction extends BaseAction {
      * @return json
      * @access public
      * TODO 站内信要素判断-05.14
-     * TODO 群发站内信判断-05.14 业管可以发送所有类型的消息，代理人可以给自己的客户群发消息，企业用户可以群发消息，个人用户只能发送私信
-     * TODO 延时发送判断-05.14  如果要延时发送站内信，定时触发机制？？？
-     * TODO 上传文件-邮件附件-05.14 前端请求->请求文件服务->上传文件,返回key;前端消息要素(key)->发送消息接口->发送消息
+     * TODO 群发站内信判断-05.15 业管可以发送所有类型的消息，代理人可以给自己的客户群发消息，企业用户可以群发消息，个人用户只能发送私信
+     * TODO 延时发送判断-05.15  如果要延时发送站内信，定时触发机制？？？
+     * Spring 自带的定时任务执行@Scheduled注解，可以定时的、周期性的执行一些任务。查看@Scheduled的注解可以看到有以下三种：
+     * 1.1 String cron() default “” ;
+     * TODO 上传文件-邮件附件-05.15 前端请求->请求文件服务->上传文件,返回key;前端消息要素(key)->发送消息接口->发送消息
+     * TODO 判断是否重复插入？？？
+     * TODO 附件格式，只存储，不操作。(端上获取key,传参,存储)
+     *
      */
     public String addMessage(ActionBean actionBean) {
         MsgIndexBean request = JsonKit.json2Bean(actionBean.body, MsgIndexBean.class);

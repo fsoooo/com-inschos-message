@@ -16,37 +16,38 @@
         `id`,`model_code`,`model_name`,`model_content`,`created_user`,`created_user_type`,`status`,`state`,`created_at`,`updated_at`
     </sql>
 
-    <sql id="Repeat_Column_List">
-        `id`
-    </sql>
-
     <!--添加模板-->
     <insert id="addMsgModel" parameterType="MsgModel">
-        insert into  msg_model(`model_code`,`model_name`,`model_content`,`created_user`,`created_user_type`,`status`,`state`,`created_at`,`updated_at`)
-        values(#{model_code},#{model_name},#{model_content},#{created_user},#{created_user_type},#{status},#{state},#{created_at},#{updated_at})
+        insert into  msg_model(`model_code`,`model_name`,`model_content`,`model_type`,`created_user`,`created_user_type`,`status`,`state`,`created_at`,`updated_at`)
+        values(#{model_code},#{model_name},#{model_content},#{model_type},#{created_user},#{created_user_type},#{status},#{state},#{created_at},#{updated_at})
     </insert>
 
-    <!--获取模板重复 todo find-->
-    <select id="getMsgModelRepeat" parameterType="MsgModel" resultType="MsgModel">
-        select
-        <include refid="Repeat_Column_List"/>
+    <!--获取模板重复-->
+    <select id="findMsgModelRepeat" parameterType="MsgModel" resultType="MsgModel">
+        select  `id`
         from msg_model
         where `model_name`=#{model_name}
         limit 1
     </select>
 
-    <!--获取收件列表--><!--TODO model里定义多个对象-->
-    <select id="getMsgModelList" parameterType="MsgModelList" resultType="MsgModel">
+    <!--获取收件列表-->
+    <select id="findMsgModelList" parameterType="MsgModelList" resultType="MsgModel">
         select
         `id`,`model_code`,`model_name`
-        from  msg_model
+        from msg_model
         <where>
             <choose>
                 <when test="page.lastId>0">
                     id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    id&gt;=(select id from msg_model where status=#{msgModel.status} AND state=1
+                    id&gt;=(
+                    select
+                    id
+                    from msg_model
+                    where status=#{msgModel.status}
+                    AND model_type = #{msgModel.model_type}
+                    AND state=1
                     limit #{page.start},1
                     )
                 </when>
@@ -54,23 +55,37 @@
                     1=1
                 </otherwise>
             </choose>
-            AND state = 1
+            AND status = #{msgModel.status} AND model_type = #{msgModel.model_type} AND state = 1
             limit #{page.offset}
         </where>
     </select>
 
-    <!--获取站内信详情，TODO 需要两表联查-->
-    <select id="getMsgModelInfo" parameterType="MsgModel" resultType="MsgModel">
+    <!--获取消息模板详情-->
+    <select id="findMsgModelInfo" parameterType="MsgModel" resultType="MsgModel">
         select
         <include refid="Base_Column_List"/>
-        from  msg_model
-        limit 1
+        from msg_model
+        where `model_code`=#{model_code}
     </select>
 
     <!--更改收件箱站内信状态-->
     <update id="updateMsgModel" parameterType="MsgModelUpdate">
      update msg_model set
+              `status`=#{status} AND `model_type` =#{modelType}
+            where `model_code`=#{model_code}
+    </update>
+
+    <!--更改收件箱站内信状态-->
+    <update id="updateMsgModelStatus" parameterType="MsgModelUpdate">
+     update msg_model set
               `status`=#{status}
+            where `model_code`=#{model_code}
+    </update>
+
+    <!--更改收件箱站内信状态-->
+    <update id="updateMsgModelType" parameterType="MsgModelUpdate">
+     update msg_model set
+              `model_type` =#{modelType}
             where `model_code`=#{model_code}
     </update>
 </mapper>

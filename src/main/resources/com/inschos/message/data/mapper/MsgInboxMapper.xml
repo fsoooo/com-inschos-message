@@ -22,7 +22,7 @@
     </sql>
 
     <!--获取收件列表-->
-    <select id="getMsgRecList" parameterType="MsgRec" resultType="MsgInbox">
+    <select id="findMsgRecList" parameterType="MsgRec" resultMap="selectMsgRecAndSys">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
         from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         <where>
@@ -31,7 +31,7 @@
                     msg_rec.id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    msg_rec.id&gt;=(select id from msg_rec where sys_status=#{MsgRec.sys_status} AND msg_rec.state=1
+                    msg_rec.id&gt;=(select id from msg_rec where sys_status=#{MsgRec.sys_status} AND msg_rec.state=0
                     limit #{page.start},1
                     )
                 </when>
@@ -39,16 +39,33 @@
                     1=1
                 </otherwise>
             </choose>
-            AND msg_rec.state = 1
+            AND msg_rec.state = 0
             limit #{page.offset}
         </where>
     </select>
 
+    <!--联查映射-->
+    <resultMap id="selectMsgRecAndSys" type="MsgRec" autoMapping="true">
+        <!--主表的主键id-->
+        <id column="id" property="id" />
+        <association property="msgSys" javaType="MsgSys">
+            <!--todo 附表的主键id-->
+            <!--<id column="id" property="id" />-->
+            <result column="title" property="title" />
+            <result column="type" property="type" />
+            <result column="from_id" property="from_id" />
+            <result column="from_type" property="from_type" />
+            <result column="status" property="status" />
+            <result column="send_time" property="send_time" />
+            <result column="state" property="state" />
+        </association>
+    </resultMap>
+
     <!--获取未接收列表-->
-    <select id="getUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
+    <select id="findUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
         select `id`
         from  msg_sys
-        where `to_id`=#{user_id} AND `to_type`=#{user_type}
+        where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 0
     </select>
 
     <!--收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）-->
@@ -57,8 +74,15 @@
         values(#{msg_id},#{user_id},#{user_type},#{sys_status},#{state},#{created_at},#{updated_at})
     </insert>
 
+    <!--更改消息读取状态-->
+    <update id="updateMsgSysStatus" parameterType="MsgSys">
+     update msg_sys set
+              `status`=#{status}
+            where `id`=#{id}
+    </update>
+
     <!--获取发件箱列表-->
-    <select id="getMsgSysList" parameterType="MsgSys" resultType="MsgSys">
+    <select id="findMsgSysList" parameterType="MsgSys" resultType="MsgSys">
         select
         <include refid="Sys_Column_List"/>
         from  msg_sys
@@ -68,7 +92,7 @@
                     msg_sys.id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    msg_sys.id&gt;=(select id from msg_model where status=#{msgModel.status} AND msg_sys.state=1
+                    msg_sys.id&gt;=(select id from msg_model where status=#{msgModel.status} AND msg_sys.state=0
                     limit #{page.start},1
                     )
                 </when>
@@ -76,16 +100,43 @@
                     1=1
                 </otherwise>
             </choose>
-            AND msg_sys.state = 1
+            AND msg_sys.state = 0
             limit #{page.offset}
         </where>
     </select>
 
     <!--获取站内信详情，TODO 需要两表联查-->
-    <select id="getMsgInfo" parameterType="long" resultType="MsgInbox">
-        select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
+    <select id="findMsgInfo" parameterType="MsgRec" resultMap="MsgRecAndSysInfo">
+        select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`,`msg_sys`.`content`,`msg_sys`.`attachment`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
         from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
-        where `msg_id`=#{msg_id}
+        where `msg_rec`.`id`=#{id}
+    </select>
+
+    <!--联查映射-->
+    <resultMap id="MsgRecAndSysInfo" type="MsgRec" autoMapping="true">
+    <!--主表的主键id-->
+    <id column="id" property="id" />
+    <association property="msgSys" javaType="MsgSys">
+    <!--todo 附表的主键id-->
+    <!--<id column="id" property="id" />-->
+    <result column="title" property="title" />
+    <result column="content" property="content" />
+    <result column="attachment" property="attachment" />
+    <result column="type" property="type" />
+    <result column="from_id" property="from_id" />
+    <result column="from_type" property="from_type" />
+    <result column="status" property="status" />
+    <result column="send_time" property="send_time" />
+    <result column="state" property="state" />
+    </association>
+    </resultMap>
+
+    <!--获取发件箱详情-->
+    <select id="findMsgSysInfo" parameterType="MsgSys" resultType="MsgSys">
+        select
+        <include refid="Sys_Column_List"/>
+        from   msg_sys
+        where `id`=#{id}
     </select>
 
     <!--更改收件箱站内信状态-->
