@@ -54,10 +54,10 @@ public class MsgIndexAction extends BaseAction {
         if(request.title.isEmpty()||request.content.isEmpty()){
             return json(BaseResponse.CODE_FAILURE, "title or content is empty", response);
         }
-        if(request.from_id==0||request.from_type==0){
+        if(request.fromId==0||request.fromType==0){
             return json(BaseResponse.CODE_FAILURE, "from_id or from_type is empty", response);
         }
-        if (request.to_user == null) {
+        if (request.toUser == null) {
             return json(BaseResponse.CODE_FAILURE, "to_user is empty", response);
         }
         //赋值
@@ -66,22 +66,26 @@ public class MsgIndexAction extends BaseAction {
         MsgSendRes msgSendRes = new MsgSendRes();
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
-        //TODO  多个收件人还没有写  遍历循环插入
-        for (MsgToBean msgToBean : request.to_user) {
+        //TODO 多个收件人还没有写  遍历循环插入
+        //TODO 权限判断
+        for (MsgToBean msgToBean : request.toUser) {
             msgSys.title = request.title;
             msgSys.content = request.content;
             msgSys.type = request.type;
+            if(request.attachment.isEmpty()){
+                request.attachment = "";
+            }
             msgSys.attachment = request.attachment;
-            msgSys.send_time = request.send_time;
-            msgSys.from_id = request.from_id;
-            msgSys.from_type = request.from_type;
-            msgSys.to_id = msgToBean.to_id;
-            msgSys.to_type = msgToBean.to_type;
+            msgSys.send_time = request.sendTime;
+            msgSys.from_id = request.fromId;
+            msgSys.from_type = request.fromType;
+            msgSys.to_id = msgToBean.toId;
+            msgSys.to_type = msgToBean.toType;
             msgSys.created_at = date;
             msgSys.updated_at = date;
             //调用DAO
-            msgSendRes.to_id = msgToBean.to_id;
-            msgSendRes.to_type = msgToBean.to_type;
+            msgSendRes.to_id = msgToBean.toId;
+            msgSendRes.to_type = msgToBean.toType;
             int send_result = msgIndexDAO.addMsgSys(msgSys);
             if(send_result==1){
                 msgSendRes.send_res = "发送成功";
