@@ -155,7 +155,7 @@ public class MsgModelAction extends BaseAction {
         }
         //赋值
         MsgModelUpdate modelUpdate = new MsgModelUpdate();
-        modelUpdate.modelCode = request.modelCode;
+        modelUpdate.model_code = request.modelCode;
         if (request.status == 0 && request.modelType == 0) {
             return json(BaseResponse.CODE_FAILURE, "no updated params", response);
         }
@@ -171,7 +171,7 @@ public class MsgModelAction extends BaseAction {
         }
         if (request.modelType != 0 || request.status == 0) {
             modelUpdate.status = request.status;
-            modelUpdate.modelType = request.modelType;
+            modelUpdate.model_type = request.modelType;
             //调用DAO
             int updateRes = msgModelDAO.updateMsgModelType(modelUpdate);
             if (updateRes != 0) {
@@ -182,7 +182,7 @@ public class MsgModelAction extends BaseAction {
         }
         if (request.status != 0 && request.modelType != 0) {
             modelUpdate.status = request.status;
-            modelUpdate.modelType = request.modelType;
+            modelUpdate.model_type = request.modelType;
             //调用DAO
             int updateRes = msgModelDAO.updateMsgModel(modelUpdate);
             if (updateRes != 0) {
