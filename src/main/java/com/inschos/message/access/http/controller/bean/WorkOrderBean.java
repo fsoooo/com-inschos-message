@@ -60,6 +60,9 @@ public class WorkOrderBean {
         @CheckParams(maxLen =20)
         public long category_id; //工单分类
 
+        public String category_extra_name; //自定义分类名
+
+
         public String addresseeUuid; //收件人uuid
 
         public String sender_uuid; //发件人 uuid

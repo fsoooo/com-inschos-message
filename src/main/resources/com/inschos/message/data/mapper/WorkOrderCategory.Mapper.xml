@@ -3,19 +3,19 @@
 <mapper namespace="com.inschos.message.data.mapper.WorkOrderCategoryMapper">
 
     <sql id="Base_Column_List">
-        `id`,`name`,`writable`,`write_name`,`created_at`
+        `id`,`name`,`writable`,`created_at`
     </sql>
 
     <insert id="insert" parameterType="WorkOrderCategory">
-        insert into work_order_category(`name`,`writable`,`write_name`,`created_at`)
+        insert into work_order_category(`name`,`writable`,`created_at`)
         values(
-          #{name},#{writable},#{write_name},#{created_at}
+          #{name},#{writable},#{created_at}
         )
     </insert>
 
     <update id="update" parameterType="WorkOrderCategory">
         update work_order_category set
-          `name`=#{name},`writable`=#{writable},`write_name`=#{write_name},`created_at`=#{created_at}
+          `name`=#{name},`writable`=#{writable},`created_at`=#{created_at}
         where `id`=#{id}
     </update>
 

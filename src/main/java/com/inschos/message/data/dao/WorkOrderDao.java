@@ -26,5 +26,8 @@ public interface WorkOrderDao {
     int updateSolveStatus(WorkOrder update);
 
     List<WorkOrderReply> findReplyList(long woId);
+    /** 新建工单   */
+    int insert(WorkOrder workOrder);//定义返回数据类型-整型-影响数据库行数
+
 
 }

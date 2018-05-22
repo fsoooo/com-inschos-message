@@ -73,6 +73,11 @@ public class WorkOrderDaoImpl extends BaseDao implements WorkOrderDao {
     public List<WorkOrderReply> findReplyList(long woId) {
         return workOrderReplyMapper.selectAll(woId);
     }
+    @Override
+    public int insert(WorkOrder workOrder){
+        return workOrderMapper.insert(workOrder);
+    }
+
 
 
 }

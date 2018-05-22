@@ -3,23 +3,24 @@
 <mapper namespace="com.inschos.message.data.mapper.WorkOrderMapper">
 
     <sql id="Base_Column_List">
-        `id`,`title`,`content`,`category_id`,`addressee_uuid`,`sender_uuid`,`type`,`close_status`,`solve_status`,`handle_status`,`created_at`,`updated_at`,`state`
+        `id`,`title`,`content`,`category_id`,`addressee_uuid`,`sender_uuid`,`type`,`close_status`,`solve_status`,`handle_status`,`created_at`,`updated_at`,`state`,`category_extra_name`
     </sql>
 
     <insert id="insert" parameterType="WorkOrder">
-        insert into work_order(`title`,`content`,`category_id`,`addressee_uuid`,`sender_uuid`,`type`,`close_status`,`solve_status`,`handle_status`,`created_at`,`updated_at`,`state`)
+        insert into work_order(`title`,`content`,`category_id`,`addressee_uuid`,`sender_uuid`,`type`,`close_status`,`solve_status`,`handle_status`,`created_at`,`updated_at`,`state`,`category_extra_name`)
         values(
-          #{title},#{content},#{category_id},#{addressee_uuid},#{sender_uuid},#{type},#{close_status},#{solve_status},#{handle_status},#{created_at},#{updated_at},#{state}
+          #{title},#{content},#{category_id},#{addressee_uuid},#{sender_uuid},#{type},#{close_status},#{solve_status},#{handle_status},#{created_at},#{updated_at},#{state},#{category_extra_name}
         )
     </insert>
 
     <update id="update" parameterType="WorkOrder">
         update work_order set
           `title`=#{title},`content`=#{content},`category_id`=#{category_id},`addressee_uuid`=#{addressee_uuid},`sender_uuid`=#{sender_uuid},`type`=#{type},`close_status`=#{close_status},`solve_status`=#{solve_status},`handle_status`=#{handle_status},`created_at`=#{created_at},`updated_at`=#{updated_at},`state`=#{state}
+          ,`category_extra_name`=#{category_extra_name}
         where `id`=#{id}
     </update>
 
-    <update id="updateHandleStatus" parameterType="WorkOrder">
+    <update id="updateHandleCloseStatus" parameterType="WorkOrder">
         update work_order set
           `handle_status`=#{handle_status},`close_status`=#{close_status},`updated_at`=#{updated_at}
         where `id`=#{id}
@@ -61,7 +62,7 @@
                               and sender_uuid=#{sender_uuid}
                           </if>
                           <if test="close_status>0">
-                              and close_status#{close_status}
+                              and close_status=#{close_status}
                           </if>
                           <if test="handle_status">
                               and handle_status=#{handle_status}
@@ -83,7 +84,7 @@
                 and sender_uuid=#{sender_uuid}
             </if>
             <if test="close_status>0">
-                and close_status#{close_status}
+                and close_status=#{close_status}
             </if>
             <if test="handle_status">
                 and handle_status=#{handle_status}
@@ -97,6 +98,7 @@
         select
             count(1)
         from work_order
+        <where>
             `type`=#{type}
             <if test='addressee_uuid!=null'>
                 and addressee_uuid = #{addressee_uuid}
@@ -105,14 +107,13 @@
                 and sender_uuid=#{sender_uuid}
             </if>
             <if test="close_status>0">
-                and close_status#{close_status}
+                and close_status=#{close_status}
             </if>
             <if test="handle_status">
                 and handle_status=#{handle_status}
             </if>
             and `state`=1
-        order by id desc
-        limit #{page.offset}
+        </where>
     </select>
 
 </mapper>

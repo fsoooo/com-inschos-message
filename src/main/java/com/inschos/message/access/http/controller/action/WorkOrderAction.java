@@ -11,7 +11,6 @@ import com.inschos.message.access.rpc.client.AccountClient;
 import com.inschos.message.access.rpc.client.AgentJobClient;
 import com.inschos.message.access.rpc.client.ChannelClient;
 import com.inschos.message.annotation.CheckParamsKit;
-import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.assist.kit.StringKit;
 import com.inschos.message.assist.kit.TimeKit;
 import com.inschos.message.data.dao.WorkOrderCategoryDao;
@@ -128,14 +127,16 @@ public class WorkOrderAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取成功", response);
     }
 
-    public String addWork(ActionBean actionBean) {
-        WorkOrderBean.addWork request = JsonKit.json2Bean(actionBean.body,WorkOrderBean.addWork.class);
 
-//        BaseResponse response = new BaseResponse();
+    public String addWork(ActionBean actionBean) {
+        WorkOrderBean.addWork request = requst2Bean(actionBean.body,WorkOrderBean.addWork.class);
+
+        BaseResponse response = new BaseResponse();
         //判空
-//        if (request == null) {
-//            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
-//        }
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
 
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
@@ -144,21 +145,25 @@ public class WorkOrderAction extends BaseAction {
         WorkOrder workOrder = new WorkOrder();
         workOrder.title = request.title;
         workOrder.content = request.content;
+        workOrder.category_extra_name = request.category_extra_name;
         workOrder.category_id = request.category_id;
-//        workOrder.addressee_uuid = addressee_uuid;
-//        workOrder.sender_uuid = sender_uuid;
+        workOrder.addressee_uuid = actionBean.managerUuid;
+        workOrder.sender_uuid = actionBean.accountUuid;
         workOrder.type = request.type; //工单类型  1 对业管的  2 业管对天眼的
         workOrder.close_status = request.close_status;
         workOrder.solve_status = request.solve_status;
         workOrder.handle_status = request.handle_status;
         workOrder.created_at = date;
         workOrder.updated_at = date;
+        System.out.println(request.title);
+        //入库
+        int add_res = workOrderDao.insert(workOrder);
+        if (add_res == 1) {
+            return json(BaseResponse.CODE_SUCCESS, "工单创建成功", response);
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "工单创建失败", response);
+        }
 
-        //判断模板是否重复
-//        MsgModel msgModelRepeat = msgModelDAO.getMsgModelRepeat(msgModel);
-
-
-        return "55858";
     }
 
     public String categoryList(ActionBean bean){
