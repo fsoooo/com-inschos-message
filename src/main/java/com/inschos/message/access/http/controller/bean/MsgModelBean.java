@@ -12,6 +12,8 @@ public class MsgModelBean {
 
         public String model_content;//'模板详细内容'
 
+        public String model_type;//'模板类型'
+
         public long created_user;//'创建用户id'
 
         public int created_user_type;//'创建用户type'
@@ -32,6 +34,8 @@ public class MsgModelBean {
         public String limit;//分页数据
 
         public int model_status = 0;//模板状态（审核通过0/未通过1/已删除2）
+
+        public String model_type;//'模板类型'
     }
 
     //获取站内信模板详情
@@ -40,12 +44,14 @@ public class MsgModelBean {
         public String model_code;//模板代码
     }
 
-    //更新站内信状态
+    //更新站内信
     public static class updateRequest extends BaseRequest {
 
         public String model_code;//'模板代码'
 
         public int status;//'审核状态:默认为0审核中，1审核通过，2审核失败'
+
+        public String model_type;//'模板类型'
 
         public long user_id;//操作人id
 
