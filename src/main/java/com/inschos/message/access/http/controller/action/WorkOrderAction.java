@@ -206,7 +206,12 @@ public class WorkOrderAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
         WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
-        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid) && workOrder.close_status!=WorkOrder.STATUS_CLOSED){
+        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
+
+            if (workOrder.close_status!=WorkOrder.STATUS_CLOSED){
+                return json(BaseResponse.CODE_FAILURE,"已关闭",response);
+            }
+
             WorkOrderReply reply = new WorkOrderReply();
             reply.content = request.content;
             reply.work_order_id = workOrder.id;
@@ -230,7 +235,15 @@ public class WorkOrderAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
         WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
-        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid) && workOrder.solve_status == WorkOrder.STATUS_SOLVE_WEIFANKUI && workOrder.handle_status == WorkOrder.STATUS_HANDLE_DONE){
+
+
+        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
+            if (workOrder.solve_status != WorkOrder.STATUS_SOLVE_WEIFANKUI){
+                return json(BaseResponse.CODE_FAILURE,"已反馈",response);
+            }
+            if(workOrder.handle_status != WorkOrder.STATUS_HANDLE_DONE){
+                return json(BaseResponse.CODE_FAILURE,"工单未处理",response);
+            }
 
             WorkOrder update = new WorkOrder();
             update.id = workOrder.id;
