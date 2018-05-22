@@ -17,6 +17,10 @@ public interface MsgModelMapper {
     //获取站内信模板详情
     MsgModel findMsgModelInfo(MsgModel msgModel);//定义返回数据类型-对象
 
-    //更新站内信模板状态
+    //更新站内信模板
     int updateMsgModel(MsgModelUpdate msgModelUpdate);//定义返回数据类型-整形-影响数据库行数
+    //更新站内信模板-状态
+    int updateMsgModelStatus(MsgModelUpdate msgModelUpdate);//定义返回数据类型-整形-影响数据库行数
+    //更新站内信模板-类型
+    int updateMsgModelType(MsgModelUpdate msgModelUpdate);//定义返回数据类型-整形-影响数据库行数
 }

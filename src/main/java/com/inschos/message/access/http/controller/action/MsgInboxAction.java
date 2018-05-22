@@ -23,15 +23,15 @@ public class MsgInboxAction extends BaseAction {
      * 站内信收件箱列表
      *
      * @param user_id|int           用户id
-     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
-     * @param message_status|string 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param user_type|string      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param message_status|string 站内信状态:未读 1/已读 2/全部 3/（非必传，默认为1）
      * @param page_num              当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为
      * @param limit                 每页显示行数，可不传，默认为
      * @return json
      * <p>
      * 业管可以查看所有人的站内信
-     * 站内信列表组成：站内信系统表里收件人id为0的（系统消息）+ 站内信系统表里收件人id为user_id的（订阅消息、私信）
+     * 站内信列表组成：站内信系统表里收件人id为-1的（系统消息）+ 站内信系统表里收件人id为user_id的（订阅消息、私信）
      * 匹配站内信系统表和站内信收件箱表，向用户收件箱里插入相应的数据，并修改站内信系统表的状态
      * todo 只要用户接收站内信，系统表就默认已经读取了，不在插入
      * @access public

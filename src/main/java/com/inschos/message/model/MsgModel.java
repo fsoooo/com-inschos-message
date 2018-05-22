@@ -10,7 +10,7 @@ public class MsgModel {
 
     public String model_content;//'模板详细内容'
 
-    public String model_type;//'模板类型'
+    public int model_type;//'模板类型'
 
     public long created_user;//'创建用户id'
 
