@@ -13,7 +13,7 @@ public class BaseRequest {
     public final static String PLATFORM_IOS = "ios";
     public final static String PLATFORM_WEB = "web";
     //分页
-    public String lastId = "0";
-    public String pageNum = "1";
-    public String pageSize = "20";
+    public String lastId;
+    public String pageNum;
+    public String pageSize;
 }

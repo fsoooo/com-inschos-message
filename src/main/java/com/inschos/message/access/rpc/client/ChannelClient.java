@@ -1,0 +1,36 @@
+package com.inschos.message.access.rpc.client;
+
+import com.inschos.message.access.rpc.bean.ChannelBean;
+import com.inschos.message.access.rpc.service.ChannelService;
+import com.inschos.message.assist.kit.L;
+import hprose.client.HproseHttpClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+/**
+ * Created by IceAnt on 2018/5/21.
+ */
+@Component
+public class ChannelClient {
+
+    @Value("${rpc.remote.customer.host}")
+    private String host;
+
+    private final String uri = "/rpc/channel";
+
+
+    private ChannelService getService(){
+        return new HproseHttpClient(host + uri).useService(ChannelService.class);
+    }
+
+    public ChannelBean getChannel(String channelId){
+        try {
+            ChannelService service = getService();
+            return service!=null?service.getChannelDetailById(channelId):null;
+
+        }catch (Exception e){
+            L.log.error("remote fail {}",e.getMessage(),e);
+            return null;
+        }
+    }
+}

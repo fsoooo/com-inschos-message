@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.message.data.mapper.WorkOrderReplyMapper">
+
+    <sql id="Base_Column_List">
+        `id`,`work_order_id`,`replier_uuid`,`to_reply_id`,`content`,`created_at`
+    </sql>
+
+    <insert id="insert" parameterType="WorkOrderReply">
+        insert into work_order_reply(`work_order_id`,`replier_uuid`,`to_reply_id`,`content`,`created_at`)
+        values(
+          #{work_order_id},#{replier_uuid},#{to_reply_id},#{content},#{created_at}
+        )
+    </insert>
+
+    <update id="update" parameterType="WorkOrderReply">
+        update work_order_reply set
+          `work_order_id`=#{work_order_id},`replier_uuid`=#{replier_uuid},`to_reply_id`=#{to_reply_id},`content`=#{content},`created_at`=#{created_at}
+        where `id`=#{id}
+    </update>
+
+    <select id="selectOne" parameterType="long" resultType="WorkOrderReply">
+        select
+        <include refid="Base_Column_List"/>
+        from work_order_reply
+        where `id`=#{id}
+    </select>
+
+    <select id="selectAll" parameterType="long" resultType="WorkOrderReply">
+        select
+        <include refid="Base_Column_List"/>
+        from work_order_reply
+        where `work_order_id`=#{work_order_id}
+    </select>
+
+
+
+</mapper>

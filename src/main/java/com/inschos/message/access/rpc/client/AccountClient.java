@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountClient{
 
-    //@Value("${rpc.remote.account.host}")
+    @Value("${rpc.remote.account.host}")
     private String host;
     
     private final String uri = "/rpc/account";

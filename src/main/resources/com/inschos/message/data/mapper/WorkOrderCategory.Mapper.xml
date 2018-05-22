@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.message.data.mapper.WorkOrderCategoryMapper">
+
+    <sql id="Base_Column_List">
+        `id`,`name`,`writable`,`created_at`
+    </sql>
+
+    <insert id="insert" parameterType="WorkOrderCategory">
+        insert into work_order_category(`name`,`writable`,`created_at`)
+        values(
+          #{name},#{writable},#{created_at}
+        )
+    </insert>
+
+    <update id="update" parameterType="WorkOrderCategory">
+        update work_order_category set
+          `name`=#{name},`writable`=#{writable},`created_at`=#{created_at}
+        where `id`=#{id}
+    </update>
+
+    <select id="selectOne" parameterType="long" resultType="WorkOrderCategory">
+        select
+        <include refid="Base_Column_List"/>
+        from work_order_category
+        where `id`=#{id}
+    </select>
+
+    <select id="selectAllValid"  resultType="WorkOrderCategory">
+        select
+        <include refid="Base_Column_List"/>
+        from work_order_category
+        where status = 1
+    </select>
+
+</mapper>
