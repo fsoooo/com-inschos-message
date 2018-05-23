@@ -7,7 +7,8 @@ public class MsgStatus {
      */
     public final static int MSG_READ = 1;
     public final static int MSG_UNREAD = 2;
-    public final static int MSG_DEL = 3;
+    public final static int MSG_All = 3;
+    public final static int MSG_DEL = 4;
 
     public static String getListStatus(int listStatus) {
         String result;
@@ -19,6 +20,9 @@ public class MsgStatus {
                 result = "已读";
                 break;
             case 3:
+                result = "全部";
+                break;
+            case 4:
                 result = "删除";
                 break;
             default:

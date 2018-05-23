@@ -4,15 +4,17 @@ public class MsgInboxBean {
     //消息 收件箱列表
     public static class inboxListRequest extends BaseRequest {
 
-        public long user_id;//用户id
+        public long userId;//用户id
 
-        public int user_type;//用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
+        public int userType;//用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
 
-        public int message_status;//消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+        public int messageStatus;//消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
 
-        public String page_num;//分页数据
+        public int messageType;//消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
 
-        public String last_id;//分页数据
+        public String pageNum;//分页数据
+
+        public String lastId;//分页数据
 
         public String limit;//分页数据
 
@@ -22,15 +24,17 @@ public class MsgInboxBean {
     //消息 发件箱列表
     public static class outboxListRequest extends BaseRequest {
 
-        public long user_id;//用户id
+        public long userId;//用户id
 
-        public int user_type;//用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
+        public int userType;//用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
 
-        public int message_status;//消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+        public int messageStatus;//消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
 
-        public String page_num;//分页数据
+        public int messageType;//消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
 
-        public String last_id;//分页数据
+        public String pageNum;//分页数据
+
+        public String lastId;//分页数据
 
         public String limit;//分页数据
 
@@ -39,16 +43,16 @@ public class MsgInboxBean {
     //消息 详情
     public static class msgInfoRequest extends BaseRequest {
 
-        public long message_id;//消息 id
+        public long messageId;//消息 id
     }
 
     //操作消息 （收件箱 读取和删除）
     public static class msgUpdateRequest extends BaseRequest {
 
-        public long message_id;//消息 id
+        public long messageId;//消息 id
 
-        public int operate_id;//操作代码:默认为1（删除/已读），2（还原/未读）
+        public int operateId;//操作代码:默认为1（删除/已读），2（还原/未读）
 
-        public String operate_type;//操作类型:read 更改读取状态，del 更改删除状态
+        public String operateType;//操作类型:read 更改读取状态，del 更改删除状态
     }
 }

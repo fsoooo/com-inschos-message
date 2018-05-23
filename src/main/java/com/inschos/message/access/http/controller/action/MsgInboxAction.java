@@ -20,17 +20,17 @@ public class MsgInboxAction extends BaseAction {
     private Page page;
 
     /**
-     * 消息 收件箱列表
+     * 消息 收件箱列表(获取所有类型的列表)
      *
-     * @param user_id|int           用户id
-     * @param user_type|string      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @param message_status|string 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @param page_num              当前页码 ，可不传，默认为1
-     * @param last_id               上一页最大id ，可不传，默认为
-     * @param limit                 每页显示行数，可不传，默认为
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
      * @return json
      * <p>
-     * 业管可以查看所有人的消息
+     * 业管可以查看所有人的消息，返回按消息分类展示
      * 消息 列表组成：消息 系统表里收件人id为-1的（系统消息）+ 消息 系统表里收件人id为user_id的（订阅消息、私信）
      * 匹配消息 系统表和消息 收件箱表，向用户收件箱里插入相应的数据，并修改消息 系统表的状态
      * todo 只要用户接收消息 ，系统表就默认已经读取了，不在插入
@@ -45,12 +45,13 @@ public class MsgInboxAction extends BaseAction {
         }
         //调用DAO
         MsgRec msgRec = new MsgRec();
-        msgRec.page = setPage(request.last_id, request.page_num, request.limit);
-        msgRec.sys_status = request.message_status;
-        msgRec.user_id = request.user_id;
-        msgRec.user_type = request.user_type;
+        msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgRec.sys_status = request.messageStatus;
+        msgRec.user_id = request.userId;
+        msgRec.user_type = request.userType;
+        MsgStatus msgStatus = new MsgStatus();
         //根据user_type判断不同用户可以查看消息 类型
-        switch (request.user_type) {
+        switch (request.userType) {
             case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
                 List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxManager;
@@ -67,7 +68,72 @@ public class MsgInboxAction extends BaseAction {
                 //TODO 判断登录
                 int loginStatus = 1;
                 if (loginStatus != 0) {
-                    String insertRes = insertMsgRec(request.user_id, request.user_type);
+                    String insertRes = insertMsgRec(request.userId, request.userType);
+                }
+                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
+                response.data = msgInboxPerson;
+                break;
+            default:
+                List<MsgRec> msgInboxs = msgInboxDAO.findMsgRecList(msgRec);
+                response.data = msgInboxs;
+                break;
+        }
+        if (response.data != null) {
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
+    }
+
+    /**
+     * 消息 收件箱列表(获取所有类型的列表)
+     *
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
+     * @return json
+     * 消息 列表组成：消息 系统表里收件人id为-1的（系统消息）+ 消息 系统表里收件人id为user_id的（订阅消息、私信）
+     * 匹配消息 系统表和消息 收件箱表，向用户收件箱里插入相应的数据，并修改消息 系统表的状态
+     * todo 只要用户接收消息 ，系统表就默认已经读取了，不在插入
+     * @access public
+     */
+    public String findMsgResListByType(ActionBean actionBean) {
+        MsgInboxBean.inboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.inboxListRequest.class);
+        BaseResponse response = new BaseResponse();
+        //判空
+        if (request == null) {
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        //调用DAO
+        MsgRec msgRec = new MsgRec();
+        msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgRec.sys_status = request.messageStatus;
+        msgRec.user_id = request.userId;
+        msgRec.user_type = request.userType;
+        MsgStatus msgStatus = new MsgStatus();
+        //根据user_type判断不同用户可以查看消息 类型
+        switch (request.userType) {
+            case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
+                List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
+                response.data = msgInboxManager;
+                break;
+            case 2://企业用户
+                List<MsgRec> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
+                response.data = msgInboxCompany;
+                break;
+            case 3://代理人用户
+                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
+                response.data = msgInboxAgent;
+                break;
+            case 4://个人用户-判断登录信息，再向收件箱表里插入数据
+                //TODO 判断登录
+                int loginStatus = 1;
+                if (loginStatus != 0) {
+                    String insertRes = insertMsgRec(request.userId, request.userType);
                 }
                 List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxPerson;
@@ -135,12 +201,12 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 发件箱列表
      *
-     * @param user_id|int           用户id
-     * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
-     * @param message_status|string 消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
-     * @param page                  当前页码 ，可不传，默认为1
-     * @param last_id               上一页最大id ，可不传，默认为
-     * @param limit                 每页显示行数，可不传，默认为
+     * @param user_id        用户id
+     * @param user_type      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
+     * @param message_status 消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param page           当前页码 ，可不传，默认为1
+     * @param last_id        上一页最大id ，可不传，默认为
+     * @param limit          每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
@@ -153,10 +219,10 @@ public class MsgInboxAction extends BaseAction {
         }
         //调用DAO
         MsgSys msgSys = new MsgSys();
-        msgSys.page = setPage(request.last_id, request.page_num, request.limit);
-        msgSys.status = request.message_status;
-        msgSys.from_id = request.user_id;
-        msgSys.from_type = request.user_type;
+        msgSys.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgSys.status = request.messageStatus;
+        msgSys.from_id = request.userId;
+        msgSys.from_type = request.userType;
         List<MsgSys> msgOutboxs = msgInboxDAO.findMsgSysList(msgSys);
         response.data = msgOutboxs;
         if (msgOutboxs != null) {
@@ -181,14 +247,14 @@ public class MsgInboxAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         MsgRec msgRec = new MsgRec();
-        msgRec.id = request.message_id;
+        msgRec.id = request.messageId;
         MsgRec msgInfo = msgInboxDAO.findMsgInfo(msgRec);
         response.data = msgInfo;
         if (msgInfo != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             MsgSys msgSys = new MsgSys();
-            msgSys.id = request.message_id;
+            msgSys.id = request.messageId;
             MsgSys msgSysInfo = msgInboxDAO.findMsgSysInfo(msgSys);
             if (msgSysInfo != null) {
                 response.data = msgSysInfo;
@@ -218,12 +284,12 @@ public class MsgInboxAction extends BaseAction {
         }
         //调用DAO
         MsgUpdate msgUpdate = new MsgUpdate();
-        msgUpdate.msg_id = request.message_id;
-        msgUpdate.operate_id = request.operate_id;
-        if (request.operate_type == "read") {
+        msgUpdate.msg_id = request.messageId;
+        msgUpdate.operate_id = request.operateId;
+        if (request.operateType == "read") {
             msgUpdate.operate_type = "sys_status";
             response.data = msgInboxDAO.updateMsgRecStatus(msgUpdate);
-        } else if (request.operate_type == "del") {
+        } else if (request.operateType == "del") {
             msgUpdate.operate_type = "state";
             response.data = msgInboxDAO.updateMsgRecState(msgUpdate);
         }

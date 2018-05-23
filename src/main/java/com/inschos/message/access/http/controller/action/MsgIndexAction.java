@@ -70,6 +70,7 @@ public class MsgIndexAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //TODO 系统消息toId和toType都等于-1，多发，和私信
+        //TODO 发件人发的消息，类型有限制:个人-顾问消息；代理人，企业，业管
         //赋值
         MsgSys msgSys = new MsgSys();
         List<MsgSendRes> msgSendResList = new ArrayList<>();
