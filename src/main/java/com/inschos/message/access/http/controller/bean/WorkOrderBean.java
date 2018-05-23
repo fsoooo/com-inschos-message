@@ -94,6 +94,8 @@ public class WorkOrderBean {
 
         public String orderStatusTxt;
 
+        public String isHandled;
+
         public List<WOReplyData> replyList;
 
     }
