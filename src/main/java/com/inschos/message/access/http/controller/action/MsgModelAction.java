@@ -40,7 +40,8 @@ public class MsgModelAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if (request.createdUserType != 4) {//TODO 只有业管才能添加模板 ??
+        MsgStatus msgStatus = new MsgStatus();
+        if (request.createdUserType != msgStatus.USER_MANAGER) {//TODO 只有业管才能添加模板 ??
             return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //获取当前时间戳(毫秒值)
@@ -150,7 +151,8 @@ public class MsgModelAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if (request.userType != 4) {//只有业管用户才能操作消息 模板
+        MsgStatus msgStatus = new MsgStatus();
+        if (request.userType != msgStatus.USER_MANAGER) {//TODO 只有业管用户才能操作消息 模板？？
             return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //赋值
