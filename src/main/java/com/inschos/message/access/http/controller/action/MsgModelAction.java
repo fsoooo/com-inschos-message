@@ -23,7 +23,7 @@ public class MsgModelAction extends BaseAction {
     private Page page;
 
     /**
-     * 添加站内信模板
+     * 添加消息 模板
      *
      * @param modelName       模板名称（不能一样）
      * @param modelContent    模板内容
@@ -73,7 +73,7 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板列表
+     * 消息 模板列表
      *
      * @param pageNum     当前页码 ，可不传，默认为1
      * @param lastId      上一页最大id ，可不传，默认为
@@ -107,7 +107,7 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板详情
+     * 消息 模板详情
      *
      * @param modelCode 模板代码
      * @return json
@@ -133,7 +133,7 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板操作（审核、删除）
+     * 消息 模板操作（审核、删除）
      *
      * @param modelCode 模板代码
      * @param status    模板状态（审核通过1，删除2）
@@ -150,7 +150,7 @@ public class MsgModelAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if (request.userType != 4) {//只有业管用户才能操作站内信模板
+        if (request.userType != 4) {//只有业管用户才能操作消息 模板
             return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //赋值

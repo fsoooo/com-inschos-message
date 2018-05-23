@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * User: wangsl
  * Date: 2018/05/04
  * Time: 17:12
- * 站内信模板管理主要功能：添加，查询列表，查询详情，操作（审核通过，删除）
+ * 消息 模板管理主要功能：添加，查询列表，查询详情，操作（审核通过，删除）
  */
 @Controller
 @RequestMapping("/message/model")
@@ -27,7 +27,7 @@ public class MsgModelController {
     private MsgModelAction msgModelAction;
 
     /**
-     * 添加站内信模板
+     * 添加消息 模板
      *
      * @param modelName       模板名称（不能一样）
      * @param modelContent    模板内容
@@ -45,7 +45,7 @@ public class MsgModelController {
     }
 
     /**
-     * 站内信模板列表
+     * 消息 模板列表
      *
      * @param pageNum     当前页码 ，可不传，默认为1
      * @param lastId      上一页最大id ，可不传，默认为
@@ -64,7 +64,7 @@ public class MsgModelController {
 
 
     /**
-     * 站内信模板详情
+     * 消息 模板详情
      *
      * @param modelCode 模板代码
      * @return json
@@ -78,7 +78,7 @@ public class MsgModelController {
     }
 
     /**
-     * 站内信模板操作（审核、删除）
+     * 消息 模板操作（审核、删除）
      *
      * @param modelCode   模板代码
      * @param operateCode 操作代码（审核通过1，删除2）

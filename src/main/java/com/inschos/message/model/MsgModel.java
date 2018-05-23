@@ -1,5 +1,5 @@
 package com.inschos.message.model;
-//站内信模板表
+//消息 模板表
 public class MsgModel {
 
     public long id;

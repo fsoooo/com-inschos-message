@@ -20,20 +20,20 @@ public class MsgInboxAction extends BaseAction {
     private Page page;
 
     /**
-     * 站内信收件箱列表
+     * 消息 收件箱列表
      *
      * @param user_id|int           用户id
      * @param user_type|string      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @param message_status|string 站内信状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param message_status|string 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
      * @param page_num              当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为
      * @param limit                 每页显示行数，可不传，默认为
      * @return json
      * <p>
-     * 业管可以查看所有人的站内信
-     * 站内信列表组成：站内信系统表里收件人id为-1的（系统消息）+ 站内信系统表里收件人id为user_id的（订阅消息、私信）
-     * 匹配站内信系统表和站内信收件箱表，向用户收件箱里插入相应的数据，并修改站内信系统表的状态
-     * todo 只要用户接收站内信，系统表就默认已经读取了，不在插入
+     * 业管可以查看所有人的消息
+     * 消息 列表组成：消息 系统表里收件人id为-1的（系统消息）+ 消息 系统表里收件人id为user_id的（订阅消息、私信）
+     * 匹配消息 系统表和消息 收件箱表，向用户收件箱里插入相应的数据，并修改消息 系统表的状态
+     * todo 只要用户接收消息 ，系统表就默认已经读取了，不在插入
      * @access public
      */
     public String findMsgRecList(ActionBean actionBean) {
@@ -49,7 +49,7 @@ public class MsgInboxAction extends BaseAction {
         msgRec.sys_status = request.message_status;
         msgRec.user_id = request.user_id;
         msgRec.user_type = request.user_type;
-        //根据user_type判断不同用户可以查看站内信类型
+        //根据user_type判断不同用户可以查看消息 类型
         switch (request.user_type) {
             case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
                 List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
@@ -86,7 +86,7 @@ public class MsgInboxAction extends BaseAction {
 
 
     /**
-     * 收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
+     * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
      * TODO 传参统一用小驼峰命名规则
      *
      * @param user_id|用户ID(收件人)
@@ -100,7 +100,7 @@ public class MsgInboxAction extends BaseAction {
         if (user_id == 0 || user_type == 0) {
             return json(BaseResponse.CODE_FAILURE, "user_id or user_type is empty", response);
         }
-        //查询站内信系统表有没有未插入的数据，没有的话，返回执行结束，有的话继续执行（赋值，插入，改变状态）
+        //查询消息 系统表有没有未插入的数据，没有的话，返回执行结束，有的话继续执行（赋值，插入，改变状态）
         MsgRec msgRec = new MsgRec();
         msgRec.user_id = user_id;
         msgRec.user_type = user_type;
@@ -133,11 +133,11 @@ public class MsgInboxAction extends BaseAction {
     }
 
     /**
-     * 站内信发件箱列表
+     * 消息 发件箱列表
      *
      * @param user_id|int           用户id
      * @param user_type|string      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
-     * @param message_status|string 站内信状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param message_status|string 消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
      * @param page                  当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为
      * @param limit                 每页显示行数，可不传，默认为
@@ -167,9 +167,9 @@ public class MsgInboxAction extends BaseAction {
     }
 
     /**
-     * 站内信详情
+     * 消息 详情
      *
-     * @param message_id 站内信id
+     * @param message_id 消息 id
      * @return json
      * @access public
      */
@@ -201,9 +201,9 @@ public class MsgInboxAction extends BaseAction {
     }
 
     /**
-     * 操作站内信（收件箱 读取和删除）
+     * 操作消息 （收件箱 读取和删除）
      *
-     * @param message_id   站内信id
+     * @param message_id   消息 id
      * @param operate_id   操作代码:默认为1（删除/已读），2（还原/未读）
      * @param operate_type 操作类型:read 更改读取状态，del 更改删除状态
      * @return json

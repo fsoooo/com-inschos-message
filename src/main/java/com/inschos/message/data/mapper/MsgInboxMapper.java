@@ -17,7 +17,7 @@ public interface MsgInboxMapper {
     //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
     List<MsgSys> findUserMsgRes(MsgRec msgRec);
 
-    //收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
+    //收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
     int insertMsgRec(MsgRec msgRec);
 
     //更改系统消息读取状态
@@ -29,13 +29,13 @@ public interface MsgInboxMapper {
     //发件箱详情
     MsgSys findMsgSysInfo(MsgSys msgSys);
 
-    // 站内信详情(findMsgInfo)
+    // 消息 详情(findMsgInfo)
     MsgRec findMsgInfo(MsgRec msgRec);
 
-    // 删除/读取站内信(updateMsgRec)
+    // 删除/读取消息 (updateMsgRec)
     int updateMsgRecStatus(MsgUpdate msgUpdate);
 
-    // 删除/读取站内信(updateMsgRec)
+    // 删除/读取消息 (updateMsgRec)
     int updateMsgRecState(MsgUpdate msgUpdate);
 
 }

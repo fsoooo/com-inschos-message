@@ -68,7 +68,7 @@
         where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 0
     </select>
 
-    <!--收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）-->
+    <!--收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）-->
     <insert id="insertMsgRec" parameterType="MsgRec">
         insert into  msg_rec(`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`)
         values(#{msg_id},#{user_id},#{user_type},#{sys_status},#{state},#{created_at},#{updated_at})
@@ -105,7 +105,7 @@
         </where>
     </select>
 
-    <!--获取站内信详情，TODO 需要两表联查-->
+    <!--获取消息 详情，TODO 需要两表联查-->
     <select id="findMsgInfo" parameterType="MsgRec" resultMap="MsgRecAndSysInfo">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`,`msg_sys`.`content`,`msg_sys`.`attachment`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
         from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
@@ -139,14 +139,14 @@
         where `id`=#{id}
     </select>
 
-    <!--更改收件箱站内信状态-->
+    <!--更改收件箱消息 状态-->
     <update id="updateMsgRecStatus" parameterType="MsgUpdate">
      update msg_rec set
               `sys_status`=#{operate_id}
             where `msg_id`=#{msg_id}
     </update>
 
-    <!--更改收件箱站内信状态-->
+    <!--更改收件箱消息 状态-->
     <update id="updateMsgRecState" parameterType="MsgUpdate">
      update msg_rec set
               `state`=#{operate_id}

@@ -5,7 +5,7 @@ import com.inschos.message.annotation.CheckParams;
 //TODO 内部类-静态方法
 public class MsgModelBean {
 
-    //添加站内信模板
+    //添加消息 模板
     public static class AddRequest extends BaseRequest {
 
         @CheckParams(stringType =CheckParams.StringType.STRING,maxLen = 10,minLen = 2)
@@ -29,7 +29,7 @@ public class MsgModelBean {
 
     }
 
-    //站内信模板列表
+    //消息 模板列表
     public static class ListRequest extends BaseRequest {
 
         public String pageNum;//分页数据
@@ -44,14 +44,14 @@ public class MsgModelBean {
         public int modelType;//'模板类型'
     }
 
-    //获取站内信模板详情
+    //获取消息 模板详情
     public static class InfoRequest extends BaseRequest {
 
         @CheckParams(stringType =CheckParams.StringType.STRING,minLen = 1)
         public String modelCode;//模板代码
     }
 
-    //更新站内信
+    //更新消息
     public static class UpdateRequest extends BaseRequest {
 
         @CheckParams(stringType =CheckParams.StringType.STRING,minLen = 1)

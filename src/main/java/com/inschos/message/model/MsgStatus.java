@@ -99,4 +99,10 @@ public class MsgStatus {
         }
         return result;
     }
+
+    /**
+     * 系统消息，收件人id，type值
+     */
+    public final static int MSG_SYS_KEY = -1;
+
 }
