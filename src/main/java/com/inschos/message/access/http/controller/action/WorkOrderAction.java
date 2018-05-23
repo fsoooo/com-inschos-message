@@ -67,6 +67,7 @@ public class WorkOrderAction extends BaseAction {
         long newLastId = 0;
         if (orderList != null && !orderList.isEmpty()) {
             for (WorkOrder order : orderList) {
+
                 WorkOrderBean.WorkOrderData data = toData(order,true,true);
                 newLastId = order.id;
                 dataList.add(data);
@@ -205,7 +206,12 @@ public class WorkOrderAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
         WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
-        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid) && workOrder.solve_status!=WorkOrder.STATUS_CLOSED){
+        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
+
+            if (workOrder.close_status!=WorkOrder.STATUS_CLOSED){
+                return json(BaseResponse.CODE_FAILURE,"已关闭",response);
+            }
+
             WorkOrderReply reply = new WorkOrderReply();
             reply.content = request.content;
             reply.work_order_id = workOrder.id;
@@ -229,7 +235,15 @@ public class WorkOrderAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
         WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
+
+
         if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
+            if (workOrder.solve_status != WorkOrder.STATUS_SOLVE_WEIFANKUI){
+                return json(BaseResponse.CODE_FAILURE,"已反馈",response);
+            }
+            if(workOrder.handle_status != WorkOrder.STATUS_HANDLE_DONE){
+                return json(BaseResponse.CODE_FAILURE,"工单未处理",response);
+            }
 
             WorkOrder update = new WorkOrder();
             update.id = workOrder.id;
@@ -256,7 +270,6 @@ public class WorkOrderAction extends BaseAction {
         if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
 
             WorkOrderBean.WorkOrderData data = toData(workOrder, true, true);
-            data.orderStatus = workOrder.handle_status;
             data.orderStatusTxt = WorkOrder.getHandle(workOrder.handle_status);
 
             data.replyList = new ArrayList<>();
@@ -311,6 +324,13 @@ public class WorkOrderAction extends BaseAction {
         data.content = order.content;
         data.submitTimeTxt = TimeKit.format("yyyy-MM-dd HH:mm", order.created_at);
         data.orderResult = WorkOrder.getResult(order.solve_status);
+        if (order.close_status == WorkOrder.STATUS_CLOSED){
+            data.orderStatusTxt = "已关闭";
+            data.orderStatus = 4;
+        }else{
+            data.orderStatusTxt = WorkOrder.getHandle(order.handle_status);
+            data.orderStatus = order.handle_status;
+        }
         if (isGetUser) {
             AgentJobBean agent = getAgent(order.addressee_uuid, order.sender_uuid);
             if (agent != null) {

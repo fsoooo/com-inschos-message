@@ -32,9 +32,7 @@ public class WorkOrderController {
     /**
      * 创建工单
      *
-     * @param name        工单标题
-     * @param classify     类型
-     * @param content      内容
+     * @param actionBean     工单
      * @return json
      * @access public
      */
