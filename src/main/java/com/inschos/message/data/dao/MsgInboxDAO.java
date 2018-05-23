@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 站内信收件处理数据访问对象（按功能划分DAO）
- * 收件箱列表(getMsgRecList)，发件箱列表(getMsgSysList),用户未接收信息查询(getMsgSysALL),站内信详情（getMsgInfo），删除/读取站内信（updateMsgRec）
+ * 消息 收件处理数据访问对象（按功能划分DAO）
+ * 收件箱列表(findMsgRecList)，发件箱列表(findMsgSysList),用户未接收信息查询(findMsgSysALL),消息 详情（findMsgInfo），删除/读取消息 （updateMsgRec）
  * TODO  在DAO里传对象，需要判空！！！
  */
 @Component
@@ -22,18 +22,18 @@ public class MsgInboxDAO {
      *
      * @param user_id|用户ID(收件人)
      * @param user_type|用户类型(收件人)
-     * @param message_status|站内信状态:未读 0/已读 1 （非必传，默认为0）
+     * @param message_status|消息 状态:未读 0/已读 1 （非必传，默认为0）
      * @param page|分页页码               （非必传，默认为1）
      * @param limit|每页显示行数            （非必传，默认为10）
      * @return mixed
      * @access public
      */
-    public List<MsgInbox> getMsgRecList(MsgRec msgRec) {
-        return msgInboxMapper.getMsgRecList(msgRec);
+    public List<MsgRec> findMsgRecList(MsgRec msgRec) {
+        return msgInboxMapper.findMsgRecList(msgRec);
     }
 
     /**
-     * 收取站内信（系统把站内信同步到用户收件箱,同时修改系统发件表的状态）
+     * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
      *
      * @param msg_id|消息标识列
      * @param user_id|用户ID(收件人)
@@ -47,6 +47,18 @@ public class MsgInboxDAO {
     }
 
     /**
+     * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
+     *
+     * @param id|消息标识列
+     * @param status|读取状态
+     * @return mixed
+     * @access public
+     */
+    public int updateMsgSysStatus(MsgSys msgSys) {
+        return msgInboxMapper.updateMsgSysStatus(msgSys);
+    }
+
+    /**
      * 用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
      *
      * @param user_id|用户ID(收件人)
@@ -54,8 +66,8 @@ public class MsgInboxDAO {
      * @return mixed
      * @access public
      */
-    public List<MsgSys> getUserMsgRes(MsgRec msgRec){
-        return msgInboxMapper.getUserMsgRes(msgRec);
+    public List<MsgSys> findUserMsgRes(MsgRec msgRec) {
+        return msgInboxMapper.findUserMsgRes(msgRec);
     }
 
     /**
@@ -65,29 +77,40 @@ public class MsgInboxDAO {
      * @param user_type|用户类型(发件人)
      * @param page|分页页码               （非必传，默认为1）
      * @param limit|每页显示行数            （非必传，默认为10）
-     * @param message_status|站内信状态:未读 0/已读 1 （非必传，默认为0）
+     * @param message_status|消息 状态:未读 0/已读 1 （非必传，默认为0）
      * @return mixed
      * @access public
      */
-    public List<MsgSys> getMsgSysList(MsgSys msgSys) {
-        return msgInboxMapper.getMsgSysList(msgSys);
+    public List<MsgSys> findMsgSysList(MsgSys msgSys) {
+        return msgInboxMapper.findMsgSysList(msgSys);
     }
 
     /**
-     * 站内信详情查询
+     * 发件箱列表查询
      *
-     * @param msg_id|站内信id
+     * @param msg_id
      * @return mixed
      * @access public
      */
-    public MsgInbox getMsgInfo(long msg_id) {
-        return msgInboxMapper.getMsgInfo(msg_id);
+    public MsgSys findMsgSysInfo(MsgSys msgSys){
+        return msgInboxMapper.findMsgSysInfo(msgSys);
     }
 
     /**
-     * 删除/读取站内信（update）
+     * 消息 详情查询
      *
-     * @param msg_id|站内信id
+     * @param id|消息 id
+     * @return mixed
+     * @access public
+     */
+    public MsgRec findMsgInfo(MsgRec msgRec) {
+        return msgInboxMapper.findMsgInfo(msgRec);
+    }
+
+    /**
+     * 删除/读取消息 （update）
+     *
+     * @param msg_id|消息 id
      * @param update_data|更新数据 ['deleted_at'=>time()] 删除
      *                         ['sys_status'=>'1'] 标记已读
      * @return mixed
@@ -98,9 +121,9 @@ public class MsgInboxDAO {
     }
 
     /**
-     * 删除/读取站内信（update）
+     * 删除/读取消息 （update）
      *
-     * @param msg_id|站内信id
+     * @param msg_id|消息 id
      * @param update_data|更新数据 ['deleted_at'=>time()] 删除
      *                         ['sys_status'=>'1'] 标记已读
      * @return mixed

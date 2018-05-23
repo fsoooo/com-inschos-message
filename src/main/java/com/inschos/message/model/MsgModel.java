@@ -1,5 +1,5 @@
 package com.inschos.message.model;
-//站内信模板表
+//消息 模板表
 public class MsgModel {
 
     public long id;
@@ -9,6 +9,8 @@ public class MsgModel {
     public String model_name;//'模板名称'
 
     public String model_content;//'模板详细内容'
+
+    public int model_type;//'模板类型'
 
     public long created_user;//'创建用户id'
 

@@ -3,19 +3,19 @@
 <mapper namespace="com.inschos.message.data.mapper.WorkOrderMapper">
 
     <sql id="Base_Column_List">
-        `id`,`title`,`content`,`category_id`,`addressee_uuid`,`sender_uuid`,`type`,`close_status`,`solve_status`,`handle_status`,`created_at`,`updated_at`,`state`,`category_extra_name`
+        `id`,`title`,`content`,`wo_num`,`category_id`,`addressee_uuid`,`sender_uuid`,`type`,`close_status`,`solve_status`,`handle_status`,`created_at`,`updated_at`,`state`,`category_extra_name`
     </sql>
 
     <insert id="insert" parameterType="WorkOrder">
-        insert into work_order(`title`,`content`,`category_id`,`addressee_uuid`,`sender_uuid`,`type`,`close_status`,`solve_status`,`handle_status`,`created_at`,`updated_at`,`state`,`category_extra_name`)
+        insert into work_order(`title`,`wo_num`,`content`,`category_id`,`addressee_uuid`,`sender_uuid`,`type`,`close_status`,`solve_status`,`handle_status`,`created_at`,`updated_at`,`state`,`category_extra_name`)
         values(
-          #{title},#{content},#{category_id},#{addressee_uuid},#{sender_uuid},#{type},#{close_status},#{solve_status},#{handle_status},#{created_at},#{updated_at},#{state},#{category_extra_name}
+          #{title},#{wo_num},#{content},#{category_id},#{addressee_uuid},#{sender_uuid},#{type},#{close_status},#{solve_status},#{handle_status},#{created_at},#{updated_at},#{state},#{category_extra_name}
         )
     </insert>
 
     <update id="update" parameterType="WorkOrder">
         update work_order set
-          `title`=#{title},`content`=#{content},`category_id`=#{category_id},`addressee_uuid`=#{addressee_uuid},`sender_uuid`=#{sender_uuid},`type`=#{type},`close_status`=#{close_status},`solve_status`=#{solve_status},`handle_status`=#{handle_status},`created_at`=#{created_at},`updated_at`=#{updated_at},`state`=#{state}
+          `title`=#{title},`wo_num`=#{wo_num},`content`=#{content},`category_id`=#{category_id},`addressee_uuid`=#{addressee_uuid},`sender_uuid`=#{sender_uuid},`type`=#{type},`close_status`=#{close_status},`solve_status`=#{solve_status},`handle_status`=#{handle_status},`created_at`=#{created_at},`updated_at`=#{updated_at},`state`=#{state}
           ,`category_extra_name`=#{category_extra_name}
         where `id`=#{id}
     </update>

@@ -23,21 +23,26 @@ public class MsgModelAction extends BaseAction {
     private Page page;
 
     /**
-     * 添加站内信模板
+     * 添加消息 模板
      *
-     * @param model_name        模板名称（不能一样）
-     * @param model_content     模板内容
-     * @param created_user      创建者姓名
-     * @param created_user_type 创建者类型
+     * @param modelName       模板名称（不能一样）
+     * @param modelContent    模板内容
+     * @param modelType       模板类型
+     * @param createdUser     创建者姓名
+     * @param createdUserType 创建者类型
      * @return json
      * @access public
      */
     public String addMsgModel(ActionBean actionBean) {
-        MsgModelBean.addRequest request = JsonKit.json2Bean(actionBean.body, MsgModelBean.addRequest.class);
+        MsgModelBean.AddRequest request = JsonKit.json2Bean(actionBean.body, MsgModelBean.AddRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        MsgStatus msgStatus = new MsgStatus();
+        if (request.createdUserType != msgStatus.USER_MANAGER) {//TODO 只有业管才能添加模板 ??
+            return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
@@ -45,17 +50,18 @@ public class MsgModelAction extends BaseAction {
         //赋值
         MsgModel msgModel = new MsgModel();
         msgModel.model_code = code;
-        msgModel.model_name = request.model_name;
-        msgModel.model_content = request.model_content;
-        msgModel.created_user = request.created_user;
-        msgModel.created_user_type = request.created_user_type;
+        msgModel.model_name = request.modelName;
+        msgModel.model_content = request.modelContent;
+        msgModel.model_type = request.modelType;
+        msgModel.created_user = request.createdUser;
+        msgModel.created_user_type = request.createdUserType;
         msgModel.status = request.status;
         msgModel.state = request.state;
         msgModel.created_at = date;
         msgModel.updated_at = date;
         //调用DAO
         //判断模板是否重复
-        MsgModel msgModelRepeat = msgModelDAO.getMsgModelRepeat(msgModel);
+        MsgModel msgModelRepeat = msgModelDAO.findMsgModelRepeat(msgModel);
         if (msgModelRepeat != null) {
             return json(BaseResponse.CODE_FAILURE, "模板已存在，请检查模板名称", response);
         }
@@ -68,19 +74,18 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板列表
-     * todo 还没写，暂时不知道分页怎么写
+     * 消息 模板列表
      *
-     * @param page         当前页码 ，可不传，默认为1
-     * @param last_id      上一页最大id ，可不传，默认为
-     * @param limit        每页显示行数，可不传，默认为
-     * @param model_status 模板状态（审核通过0/未通过1/已删除2）
+     * @param pageNum     当前页码 ，可不传，默认为1
+     * @param lastId      上一页最大id ，可不传，默认为
+     * @param limit       每页显示行数，可不传，默认为
+     * @param modelStatus 模板状态（审核通过0/未通过1/已删除2）
+     * @param modelSype   模板类型
      * @return json
      * @access public
      */
-
     public String listMsgModel(ActionBean actionBean) {
-        MsgModelBean.listRequest request = JsonKit.json2Bean(actionBean.body, MsgModelBean.listRequest.class);
+        MsgModelBean.ListRequest request = JsonKit.json2Bean(actionBean.body, MsgModelBean.ListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
@@ -88,11 +93,12 @@ public class MsgModelAction extends BaseAction {
         }
         //调用DAO
         MsgModelList msgModelList = new MsgModelList();
-        msgModelList.page = setPage(request.last_id, request.page_num, request.limit);
+        msgModelList.page = setPage(request.lastId, request.pageNum, request.limit);
         MsgModel msgModel = new MsgModel();
-        msgModel.status = request.model_status;
+        msgModel.status = request.modelStatus;
+        msgModel.model_type = request.modelType;
         msgModelList.msgModel = msgModel;
-        List<MsgModel> msgModels = msgModelDAO.getMsgModelList(msgModelList);
+        List<MsgModel> msgModels = msgModelDAO.findMsgModelList(msgModelList);
         response.data = msgModels;
         if (msgModels != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
@@ -102,23 +108,25 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板详情
+     * 消息 模板详情
      *
-     * @param model_code 模板代码
+     * @param modelCode 模板代码
      * @return json
      * @access public
      */
     public String infoMsgModel(ActionBean actionBean) {
-        MsgModelBean.infoRequest request = JsonKit.json2Bean(actionBean.body, MsgModelBean.infoRequest.class);
+        MsgModelBean.InfoRequest request = JsonKit.json2Bean(actionBean.body, MsgModelBean.InfoRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         //调用DAO
-        MsgModel msgModel = msgModelDAO.getMsgModelInfo(request.model_code);
-        response.data = msgModel;
-        if (msgModel != null) {
+        MsgModel msgModel = new MsgModel();
+        msgModel.model_code = request.modelCode;
+        MsgModel modelInfo = msgModelDAO.findMsgModelInfo(msgModel);
+        response.data = modelInfo;
+        if (modelInfo != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
@@ -126,34 +134,65 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板操作（审核、删除）
+     * 消息 模板操作（审核、删除）
      *
-     * @param model_code   模板代码
-     * @param operate_code 操作代码（审核通过1，删除2）
-     * @param user_id      操作人id
-     * @param user_type    操作人类型（只有业管可以审核和删除）
+     * @param modelCode 模板代码
+     * @param status    模板状态（审核通过1，删除2）
+     * @param modelType 模板类型
+     * @param userId    操作人id
+     * @param userType  操作人类型（只有业管可以审核和删除）
      * @return json
      * @access public
      */
     public String updateMsgModel(ActionBean actionBean) {
-        MsgModelBean.updateRequest request = JsonKit.json2Bean(actionBean.body, MsgModelBean.updateRequest.class);
+        MsgModelBean.UpdateRequest request = JsonKit.json2Bean(actionBean.body, MsgModelBean.UpdateRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if (request.user_type != 1) {//只有业管用户才能操作站内信模板
-            return json(BaseResponse.CODE_FAILURE, "操作失败，没有权限", response);
+        MsgStatus msgStatus = new MsgStatus();
+        if (request.userType != msgStatus.USER_MANAGER) {//TODO 只有业管用户才能操作消息 模板？？
+            return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //赋值
         MsgModelUpdate modelUpdate = new MsgModelUpdate();
-        modelUpdate.model_code = request.model_code;
-        modelUpdate.status = request.status;
-        //调用DAO
-        int updateRes = msgModelDAO.updateMsgModel(modelUpdate);
-        if (updateRes != 0) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-        } else {
+        modelUpdate.model_code = request.modelCode;
+        if (request.status == 0 && request.modelType == 0) {
+            return json(BaseResponse.CODE_FAILURE, "no updated params", response);
+        }
+        if (request.status != 0 || request.modelType == 0) {
+            modelUpdate.status = request.status;
+            //调用DAO
+            int updateRes = msgModelDAO.updateMsgModelStatus(modelUpdate);
+            if (updateRes != 0) {
+                return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            }
+        }
+        if (request.modelType != 0 || request.status == 0) {
+            modelUpdate.status = request.status;
+            modelUpdate.model_type = request.modelType;
+            //调用DAO
+            int updateRes = msgModelDAO.updateMsgModelType(modelUpdate);
+            if (updateRes != 0) {
+                return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            }
+        }
+        if (request.status != 0 && request.modelType != 0) {
+            modelUpdate.status = request.status;
+            modelUpdate.model_type = request.modelType;
+            //调用DAO
+            int updateRes = msgModelDAO.updateMsgModel(modelUpdate);
+            if (updateRes != 0) {
+                return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            }
+        }else{
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
     }

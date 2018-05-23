@@ -2,7 +2,7 @@ package com.inschos.message.model;
 
 public class MsgUpdate {
 
-    public long msg_id;//站内信id
+    public long msg_id;//消息 id
 
     public int operate_id;//操作代码:默认为1（删除/已读），2（还原/未读）
 
