@@ -227,6 +227,7 @@ public class MsgInboxAction extends BaseAction {
      * @param limit          每页显示行数，可不传，默认为
      * @return json
      * @access public
+     * TODO 发件箱要不要按分类展示
      */
     public String findMsgSysList(ActionBean actionBean) {
         MsgInboxBean.OutboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.OutboxListRequest.class);
