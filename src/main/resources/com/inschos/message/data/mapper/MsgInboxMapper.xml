@@ -47,6 +47,12 @@
             <when test="user_type==4">
                 GROUP BY `type`
             </when>
+            <otherwise>
+                <where>
+                    `type` in (1,2,3,6,7)
+                </where>
+                GROUP BY `type`
+            </otherwise>
         </choose>
     </select>
 
@@ -55,19 +61,39 @@
             from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
             <where>
                 <choose>
-                    <when test="page.lastId>0">
-                        msg_rec.id&gt;#{page.lastId}
-                    </when>
-                    <when test="page.start>0">
-                        msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0
-                        limit #{page.start},1
-                        )
+                    <when test="user_type==4">
+                        <choose>
+                            <when test="page.lastId>0">
+                                msg_rec.id&gt;#{page.lastId}
+                            </when>
+                            <when test="page.start>0">
+                                msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0
+                                limit #{page.start},1
+                                )
+                            </when>
+                            <otherwise>
+                                1=1
+                            </otherwise>
+                        </choose>
+                        AND msg_rec.state = 0 AND  msg_rec.type =#{type} limit #{page.offset}
                     </when>
                     <otherwise>
-                        1=1
+                        <choose>
+                            <when test="page.lastId>0">
+                                msg_rec.id&gt;#{page.lastId}
+                            </when>
+                            <when test="page.start>0">
+                                msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0
+                                limit #{page.start},1
+                                )
+                            </when>
+                            <otherwise>
+                                1=1
+                            </otherwise>
+                        </choose>
+                        AND msg_rec.state = 0 AND msg_rec.user_id =#{user_id} AND  msg_rec.user_type =#{user_type} AND  msg_rec.type =#{type} limit #{page.offset}
                     </otherwise>
                 </choose>
-                AND msg_rec.state = 0 AND msg_rec.user_id =#{user_id} AND  msg_rec.user_type =#{user_type} AND  msg_rec.type =#{type} limit #{page.offset}
             </where>
     </select>
     <!--联查映射-->
@@ -89,7 +115,7 @@
 
     <!--获取未接收列表-->
     <select id="findUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
-        select `id`
+        select `id`,`type`
         from  msg_sys
         where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 0
     </select>

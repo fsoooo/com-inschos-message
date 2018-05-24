@@ -53,22 +53,28 @@ public class MsgInboxAction extends BaseAction {
         msgRec.user_type = request.userType;
         MsgStatus msgStatus = new MsgStatus();
         //根据user_type判断不同用户可以查看消息 类型
+        //TODO 判断登录
+        int loginStatus = 1;
         switch (request.userType) {
-            case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
+            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
                 List<MsgInboxLists> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxManager;
                 break;
-            case 2://企业用户
+            case 3://企业用户
+                if (loginStatus != 0) {
+                    String insertRes = insertMsgRec(request.userId, request.userType);
+                }
                 List<MsgInboxLists> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxCompany;
                 break;
-            case 3://代理人用户
+            case 2://代理人用户
+                if (loginStatus != 0) {
+                    String insertRes = insertMsgRec(request.userId, request.userType);
+                }
                 List<MsgInboxLists> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxAgent;
                 break;
-            case 4://个人用户-判断登录信息，再向收件箱表里插入数据
-                //TODO 判断登录
-                int loginStatus = 1;
+            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
                 if (loginStatus != 0) {
                     String insertRes = insertMsgRec(request.userId, request.userType);
                 }
@@ -123,22 +129,28 @@ public class MsgInboxAction extends BaseAction {
         msgRec.type = request.messageType;
         MsgStatus msgStatus = new MsgStatus();
         //根据user_type判断不同用户可以查看消息 类型
+        //TODO 判断登录
+        int loginStatus = 1;
         switch (request.userType) {
-            case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
+            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
                 List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecListByType(msgRec);
                 response.data = msgInboxManager;
                 break;
-            case 2://企业用户
+            case 3://企业用户
+                if (loginStatus != 0) {
+                    String insertRes = insertMsgRec(request.userId, request.userType);
+                }
                 List<MsgRec> msgInboxCompany = msgInboxDAO.findMsgRecListByType(msgRec);
                 response.data = msgInboxCompany;
                 break;
-            case 3://代理人用户
+            case 2://代理人用户
+                if (loginStatus != 0) {
+                    String insertRes = insertMsgRec(request.userId, request.userType);
+                }
                 List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecListByType(msgRec);
                 response.data = msgInboxAgent;
                 break;
-            case 4://个人用户-判断登录信息，再向收件箱表里插入数据
-                //TODO 判断登录
-                int loginStatus = 1;
+            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
                 if (loginStatus != 0) {
                     String insertRes = insertMsgRec(request.userId, request.userType);
                 }
@@ -185,6 +197,7 @@ public class MsgInboxAction extends BaseAction {
         List insertResList = new ArrayList();
         for (MsgSys sys : MsgSys) {
             msgRec.msg_id = sys.id;
+            msgRec.type = sys.type;
             msgRec.sys_status = 0;
             msgRec.state = 0;
             msgRec.created_at = date;
