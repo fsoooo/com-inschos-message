@@ -3,7 +3,7 @@ package com.inschos.message.model;
 public class MsgStatus {
 
     /**
-     * 消息列表状态(未读/已读/删除)
+     * 消息列表状态(未读/已读/全部/删除)
      */
     public final static int MSG_READ = 1;
     public final static int MSG_UNREAD = 2;

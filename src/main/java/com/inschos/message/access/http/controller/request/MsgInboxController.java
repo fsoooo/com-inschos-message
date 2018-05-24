@@ -37,8 +37,8 @@ public class MsgInboxController {
      * 消息 收件箱列表
      *
      * @param user_id            用户id
-     * @param user_type       用户类型:个人用户 3/代理人 2/企业用户 1/业管用户
-     * @param message_status  消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param user_type      用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
+     * @param message_status  消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
      * @param page                  当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为
      * @param limit                 每页显示行数，可不传，默认为
@@ -61,8 +61,8 @@ public class MsgInboxController {
      * 消息 发件箱列表
      *
      * @param user_id            用户id
-     * @param user_type       用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
-     * @param message_status  消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param user_type       用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
+     * @param message_status  消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
      * @param page                  当前页码 ，可不传，默认为1
      * @param last_id               上一页最大id ，可不传，默认为
      * @param limit                 每页显示行数，可不传，默认为

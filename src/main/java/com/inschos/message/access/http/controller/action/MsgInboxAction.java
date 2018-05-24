@@ -24,13 +24,13 @@ public class MsgInboxAction extends BaseAction {
      *
      * @param userId        用户id
      * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
      * @param pageNum       当前页码 ，可不传，默认为1
      * @param lastId        上一页最大id ，可不传，默认为
      * @param limit         每页显示行数，可不传，默认为
      * @return json
      * <p>
-     * 业管可以查看所有人的消息，返回按消息分类展示
+     * 业管可以查看所有人、所有类型的消息，返回按消息分类展示
      * 消息 列表组成：消息 系统表里收件人id为-1的（系统消息）+ 消息 系统表里收件人id为user_id的（订阅消息、私信）
      * 匹配消息 系统表和消息 收件箱表，向用户收件箱里插入相应的数据，并修改消息 系统表的状态
      * todo 只要用户接收消息 ，系统表就默认已经读取了，不在插入
@@ -156,7 +156,7 @@ public class MsgInboxAction extends BaseAction {
      * TODO 传参统一用小驼峰命名规则
      *
      * @param user_id|用户ID(收件人)
-     * @param user_type|发件人类型，个人用户1/企业用户2/业管用户等
+     * @param user_type|发件人类型，用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
      * @return mixed
      * @access public
      */
@@ -202,8 +202,8 @@ public class MsgInboxAction extends BaseAction {
      * 消息 发件箱列表
      *
      * @param user_id        用户id
-     * @param user_type      用户类型:个人用户 3/代理人 2/企业用户 1/业管用户 0
-     * @param message_status 消息 状态:未读 0/已读 1/全部 2/删除 3 （非必传，默认为0）
+     * @param user_type      用户类型:用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
+     * @param message_status 消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
      * @param page           当前页码 ，可不传，默认为1
      * @param last_id        上一页最大id ，可不传，默认为
      * @param limit          每页显示行数，可不传，默认为

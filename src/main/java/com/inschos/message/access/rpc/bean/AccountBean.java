@@ -15,7 +15,7 @@ public class AccountBean {
     /** 登录账号uuid*/
     public String accountUuid;
 
-    /** 1：个人账号，2：企业账号，3：业管账号，4：代理人*/
+    /** 1：个人账号，2：企业账号，3：代理人，4：业管账号，*/
     public int userType;
 
     /** 用户ID*/

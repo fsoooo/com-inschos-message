@@ -25,18 +25,17 @@ public class MsgIndexAction extends BaseAction {
      * @param title|标题
      * @param content|内容
      * @param attachment|附件:上传附件的URL,可为空
-     * @param type|消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/
+     * @param type|消息                            类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/
      * @param fromId|发件人ID
-     * @param fromType|发件人类型:个人用户1/企业用户2/业管用户等3
+     * @param fromType|发件人类型:用户类型:个人用户           1/企业用户 2/代理人 3/业管用户 4
      * @param toId|收件人id
-     * @param toType|收件人类型:个人用户1/企业用户2/业管用户等3
-     * @param status|读取状态:标识消息 是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
+     * @param toType|收件人类型:用户类型:个人用户             1/企业用户 2/代理人 3/业管用户 4
+     * @param status|读取状态:标识消息                   是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
      * @param sendTime|发送时间:默认为空。需要延时发送的，发送时间不为空
      * @param parentId|消息父级id
-     *
      * @return json
      * @access public
-     *
+     * <p>
      * TODO 消息 要素判断-05.14
      * TODO 群发消息 判断-05.15 业管可以发送所有类型的消息，代理人可以给自己的客户群发消息，企业用户可以给自己的员工群发消息，个人用户只能发送私信
      * TODO 延时发送判断-05.15  如果要延时发送消息 ，定时触发机制？？？
@@ -45,7 +44,6 @@ public class MsgIndexAction extends BaseAction {
      * TODO 判断是否重复插入？
      * TODO 附件格式，只存储，不操作。(端上获取key,传参,存储)
      * TODO 个人用户可以跟代理人（顾问）联系。待确定用户之间的联系方式
-     *
      */
     public String addMessage(ActionBean actionBean) {
         MsgIndexBean request = JsonKit.json2Bean(actionBean.body, MsgIndexBean.class);
@@ -54,19 +52,19 @@ public class MsgIndexAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if(request.title.isEmpty()||request.content.isEmpty()){
+        if (request.title.isEmpty() || request.content.isEmpty()) {
             return json(BaseResponse.CODE_FAILURE, "title or content is empty", response);
         }
-        if(request.fromId==0||request.fromType==0){
+        if (request.fromId == 0 || request.fromType == 0) {
             return json(BaseResponse.CODE_FAILURE, "from_id or from_type is empty", response);
         }
-        if (request.toUser == null||request.toUser.size()==0) {
+        if (request.toUser == null || request.toUser.size() == 0) {
             return json(BaseResponse.CODE_FAILURE, "to_user is empty", response);
         }
         //消息配置
         MsgStatus msgStatus = new MsgStatus();
         //TODO 权限判断 个人1/企业2/代理人3/业管4
-        if(request.toUser.size()>1&&request.fromType==msgStatus.USER_PERSON){//只有个人用户不能发送多条和系统消息
+        if (request.toUser.size() > 1 && request.fromType == msgStatus.USER_PERSON) {//只有个人用户不能发送多条和系统消息
             return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //TODO 系统消息toId和toType都等于-1，多发，和私信
@@ -78,15 +76,15 @@ public class MsgIndexAction extends BaseAction {
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
         for (MsgToBean msgToBean : request.toUser) {
-            if(msgToBean.toId==msgStatus.MSG_SYS_KEY||msgToBean.toType==msgStatus.MSG_SYS_KEY){
-                if(request.fromType!=msgStatus.USER_MANAGER){//只有业管系统消息
+            if (msgToBean.toId == msgStatus.MSG_SYS_KEY || msgToBean.toType == msgStatus.MSG_SYS_KEY) {
+                if (request.fromType != msgStatus.USER_MANAGER) {//只有业管系统消息
                     return json(BaseResponse.CODE_FAILURE, "no permission", response);
                 }
                 //TODO 如果发送的是系统消息,只需要插一次
                 msgSys.title = request.title;
                 msgSys.content = request.content;
                 msgSys.type = request.type;
-                if(request.attachment.isEmpty()){
+                if (request.attachment.isEmpty()) {
                     request.attachment = "";
                 }
                 msgSys.attachment = request.attachment;
@@ -102,18 +100,18 @@ public class MsgIndexAction extends BaseAction {
                 msgSendRes.to_id = msgToBean.toId;
                 msgSendRes.to_type = msgToBean.toType;
                 int send_result = msgIndexDAO.addMsgSys(msgSys);
-                if(send_result==1){
+                if (send_result == 1) {
                     msgSendRes.send_res = "发送成功";
-                }else{
+                } else {
                     msgSendRes.send_res = "发送失败";
                 }
                 msgSendResList.add(msgSendRes);
                 break;
-            }else{
+            } else {
                 msgSys.title = request.title;
                 msgSys.content = request.content;
                 msgSys.type = request.type;
-                if(request.attachment.isEmpty()){
+                if (request.attachment.isEmpty()) {
                     request.attachment = "";
                 }
                 msgSys.attachment = request.attachment;
@@ -129,9 +127,9 @@ public class MsgIndexAction extends BaseAction {
                 msgSendRes.to_id = msgToBean.toId;
                 msgSendRes.to_type = msgToBean.toType;
                 int send_result = msgIndexDAO.addMsgSys(msgSys);
-                if(send_result==1){
+                if (send_result == 1) {
                     msgSendRes.send_res = "发送成功";
-                }else{
+                } else {
                     msgSendRes.send_res = "发送失败";
                 }
                 msgSendResList.add(msgSendRes);

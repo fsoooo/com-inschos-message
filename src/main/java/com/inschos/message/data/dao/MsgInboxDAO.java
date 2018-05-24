@@ -22,7 +22,7 @@ public class MsgInboxDAO {
      *
      * @param user_id|用户ID(收件人)
      * @param user_type|用户类型(收件人)
-     * @param message_status|消息 状态:未读 0/已读 1 （非必传，默认为0）
+     * @param message_status|消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
      * @param page|分页页码               （非必传，默认为1）
      * @param limit|每页显示行数            （非必传，默认为10）
      * @return mixed
@@ -37,7 +37,7 @@ public class MsgInboxDAO {
      *
      * @param msg_id|消息标识列
      * @param user_id|用户ID(收件人)
-     * @param user_type|发件人类型，个人用户1/企业用户2/业管用户等3
+     * @param user_type|发件人类型，用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
      * @param sys_status|消息状态：默认为未读0/已读1
      * @return mixed
      * @access public
