@@ -208,7 +208,7 @@ public class WorkOrderAction extends BaseAction {
         WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
         if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
 
-            if (workOrder.close_status!=WorkOrder.STATUS_CLOSED){
+            if (workOrder.close_status==WorkOrder.STATUS_CLOSED){
                 return json(BaseResponse.CODE_FAILURE,"已关闭",response);
             }
 
