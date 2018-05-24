@@ -4,6 +4,8 @@ public class MsgRec {
 
     public Page page;
 
+    public MsgStatus msgStatus;
+
     public String body;
 
     public long id;
@@ -15,6 +17,8 @@ public class MsgRec {
     public int user_type;//'发件人类型，个人1/企业2/代理人3/业管4
 
     public int sys_status;//'消息状态：默认为未读0/已读1'
+
+    public int type;//'消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
 
     public int state;//'删除标识:默认为0，1未删除'
 

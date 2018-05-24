@@ -37,7 +37,7 @@ public class MsgInboxAction extends BaseAction {
      * @access public
      */
     public String findMsgRecList(ActionBean actionBean) {
-        MsgInboxBean.inboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.inboxListRequest.class);
+        MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.InboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
@@ -46,22 +46,24 @@ public class MsgInboxAction extends BaseAction {
         //调用DAO
         MsgRec msgRec = new MsgRec();
         msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
-        msgRec.sys_status = request.messageStatus;
+        if (request.messageStatus != 0) {
+            msgRec.sys_status = request.messageStatus;
+        }
         msgRec.user_id = request.userId;
         msgRec.user_type = request.userType;
         MsgStatus msgStatus = new MsgStatus();
         //根据user_type判断不同用户可以查看消息 类型
         switch (request.userType) {
             case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-                List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgInboxLists> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxManager;
                 break;
             case 2://企业用户
-                List<MsgRec> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgInboxLists> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxCompany;
                 break;
             case 3://代理人用户
-                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgInboxLists> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxAgent;
                 break;
             case 4://个人用户-判断登录信息，再向收件箱表里插入数据
@@ -70,12 +72,11 @@ public class MsgInboxAction extends BaseAction {
                 if (loginStatus != 0) {
                     String insertRes = insertMsgRec(request.userId, request.userType);
                 }
-                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgInboxLists> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
                 response.data = msgInboxPerson;
                 break;
             default:
-                List<MsgRec> msgInboxs = msgInboxDAO.findMsgRecList(msgRec);
-                response.data = msgInboxs;
+                response.data = "";
                 break;
         }
         if (response.data != null) {
@@ -102,31 +103,37 @@ public class MsgInboxAction extends BaseAction {
      * @access public
      */
     public String findMsgResListByType(ActionBean actionBean) {
-        MsgInboxBean.inboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.inboxListRequest.class);
+        MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.InboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
+        if(request.messageType==0){
+            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
+        }
         //调用DAO
         MsgRec msgRec = new MsgRec();
         msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
-        msgRec.sys_status = request.messageStatus;
+        if (request.messageStatus != 0) {
+            msgRec.sys_status = request.messageStatus;
+        }
         msgRec.user_id = request.userId;
         msgRec.user_type = request.userType;
+        msgRec.type = request.messageType;
         MsgStatus msgStatus = new MsgStatus();
         //根据user_type判断不同用户可以查看消息 类型
         switch (request.userType) {
             case 1://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-                List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecListByType(msgRec);
                 response.data = msgInboxManager;
                 break;
             case 2://企业用户
-                List<MsgRec> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxCompany = msgInboxDAO.findMsgRecListByType(msgRec);
                 response.data = msgInboxCompany;
                 break;
             case 3://代理人用户
-                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecListByType(msgRec);
                 response.data = msgInboxAgent;
                 break;
             case 4://个人用户-判断登录信息，再向收件箱表里插入数据
@@ -135,12 +142,11 @@ public class MsgInboxAction extends BaseAction {
                 if (loginStatus != 0) {
                     String insertRes = insertMsgRec(request.userId, request.userType);
                 }
-                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
+                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecListByType(msgRec);
                 response.data = msgInboxPerson;
                 break;
             default:
-                List<MsgRec> msgInboxs = msgInboxDAO.findMsgRecList(msgRec);
-                response.data = msgInboxs;
+                response.data = "";
                 break;
         }
         if (response.data != null) {
@@ -149,7 +155,6 @@ public class MsgInboxAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
     }
-
 
     /**
      * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
@@ -201,17 +206,17 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 发件箱列表
      *
-     * @param user_id        用户id
-     * @param user_type      用户类型:用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
-     * @param message_status 消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
-     * @param page           当前页码 ，可不传，默认为1
-     * @param last_id        上一页最大id ，可不传，默认为
+     * @param userId        用户id
+     * @param userType      用户类型:用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
+     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
+     * @param pageNum           当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
      * @param limit          每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
     public String findMsgSysList(ActionBean actionBean) {
-        MsgInboxBean.outboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.outboxListRequest.class);
+        MsgInboxBean.OutboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.OutboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
@@ -235,12 +240,12 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 详情
      *
-     * @param message_id 消息 id
+     * @param messageId 消息 id
      * @return json
      * @access public
      */
     public String findMsgInfo(ActionBean actionBean) {
-        MsgInboxBean.msgInfoRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.msgInfoRequest.class);
+        MsgInboxBean.MsgInfoRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.MsgInfoRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
@@ -269,14 +274,14 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 操作消息 （收件箱 读取和删除）
      *
-     * @param message_id   消息 id
-     * @param operate_id   操作代码:默认为1（删除/已读），2（还原/未读）
-     * @param operate_type 操作类型:read 更改读取状态，del 更改删除状态
+     * @param messageId   消息 id
+     * @param operateId   操作代码:默认为1（删除/已读），2（还原/未读）
+     * @param operateType 操作类型:read 更改读取状态，del 更改删除状态
      * @return json
      * @access public
      */
     public String updateMsgRec(ActionBean actionBean) {
-        MsgInboxBean.msgUpdateRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.msgUpdateRequest.class);
+        MsgInboxBean.MsgUpdateRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.MsgUpdateRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {

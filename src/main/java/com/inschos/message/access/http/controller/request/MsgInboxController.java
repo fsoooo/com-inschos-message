@@ -34,20 +34,15 @@ public class MsgInboxController {
     private MsgInboxAction msgInboxAction;
 
     /**
-     * 消息 收件箱列表
+     * 消息 收件箱列表-总列表
      *
-     * @param user_id            用户id
-     * @param user_type      用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
-     * @param message_status  消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
-     * @param page                  当前页码 ，可不传，默认为1
-     * @param last_id               上一页最大id ，可不传，默认为
-     * @param limit                 每页显示行数，可不传，默认为
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
      * @return json
-     * <p>
-     * 业管可以查看所有人的消息
-     * 消息 列表组成：消息 系统表里收件人id为0的（系统消息）+ 消息 系统表里收件人id为user_id的（订阅消息、私信）
-     * 匹配消息 系统表和消息 收件箱表，向用户收件箱里插入相应的数据，并修改消息 系统表的状态
-     * todo 只要用户接收消息 ，系统表就默认已经读取了，不在插入
      * @access public
      */
     @GetActionBeanAnnotation(isCheckAccess = false)
@@ -58,14 +53,34 @@ public class MsgInboxController {
     }
 
     /**
+     * 消息 收件箱列表-某一分类列表
+     *
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
+     * @return json
+     * @access public
+     */
+    @GetActionBeanAnnotation(isCheckAccess = false)
+    @RequestMapping("/list/inbox/type/**")
+    @ResponseBody
+    public String listInboxByType(ActionBean actionBean) {
+        return msgInboxAction.findMsgResListByType(actionBean);
+    }
+
+    /**
      * 消息 发件箱列表
      *
-     * @param user_id            用户id
-     * @param user_type       用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
-     * @param message_status  消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
-     * @param page                  当前页码 ，可不传，默认为1
-     * @param last_id               上一页最大id ，可不传，默认为
-     * @param limit                 每页显示行数，可不传，默认为
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
@@ -79,7 +94,7 @@ public class MsgInboxController {
     /**
      * 消息 详情
      *
-     * @param message_id    消息 id
+     * @param messageId 消息 id
      * @return json
      * @access public
      */
@@ -93,9 +108,9 @@ public class MsgInboxController {
     /**
      * 操作消息 （收件箱 读取和删除）
      *
-     * @param message_id      消息 id
-     * @param operate_id      操作代码:默认为1（删除/已读），2（还原/未读）
-     * @param operate_type    操作类型:read 更改读取状态，del 更改删除状态
+     * @param messageId   消息 id
+     * @param operateId   操作代码:默认为1（删除/已读），2（还原/未读）
+     * @param operateType 操作类型:read 更改读取状态，del 更改删除状态
      * @return json
      * @access public
      */

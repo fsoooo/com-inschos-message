@@ -21,43 +21,69 @@
         `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`status`,`send_time`,`state`,`created_at`,`updated_at`
     </sql>
 
-    <!--获取收件列表-->
-    <select id="findMsgRecList" parameterType="MsgRec" resultMap="selectMsgRecAndSys">
-        select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
-        from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
-        <where>
-            <choose>
-                <when test="page.lastId>0">
-                    msg_rec.id&gt;#{page.lastId}
-                </when>
-                <when test="page.start>0">
-                    msg_rec.id&gt;=(select id from msg_rec where sys_status=#{MsgRec.sys_status} AND msg_rec.state=0
-                    limit #{page.start},1
-                    )
-                </when>
-                <otherwise>
-                    1=1
-                </otherwise>
-            </choose>
-            AND msg_rec.state = 0
-            limit #{page.offset}
-        </where>
+    <!--获取收件列表 TODO 收件箱总列表，返回按messageType  GroupBy 之后返回(类型，数量，和最大时间值)-->
+    <!--TODO 消息类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/-->
+    <select  id="findMsgRecList" parameterType="MsgRec" resultType="MsgInboxLists">
+        select `type`,count(`id`) as count, max(`created_at`) as time from msg_rec
+        <choose>
+            <when test="user_type==1">
+                <where>
+                    `type` in (1,2,3,6,7)
+                </where>
+                GROUP BY `type`
+            </when>
+            <when test="user_type==2">
+                <where>
+                    `type` in (1,2,3,5,6,7)
+                </where>
+                GROUP BY `type`
+            </when>
+            <when test="user_type==3">
+                <where>
+                    `type` in (1,2,3,4,5,7)
+                </where>
+                GROUP BY `type`
+            </when>
+            <when test="user_type==4">
+                GROUP BY `type`
+            </when>
+        </choose>
     </select>
 
+    <select id="findMsgRecListByType" parameterType="MsgRec" resultMap="selectMsgRecAndSys">
+            select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
+            from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
+            <where>
+                <choose>
+                    <when test="page.lastId>0">
+                        msg_rec.id&gt;#{page.lastId}
+                    </when>
+                    <when test="page.start>0">
+                        msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0
+                        limit #{page.start},1
+                        )
+                    </when>
+                    <otherwise>
+                        1=1
+                    </otherwise>
+                </choose>
+                AND msg_rec.state = 0 AND msg_rec.user_id =#{user_id} AND  msg_rec.user_type =#{user_type} AND  msg_rec.type =#{type} limit #{page.offset}
+            </where>
+    </select>
     <!--联查映射-->
     <resultMap id="selectMsgRecAndSys" type="MsgRec" autoMapping="true">
         <!--主表的主键id-->
-        <id column="id" property="id" />
+        <id column="id" property="id"/>
         <association property="msgSys" javaType="MsgSys">
             <!--todo 附表的主键id-->
             <!--<id column="id" property="id" />-->
-            <result column="title" property="title" />
-            <result column="type" property="type" />
-            <result column="from_id" property="from_id" />
-            <result column="from_type" property="from_type" />
-            <result column="status" property="status" />
-            <result column="send_time" property="send_time" />
-            <result column="state" property="state" />
+            <result column="title" property="title"/>
+            <result column="type" property="type"/>
+            <result column="from_id" property="from_id"/>
+            <result column="from_type" property="from_type"/>
+            <result column="status" property="status"/>
+            <result column="send_time" property="send_time"/>
+            <result column="state" property="state"/>
         </association>
     </resultMap>
 
@@ -70,8 +96,8 @@
 
     <!--收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）-->
     <insert id="insertMsgRec" parameterType="MsgRec">
-        insert into  msg_rec(`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`)
-        values(#{msg_id},#{user_id},#{user_type},#{sys_status},#{state},#{created_at},#{updated_at})
+        insert into  msg_rec(`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`type`,`created_at`,`updated_at`)
+        values(#{msg_id},#{user_id},#{user_type},#{sys_status},#{state},#{type},#{created_at},#{updated_at})
     </insert>
 
     <!--更改消息读取状态-->
@@ -85,7 +111,7 @@
     <select id="findMsgSysList" parameterType="MsgSys" resultType="MsgSys">
         select
         <include refid="Sys_Column_List"/>
-        from  msg_sys
+        from msg_sys
         <where>
             <choose>
                 <when test="page.lastId>0">
@@ -114,28 +140,28 @@
 
     <!--联查映射-->
     <resultMap id="MsgRecAndSysInfo" type="MsgRec" autoMapping="true">
-    <!--主表的主键id-->
-    <id column="id" property="id" />
-    <association property="msgSys" javaType="MsgSys">
-    <!--todo 附表的主键id-->
-    <!--<id column="id" property="id" />-->
-    <result column="title" property="title" />
-    <result column="content" property="content" />
-    <result column="attachment" property="attachment" />
-    <result column="type" property="type" />
-    <result column="from_id" property="from_id" />
-    <result column="from_type" property="from_type" />
-    <result column="status" property="status" />
-    <result column="send_time" property="send_time" />
-    <result column="state" property="state" />
-    </association>
+        <!--主表的主键id-->
+        <id column="id" property="id"/>
+        <association property="msgSys" javaType="MsgSys">
+            <!--todo 附表的主键id-->
+            <!--<id column="id" property="id" />-->
+            <result column="title" property="title"/>
+            <result column="content" property="content"/>
+            <result column="attachment" property="attachment"/>
+            <result column="type" property="type"/>
+            <result column="from_id" property="from_id"/>
+            <result column="from_type" property="from_type"/>
+            <result column="status" property="status"/>
+            <result column="send_time" property="send_time"/>
+            <result column="state" property="state"/>
+        </association>
     </resultMap>
 
     <!--获取发件箱详情-->
     <select id="findMsgSysInfo" parameterType="MsgSys" resultType="MsgSys">
         select
         <include refid="Sys_Column_List"/>
-        from   msg_sys
+        from msg_sys
         where `id`=#{id}
     </select>
 

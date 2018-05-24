@@ -6,7 +6,7 @@ public class Page {
 
     public long start = -1;
 
-    public int offset;
+    public int offset = 10;
 
     public long lastId = -1;
 }
