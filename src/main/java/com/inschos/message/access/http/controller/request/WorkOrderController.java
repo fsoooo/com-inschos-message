@@ -44,7 +44,7 @@ public class WorkOrderController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("/list/agent/my")
+    @RequestMapping("/agent/my")
     @ResponseBody
     public String listOfAgentMy(ActionBean bean){
         return workOrderAction.listOfAgentMy(bean);
