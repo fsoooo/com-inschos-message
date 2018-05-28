@@ -116,47 +116,25 @@
         </association>
     </resultMap>
 
-    <select id="findMsgRecListByParent" parameterType="MsgRec" resultType="selectMsgRecAndSysByParent">
+    <select id="findMsgRecListByParent" parameterType="MsgRec" resultMap="selectMsgRecAndSysByParent">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`,
-        `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`content`,`msg_sys`.`type`,
+        `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`,
+        `msg_sys`.`content`,`msg_sys`.`type`,
         `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
         from msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         <where>
             <choose>
-                <when test="user_type==4">
-                    <choose>
-                        <when test="page.lastId>0">
-                            msg_rec.id&gt;#{page.lastId}
-                        </when>
-                        <when test="page.start>0">
-                            msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0
-                            limit #{page.start},1
-                            )
-                        </when>
-                        <otherwise>
-                            1=1
-                        </otherwise>
-                    </choose>
-                    AND msg_rec.state = 0 AND msg_rec.type =#{type} AND parent_id =#{parent_id} limit #{page.offset}
+                <when test="page.lastId>0">
+                    msg_rec.id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0 AND msg_rec.parent_id =#{parent_id} limit #{page.start},1)
                 </when>
                 <otherwise>
-                    <choose>
-                        <when test="page.lastId>0">
-                            msg_rec.id&gt;#{page.lastId}
-                        </when>
-                        <when test="page.start>0">
-                            msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0
-                            limit #{page.start},1
-                            )
-                        </when>
-                        <otherwise>
-                            1=1
-                        </otherwise>
-                    </choose>
-                    AND msg_rec.state = 0 AND msg_rec.user_id =#{user_id} AND msg_rec.user_type =#{user_type} AND
-                    msg_rec.type =#{type} AND parent_id =#{parent_id} limit #{page.offset}
+                    1=1
                 </otherwise>
             </choose>
+            AND msg_rec.state = 0 AND msg_rec.user_id =#{user_id} AND msg_rec.user_type =#{user_type} AND msg_rec.type =#{type} AND msg_rec.parent_id =#{parent_id} limit #{page.offset}
         </where>
     </select>
     <!--联查映射-->
@@ -242,7 +220,8 @@
                     id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    id&gt;=(select id from msg_sys where status=#{status} AND state=0 AND type =#{type} limit #{page.start},1)
+                    id&gt;=(select id from msg_sys where status=#{status} AND state=0 AND type =#{type} limit
+                    #{page.start},1)
                 </when>
                 <otherwise>
                     1=1
@@ -263,7 +242,8 @@
                     id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    id&gt;=(select id from msg_sys where status=#{status} AND state=0 AND type =#{type} AND parent_id =#{parent_id} limit #{page.start},1)
+                    id&gt;=(select id from msg_sys where status=#{status} AND state=0 AND type =#{type} AND parent_id
+                    =#{parent_id} limit #{page.start},1)
                 </when>
                 <otherwise>
                     1=1

@@ -189,11 +189,8 @@ public class MsgInboxAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if(request.messageStatus==0){
-            return json(BaseResponse.CODE_FAILURE, "messageStatus is empty", response);
-        }
-        if(request.messageStatus!=5||request.messageStatus!=7){
-            return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
+        if(request.messageType==0){
+            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
         }
         if(request.parentId==0){
             return json(BaseResponse.CODE_FAILURE, "parentId is empty", response);
@@ -207,6 +204,10 @@ public class MsgInboxAction extends BaseAction {
         msgRec.type = request.messageType;
         msgRec.parent_id = request.parentId;
         MsgStatus msgStatus = new MsgStatus();
+        logger.info(msgRec.user_id);
+        logger.info(msgRec.user_type);
+        logger.info(msgRec.type);
+        logger.info(msgRec.parent_id);
         //根据user_type判断不同用户可以查看消息 类型
         //TODO 判断登录
         int loginStatus = 1;
@@ -224,7 +225,7 @@ public class MsgInboxAction extends BaseAction {
 //                response.data = msgInboxCompany;
 //                break;
             case 2://代理人用户
-                if(request.messageStatus!=5){
+                if(request.messageType!=5){
                     return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
                 }
                 if (loginStatus != 0) {
@@ -234,7 +235,7 @@ public class MsgInboxAction extends BaseAction {
                 response.data = msgInboxAgent;
                 break;
             case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                if(request.messageStatus!=7){
+                if(request.messageType!=7){
                     return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
                 }
                 if (loginStatus != 0) {
@@ -401,11 +402,8 @@ public class MsgInboxAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if(request.messageStatus==0){
-            return json(BaseResponse.CODE_FAILURE, "messageStatus is empty", response);
-        }
-        if(request.messageStatus!=5||request.messageStatus!=7){
-            return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
+        if(request.messageType==0){
+            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
         }
         if(request.parentId==0){
             return json(BaseResponse.CODE_FAILURE, "parentId is empty", response);
@@ -431,14 +429,14 @@ public class MsgInboxAction extends BaseAction {
 //                response.data = msgOutboxCompany;
 //                break;
             case 2://代理人用户
-                if(request.messageStatus!=5){
+                if(request.messageType!=5){
                     return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
                 }
                 List<MsgSys> msgOutboxAgent = msgInboxDAO.findMsgSysListByParent(msgSys);
                 response.data = msgOutboxAgent;
                 break;
             case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                if(request.messageStatus!=7){
+                if(request.messageType!=7){
                     return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
                 }
                 List<MsgSys> msgOutboxPerson = msgInboxDAO.findMsgSysListByParent(msgSys);
