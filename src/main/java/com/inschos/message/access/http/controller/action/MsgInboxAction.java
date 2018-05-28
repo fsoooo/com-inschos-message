@@ -503,6 +503,9 @@ public class MsgInboxAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
+        if(request.userType!=4){
+            return json(BaseResponse.CODE_FAILURE, "no permission", response);
+        }
         //调用DAO
         MsgUpdate msgUpdate = new MsgUpdate();
         msgUpdate.msg_id = request.messageId;

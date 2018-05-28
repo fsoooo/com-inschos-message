@@ -60,6 +60,10 @@ public class MsgInboxBean {
     //操作消息 （收件箱 读取和删除）
     public static class MsgUpdateRequest extends BaseRequest {
 
+        public long userId;
+
+        public int userType;
+
         @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)
         public long messageId;//消息 id
 

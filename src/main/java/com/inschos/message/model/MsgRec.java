@@ -8,9 +8,9 @@ public class MsgRec {
 
     public long id;
 
-    public long manager_uuid;
+    public long manager_uuid = -1;
 
-    public long account_uuid;
+    public long account_uuid = -1;
 
     public long parent_id;
 

@@ -7,9 +7,9 @@ public class MsgSys {
 
     public long id;
 
-    public long manager_uuid;
+    public long manager_uuid = -1;
 
-    public long account_uuid;
+    public long account_uuid = -1;
 
     public String title;//'标题'
 
