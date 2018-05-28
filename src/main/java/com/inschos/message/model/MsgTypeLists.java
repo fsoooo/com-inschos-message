@@ -1,6 +1,6 @@
 package com.inschos.message.model;
 
-public class MsgInboxLists {
+public class MsgTypeLists {
 
     public int type;
 

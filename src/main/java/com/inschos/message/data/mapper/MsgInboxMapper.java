@@ -11,11 +11,14 @@ import java.util.List;
 //3、Mapper接口方法的输入参数类型和mapper.xml中定义的每个sql 的parameterType的类型相同
 //4、Mapper接口方法的输出参数类型和mapper.xml中定义的每个sql的resultType的类型相同
 public interface MsgInboxMapper {
-    // 收件箱列表(findMsgRecList)MsgInboxLists
-    List<MsgInboxLists> findMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
+    // 收件箱列表(findMsgRecList)MsgTypeLists
+    List<MsgTypeLists> findMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
 
     //某一分类的收件箱的列表(findMsgRecListByType)MsgRec
     List<MsgRec> findMsgRecListByType(MsgRec msgRec);//定义返回数据类型-集合
+
+    //按parent_id获取收件列表(findMsgRecListByParent)MsgRec
+    List<MsgRec> findMsgRecListByParent(MsgRec msgRec);//定义返回数据类型-集合
 
     //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
     List<MsgSys> findUserMsgRes(MsgRec msgRec);
@@ -28,6 +31,12 @@ public interface MsgInboxMapper {
 
     // 发件箱列表(findMsgSysList)
     List<MsgSys> findMsgSysList(MsgSys msgSys);
+
+    //某一分类的收件箱的列表(findMsgSysListByType)MsgRec
+    List<MsgSys> findMsgSysListByType(MsgSys msgSys);//定义返回数据类型-集合
+
+    //按parent_id获取收件列表(findMsgSysListByParent)MsgRec
+    List<MsgSys> findMsgSysListByParent(MsgSys msgSys);//定义返回数据类型-集合
 
     //发件箱详情
     MsgSys findMsgSysInfo(MsgSys msgSys);

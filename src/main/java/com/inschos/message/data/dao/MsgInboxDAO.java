@@ -29,7 +29,7 @@ public class MsgInboxDAO {
      * @return list
      * @access public
      */
-    public List<MsgInboxLists> findMsgRecList(MsgRec msgRec) {
+    public List<MsgTypeLists> findMsgRecList(MsgRec msgRec) {
         return msgInboxMapper.findMsgRecList(msgRec);
     }
 
@@ -42,6 +42,17 @@ public class MsgInboxDAO {
      */
     public List<MsgRec> findMsgRecListByType(MsgRec msgRec) {
         return msgInboxMapper.findMsgRecListByType(msgRec);
+    }
+
+    /**
+     * 收件箱列表查询-按parent_id
+     *
+     * @param msgRec
+     * @return list
+     * @access public
+     */
+    public List<MsgRec> findMsgRecListByParent(MsgRec msgRec) {
+        return msgInboxMapper.findMsgRecListByParent(msgRec);
     }
 
     /**
@@ -86,6 +97,28 @@ public class MsgInboxDAO {
      */
     public List<MsgSys> findMsgSysList(MsgSys msgSys) {
         return msgInboxMapper.findMsgSysList(msgSys);
+    }
+
+    /**
+     * 发件箱列表查询-按消息分类
+     *
+     * @param msgSys
+     * @return list
+     * @access public
+     */
+    public List<MsgSys> findMsgSysListByType(MsgSys msgSys) {
+        return msgInboxMapper.findMsgSysListByType(msgSys);
+    }
+
+    /**
+     * 收件箱列表查询-按消息分类
+     *
+     * @param msgSys
+     * @return list
+     * @access public
+     */
+    public List<MsgSys> findMsgSysListByParent(MsgSys msgSys) {
+        return msgInboxMapper.findMsgSysListByParent(msgSys);
     }
 
     /**

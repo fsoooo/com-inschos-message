@@ -16,6 +16,8 @@ public class MsgInboxBean {
 
         public int messageType;//消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
 
+        public long parentId;
+
         public String pageNum;//分页数据
 
         public String lastId;//分页数据
@@ -37,6 +39,8 @@ public class MsgInboxBean {
         public int messageStatus = 1;//消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
 
         public int messageType;//消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+
+        public long parentId;
 
         public String pageNum;//分页数据
 

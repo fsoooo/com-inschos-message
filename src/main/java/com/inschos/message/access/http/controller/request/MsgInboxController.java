@@ -73,6 +73,27 @@ public class MsgInboxController {
     }
 
     /**
+     * 消息 根据parentId获取消息列表
+     *
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @param parentId
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
+     * @return json
+     * @access public
+     */
+    @GetActionBeanAnnotation(isCheckAccess = false)
+    @RequestMapping("/list/inbox/parent/**")
+    @ResponseBody
+    public String listInboxByParent(ActionBean actionBean) {
+        return msgInboxAction.findMsgResListByParent(actionBean);
+    }
+
+    /**
      * 消息 发件箱列表
      *
      * @param userId        用户id
@@ -89,6 +110,47 @@ public class MsgInboxController {
     @ResponseBody
     public String listOutbox(ActionBean actionBean) {
         return msgInboxAction.findMsgSysList(actionBean);
+    }
+
+    /**
+     * 消息 发件箱列表-某一分类列表
+     *
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
+     * @return json
+     * @access public
+     */
+    @GetActionBeanAnnotation(isCheckAccess = false)
+    @RequestMapping("/list/outbox/type/**")
+    @ResponseBody
+    public String listOutboxByType(ActionBean actionBean) {
+        return msgInboxAction.findMsgSysListByType(actionBean);
+    }
+
+    /**
+     * 消息 根据parentId获取消息列表
+     *
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @param parentId
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
+     * @return json
+     * @access public
+     */
+    @GetActionBeanAnnotation(isCheckAccess = false)
+    @RequestMapping("/list/outbox/parent/**")
+    @ResponseBody
+    public String listOutboxByParent(ActionBean actionBean) {
+        return msgInboxAction.findMsgSysListByParent(actionBean);
     }
 
     /**

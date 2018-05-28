@@ -7,6 +7,10 @@ public class MsgSys {
 
     public long id;
 
+    public long manager_uuid;
+
+    public long account_uuid;
+
     public String title;//'标题'
 
     public String content;//'内容'

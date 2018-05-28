@@ -6,9 +6,13 @@ public class MsgRec {
 
     public MsgStatus msgStatus;
 
-    public String body;
-
     public long id;
+
+    public long manager_uuid;
+
+    public long account_uuid;
+
+    public long parent_id;
 
     public long msg_id;//'消息标识列'
 
