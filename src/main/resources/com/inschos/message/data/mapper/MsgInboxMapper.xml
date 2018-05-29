@@ -13,12 +13,12 @@
 
     <!--msg_rec表查询字段-->
     <sql id="Rec_Column_List">
-        `id`,`manager_uuid`,`account_uuid`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`parent_id`,`created_at`,`updated_at`
+        `id`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`
     </sql>
 
     <!--msg_sys查询字段-->
     <sql id="Sys_Column_List">
-        `id`,`manager_uuid`,`account_uuid`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`parent_id`,`status`,`send_time`,`state`,`created_at`,`updated_at`
+        `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`parent_id`,`status`,`send_time`,`state`,`created_at`,`updated_at`
     </sql>
 
     <!--获取收件列表 TODO 收件箱总列表，返回按messageType  GroupBy 之后返回(类型，数量，和最大时间值)-->
@@ -58,7 +58,7 @@
 
     <select id="findMsgRecListByType" parameterType="MsgRec" resultMap="selectMsgRecAndSys">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`,
-        `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`, `msg_sys`.`type`,
+        `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`,`msg_sys`.`content`,`msg_sys`.`type`,
         `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
         from msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         <where>
@@ -108,6 +108,7 @@
             <!--<id column="id" property="id" />-->
             <result column="title" property="title"/>
             <result column="type" property="type"/>
+            <result column="content" property="content"/>
             <result column="from_id" property="from_id"/>
             <result column="from_type" property="from_type"/>
             <result column="status" property="status"/>
