@@ -12,7 +12,7 @@ public class MsgRec {
 
     public long account_uuid = -1;
 
-    public long channel_uuid = -1;
+    public long channel_id = -1;
 
     public long parent_id = -1;
 

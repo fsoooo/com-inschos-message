@@ -164,8 +164,8 @@
 
     <!--收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）-->
     <insert id="insertMsgRec" parameterType="MsgRec">
-        insert into  msg_rec(`manager_uuid`,`account_uuid`,`channel_uuid`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`type`,`created_at`,`updated_at`)
-        values(#{manager_uuid},#{account_uuid},#{channel_uuid},#{msg_id},#{user_id},#{user_type},#{sys_status},#{state},#{type},#{created_at},#{updated_at})
+        insert into  msg_rec(`manager_uuid`,`account_uuid`,`channel_id`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`type`,`created_at`,`updated_at`)
+        values(#{manager_uuid},#{account_uuid},#{channel_id},#{msg_id},#{user_id},#{user_type},#{sys_status},#{state},#{type},#{created_at},#{updated_at})
     </insert>
 
     <!--更改消息读取状态-->

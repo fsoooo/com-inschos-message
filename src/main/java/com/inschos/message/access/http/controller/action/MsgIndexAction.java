@@ -93,14 +93,14 @@ public class MsgIndexAction extends BaseAction {
                 msgSys.from_type = request.fromType;
                 msgSys.to_id = msgToBean.toId;
                 msgSys.to_type = msgToBean.toType;
-                msgSys.channel_uuid = msgToBean.channelId;
+                msgSys.channel_id = msgToBean.channelId;
                 msgSys.parent_id = request.parentId;
                 msgSys.created_at = date;
                 msgSys.updated_at = date;
                 //调用DAO
                 msgSendRes.to_id = msgToBean.toId;
                 msgSendRes.to_type = msgToBean.toType;
-                msgSendRes.channel_uuid = msgToBean.channelId;
+                msgSendRes.channel_id = msgToBean.channelId;
                 int send_result = msgIndexDAO.addMsgSys(msgSys);
                 if (send_result == 1) {
                     msgSendRes.send_res = "发送成功";
@@ -122,14 +122,14 @@ public class MsgIndexAction extends BaseAction {
                 msgSys.from_type = request.fromType;
                 msgSys.to_id = msgToBean.toId;
                 msgSys.to_type = msgToBean.toType;
-                msgSys.channel_uuid = msgToBean.channelId;
+                msgSys.channel_id = msgToBean.channelId;
                 msgSys.parent_id = request.parentId;
                 msgSys.created_at = date;
                 msgSys.updated_at = date;
                 //调用DAO
                 msgSendRes.to_id = msgToBean.toId;
                 msgSendRes.to_type = msgToBean.toType;
-                msgSendRes.channel_uuid = msgToBean.channelId;
+                msgSendRes.channel_id = msgToBean.channelId;
                 int send_result = msgIndexDAO.addMsgSys(msgSys);
                 if (send_result == 1) {
                     msgSendRes.send_res = "发送成功";

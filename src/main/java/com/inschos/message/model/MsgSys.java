@@ -27,7 +27,7 @@ public class MsgSys {
 
     public int to_type;//'收件人类型，个人1/企业2/代理人3/业管4
 
-    public long channel_uuid = -1;//渠道标识
+    public long channel_id = -1;//渠道标识
 
     public long parent_id = -1;//消息父级id
 

@@ -6,5 +6,5 @@ public class MsgTo {
 
     public int to_type;//'收件人类型，，个人1/企业2/代理人3/业管4
 
-    public int channel_uuid;
+    public int channel_id;
 }
