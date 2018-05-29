@@ -27,7 +27,9 @@ public class MsgSys {
 
     public int to_type;//'收件人类型，个人1/企业2/代理人3/业管4
 
-    public long parent_id;//消息父级id
+    public long channel_uuid = -1;//渠道标识
+
+    public long parent_id = -1;//消息父级id
 
     public int status = 0;//'读取状态:标识消息 是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0'
 

@@ -22,6 +22,7 @@ public class MsgIndexDAO {
      * @param from_type|发件人类型:个人用户1/企业用户2/业管用户等3
      * @param to_id|收件人id
      * @param to_type|收件人类型:个人用户1/企业用户2/业管用户等3
+     * @param channel|渠道
      * @param status|读取状态:标识消息 是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
      * @param send_time|发送时间:默认为空。需要延时发送的，发送时间不为空
      * @return mixed

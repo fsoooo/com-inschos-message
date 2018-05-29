@@ -12,7 +12,9 @@ public class MsgRec {
 
     public long account_uuid = -1;
 
-    public long parent_id;
+    public long channel_uuid = -1;
+
+    public long parent_id = -1;
 
     public long msg_id;//'消息标识列'
 

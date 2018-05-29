@@ -6,6 +6,8 @@ public class MsgSendRes {
 
     public int to_type;//'收件人类型，，个人1/企业2/代理人3/业管4
 
+    public long channel_uuid;//渠道
+
     public String send_res;//发送结果
 
 }

@@ -38,6 +38,7 @@ public class MsgIndexController {
      * @param fromType|发件人类型:用户类型:个人用户           1/企业用户 2/代理人 3/业管用户 4
      * @param toId|收件人id
      * @param toType|收件人类型:用户类型:个人用户             1/企业用户 2/代理人 3/业管用户 4
+     * @param channelId|渠道id
      * @param status|读取状态:标识消息                   是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
      * @param sendTime|发送时间:默认为空。需要延时发送的，发送时间不为空
      * @param parentId|消息父级id
