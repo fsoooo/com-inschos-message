@@ -24,12 +24,12 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 收件箱列表(获取所有类型的列表)
      *
-     * @param userId        用户id
-     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @param messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
-     * @param pageNum       当前页码 ，可不传，默认为1
-     * @param lastId        上一页最大id ，可不传，默认为
-     * @param limit         每页显示行数，可不传，默认为
+     * @params userId        用户id
+     * @params userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @params messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
+     * @params pageNum       当前页码 ，可不传，默认为1
+     * @params lastId        上一页最大id ，可不传，默认为
+     * @params limit         每页显示行数，可不传，默认为
      * @return json
      * <p>
      * 业管可以查看所有人、所有类型的消息，返回按消息分类展示
@@ -105,13 +105,13 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 收件箱列表(获取所有类型的列表)
      *
-     * @param userId        用户id
-     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @param messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
-     * @param pageNum       当前页码 ，可不传，默认为1
-     * @param lastId        上一页最大id ，可不传，默认为
-     * @param limit         每页显示行数，可不传，默认为
+     * @params userId        用户id
+     * @params userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @params messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @params pageNum       当前页码 ，可不传，默认为1
+     * @params lastId        上一页最大id ，可不传，默认为
+     * @params limit         每页显示行数，可不传，默认为
      * @return json
      * 消息 列表组成：消息 系统表里收件人id为-1的（系统消息）+ 消息 系统表里收件人id为user_id的（订阅消息、私信）
      * 匹配消息 系统表和消息 收件箱表，向用户收件箱里插入相应的数据，并修改消息 系统表的状态
@@ -204,7 +204,7 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 详情
      *
-     * @param messageId 消息 id
+     * @params messageId 消息 id
      * @return json
      * @access public
      */
@@ -259,8 +259,8 @@ public class MsgInboxAction extends BaseAction {
      * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
      * TODO 传参统一用小驼峰命名规则
      *
-     * @param userId|用户ID(收件人)
-     * @param userType|发件人类型，用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
+     * @params userId|用户ID(收件人)
+     * @params userType|发件人类型，用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
      * @return mixed
      * @access public
      */
@@ -304,12 +304,12 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 发件箱列表
      *
-     * @param userId        用户id
-     * @param userType      用户类型:用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
-     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
-     * @param pageNum       当前页码 ，可不传，默认为1
-     * @param lastId        上一页最大id ，可不传，默认为
-     * @param limit         每页显示行数，可不传，默认为
+     * @params userId        用户id
+     * @params userType      用户类型:用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
+     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
+     * @params pageNum       当前页码 ，可不传，默认为1
+     * @params lastId        上一页最大id ，可不传，默认为
+     * @params limit         每页显示行数，可不传，默认为
      * @return json
      * @access public
      * TODO 发件箱要不要按分类展示
@@ -325,11 +325,26 @@ public class MsgInboxAction extends BaseAction {
         MsgSys msgSys = new MsgSys();
         msgSys.page = setPage(request.lastId, request.pageNum, request.limit);
         msgSys.status = request.messageStatus;
-        msgSys.from_id = request.userId;
-        msgSys.from_type = request.userType;
-        List<MsgSys> msgOutboxs = msgInboxDAO.findMsgSysList(msgSys);
-        response.data = msgOutboxs;
-        if (msgOutboxs != null) {
+        msgSys.account_uuid = actionBean.accountUuid;
+        msgSys.manager_uuid = actionBean.managerUuid;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<MsgTypeLists>  msgOutboxs = msgInboxDAO.findMsgSysList(msgSys);
+        if(msgOutboxs==null){
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
+        List<MsgInboxListBean> msgInboxLists = new ArrayList<>();
+        for (MsgTypeLists msgOutbox : msgOutboxs) {
+            MsgInboxListBean msgInboxListBean = new MsgInboxListBean();
+            msgInboxListBean.messageType = msgOutbox.type;
+            msgInboxListBean.messageTypeText = MsgStatus.getMsgType(msgOutbox.type);
+            msgInboxListBean.unReadCount = msgOutbox.count;
+            msgInboxListBean.unReadCountText = msgOutbox.count + "条新消息";
+            msgInboxListBean.time = msgOutbox.time;
+            msgInboxListBean.timeTxt = sdf.format(new Date(Long.valueOf(msgOutbox.time)));
+            msgInboxLists.add(msgInboxListBean);
+        }
+        response.data = msgInboxLists;
+        if (msgInboxLists != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
@@ -339,13 +354,13 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 发件箱列表-某一分类列表
      *
-     * @param userId        用户id
-     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @param messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
-     * @param pageNum       当前页码 ，可不传，默认为1
-     * @param lastId        上一页最大id ，可不传，默认为
-     * @param limit         每页显示行数，可不传，默认为
+     * @params userId        用户id
+     * @params userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @params messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @params pageNum       当前页码 ，可不传，默认为1
+     * @params lastId        上一页最大id ，可不传，默认为
+     * @params limit         每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
@@ -359,6 +374,7 @@ public class MsgInboxAction extends BaseAction {
         if (request.messageType == 0) {
             return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
         }
+
         //调用DAO
         MsgSys msgSys = new MsgSys();
         msgSys.page = setPage(request.lastId, request.pageNum, request.limit);
@@ -368,9 +384,42 @@ public class MsgInboxAction extends BaseAction {
         msgSys.from_id = request.userId;
         msgSys.from_type = request.userType;
         msgSys.type = request.messageType;
+        msgSys.account_uuid = actionBean.accountUuid;
+        msgSys.manager_uuid = actionBean.managerUuid;
         MsgStatus msgStatus = new MsgStatus();
-        List<MsgSys> msgRes = msgInboxDAO.findMsgSysListByType(msgSys);
-        response.data = msgRes;
+        List<MsgSys> msgResList = msgInboxDAO.findMsgSysListByType(msgSys);
+        if(msgResList==null){
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        MsgInboxListTypeBean msgInboxListTypeBean = new MsgInboxListTypeBean();
+        List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
+        for (MsgSys sys : msgResList) {
+            msgSys.account_uuid = actionBean.accountUuid;
+            msgSys.manager_uuid = actionBean.managerUuid;
+            msgSys.id = sys.id;
+            List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
+            List<MsgToBean> MsgToBeans = new ArrayList<>();
+            for (MsgTo to : msgTo) {
+                MsgToBean msgToBean = new MsgToBean();
+                msgToBean.toId = to.to_id;
+                msgToBean.toType = to.to_type;
+                msgToBean.channelId = to.channel_id;
+                MsgToBeans.add(msgToBean);
+            }
+            MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
+            msgInboxListType.id = sys.id;
+            msgInboxListType.title = sys.title;
+            msgInboxListType.content = sys.content;
+            msgInboxListType.messageType = sys.type;
+            msgInboxListType.messageTypeText = MsgStatus.getMsgType(sys.type);
+            msgInboxListType.readFlag = sys.status;
+            msgInboxListType.time = sys.created_at;
+            msgInboxListType.timeTxt = sdf.format(new Date(Long.valueOf(sys.created_at)));
+            msgInboxListType.msgToBean = MsgToBeans;
+            msgInboxListTypeBeans.add(msgInboxListType);
+        }
+        response.data = msgInboxListTypeBeans;
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
@@ -381,7 +430,7 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 详情
      *
-     * @param messageId 消息 id
+     * @params messageId 消息 id
      * @return json
      * @access public
      */
@@ -432,14 +481,14 @@ public class MsgInboxAction extends BaseAction {
      * 消息 根据parentId获取消息列表
      * TODO  先不改
      *
-     * @param userId        用户id
-     * @param userType      用户类型:个人用户 1/企业用户 2/代理人 3/业管用户4
-     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @param messageType   消息 类型:客户消息5/顾问消息7/,默认是顾问消息和客户消息，根据用户类型判断
-     * @param parentId
-     * @param pageNum       当前页码 ，可不传，默认为1
-     * @param lastId        上一页最大id ，可不传，默认为
-     * @param limit         每页显示行数，可不传，默认为
+     * @params userId        用户id
+     * @params userType      用户类型:个人用户 1/企业用户 2/代理人 3/业管用户4
+     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @params messageType   消息 类型:客户消息5/顾问消息7/,默认是顾问消息和客户消息，根据用户类型判断
+     * @params parentId
+     * @params pageNum       当前页码 ，可不传，默认为1
+     * @params lastId        上一页最大id ，可不传，默认为
+     * @params limit         每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
@@ -519,14 +568,14 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 根据parentId获取消息列表
      *
-     * @param userId        用户id
-     * @param userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @param messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
-     * @param parentId
-     * @param pageNum       当前页码 ，可不传，默认为1
-     * @param lastId        上一页最大id ，可不传，默认为
-     * @param limit         每页显示行数，可不传，默认为
+     * @params userId        用户id
+     * @params userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @params messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @params parentId
+     * @params pageNum       当前页码 ，可不传，默认为1
+     * @params lastId        上一页最大id ，可不传，默认为
+     * @params limit         每页显示行数，可不传，默认为
      * @return json
      * @access public
      */

@@ -5,8 +5,6 @@ public class MsgSys {
 
     public Page page;
 
-    public long account_uuidid;
-
     public long id;
 
     public String manager_uuid = "-1";

@@ -168,13 +168,13 @@
         select `type`,count(`id`) as count, max(`send_time`) as time from msg_sys
         <where>
             <choose>
-                <when test="user_type==1">
+                <when test="from_type==1">
                     `type` in (1,2,3,6,7)
                 </when>
-                <when test="user_type==2">
+                <when test="from_type==2">
                     `type` in (1,2,3,5,6,7)
                 </when>
-                <when test="user_type==3">
+                <when test="from_type==3">
                     `type` in (1,2,3,4,5,7)
                 </when>
             </choose>

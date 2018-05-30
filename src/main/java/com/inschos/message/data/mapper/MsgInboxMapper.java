@@ -30,7 +30,7 @@ public interface MsgInboxMapper {
     int updateMsgSysStatus(MsgSys msgSys);
 
     // 发件箱列表(findMsgSysList)
-    List<MsgSys> findMsgSysList(MsgSys msgSys);
+    List<MsgTypeLists> findMsgSysList(MsgSys msgSys);
 
     //某一分类的收件箱的列表(findMsgSysListByType)MsgRec
     List<MsgSys> findMsgSysListByType(MsgSys msgSys);//定义返回数据类型-集合

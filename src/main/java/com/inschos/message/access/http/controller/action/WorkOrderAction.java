@@ -129,7 +129,7 @@ public class WorkOrderAction extends BaseAction {
     /**
      * 创建工单
      *
-     * @param actionBean 工单
+     * @params actionBean 工单
      * @return json
      * @access public
      */

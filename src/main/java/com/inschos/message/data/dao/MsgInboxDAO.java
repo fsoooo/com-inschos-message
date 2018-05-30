@@ -95,7 +95,7 @@ public class MsgInboxDAO {
      * @return list
      * @access public
      */
-    public List<MsgSys> findMsgSysList(MsgSys msgSys) {
+    public List<MsgTypeLists> findMsgSysList(MsgSys msgSys) {
         return msgInboxMapper.findMsgSysList(msgSys);
     }
 
