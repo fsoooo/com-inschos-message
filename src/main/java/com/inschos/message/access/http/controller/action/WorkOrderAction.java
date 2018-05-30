@@ -40,9 +40,7 @@ public class WorkOrderAction extends BaseAction {
     private WorkOrderCategoryDao workOrderCategoryDao;
 
 
-
-
-    public String listToMe(ActionBean bean,String method) {
+    public String listToMe(ActionBean bean, String method) {
         WorkOrderBean.WorkOrderListRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderListRequest.class);
         WorkOrderBean.WorkOrderListResponse response = new WorkOrderBean.WorkOrderListResponse();
 
@@ -51,11 +49,11 @@ public class WorkOrderAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
         WorkOrder search = new WorkOrder();
-        if("closed".equals(method)){
+        if ("closed".equals(method)) {
             search.close_status = WorkOrder.STATUS_CLOSED;
-        }else if("wait".equals(method)){
+        } else if ("wait".equals(method)) {
             search.close_status = WorkOrder.STATUS_HANDLE_WAITING;
-        }else{
+        } else {
             return json(BaseResponse.CODE_PARAM_ERROR, "请选择查询类型", response);
         }
 
@@ -68,7 +66,7 @@ public class WorkOrderAction extends BaseAction {
         if (orderList != null && !orderList.isEmpty()) {
             for (WorkOrder order : orderList) {
 
-                WorkOrderBean.WorkOrderData data = toData(order,true,true);
+                WorkOrderBean.WorkOrderData data = toData(order, true, true);
                 newLastId = order.id;
                 dataList.add(data);
             }
@@ -105,11 +103,11 @@ public class WorkOrderAction extends BaseAction {
         if (orderList != null && !orderList.isEmpty()) {
             AgentJobBean agent = agentJobClient.getAgent(bean.managerUuid, Long.valueOf(bean.userId));
             String name = "";
-            if(agent!=null){
+            if (agent != null) {
                 name = agent.name;
             }
             for (WorkOrder order : orderList) {
-                WorkOrderBean.WorkOrderData data = toData(order,false,false);
+                WorkOrderBean.WorkOrderData data = toData(order, false, false);
                 data.senderName = name;
                 newLastId = order.id;
                 dataList.add(data);
@@ -131,12 +129,12 @@ public class WorkOrderAction extends BaseAction {
     /**
      * 创建工单
      *
-     * @param actionBean     工单
+     * @param actionBean 工单
      * @return json
      * @access public
      */
     public String addWork(ActionBean actionBean) {
-        WorkOrderBean.addWork request = requst2Bean(actionBean.body,WorkOrderBean.addWork.class);
+        WorkOrderBean.addWork request = requst2Bean(actionBean.body, WorkOrderBean.addWork.class);
 
         BaseResponse response = new BaseResponse();
 
@@ -175,8 +173,8 @@ public class WorkOrderAction extends BaseAction {
 
     }
 
-    public String categoryList(ActionBean bean){
-        BaseRequest request = requst2Bean(bean.body,BaseRequest.class);
+    public String categoryList(ActionBean bean) {
+        BaseRequest request = requst2Bean(bean.body, BaseRequest.class);
         WorkOrderBean.WOCategoryListResponse response = new WorkOrderBean.WOCategoryListResponse();
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
@@ -185,7 +183,7 @@ public class WorkOrderAction extends BaseAction {
 
         List<WorkOrderCategory> list = workOrderDao.findCategoryList();
         List<WorkOrderBean.WOCategoryData> dataList = new ArrayList<>();
-        if(list!=null && !list.isEmpty()){
+        if (list != null && !list.isEmpty()) {
             for (WorkOrderCategory category : list) {
                 WorkOrderBean.WOCategoryData data = new WorkOrderBean.WOCategoryData();
                 data.id = category.id;
@@ -195,10 +193,10 @@ public class WorkOrderAction extends BaseAction {
             }
         }
         response.data = dataList;
-        return json(BaseResponse.CODE_SUCCESS,"获取成功",response);
+        return json(BaseResponse.CODE_SUCCESS, "获取成功", response);
     }
 
-    public String reply(ActionBean bean){
+    public String reply(ActionBean bean) {
         WorkOrderBean.WorkOrderReplyRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderReplyRequest.class);
         BaseResponse response = new BaseResponse();
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
@@ -206,10 +204,10 @@ public class WorkOrderAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
         WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
-        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
+        if (workOrder != null && workOrder.addressee_uuid.equals(bean.managerUuid)) {
 
-            if (workOrder.close_status!=WorkOrder.STATUS_CLOSED){
-                return json(BaseResponse.CODE_FAILURE,"已关闭",response);
+            if (workOrder.close_status == WorkOrder.STATUS_CLOSED) {
+                return json(BaseResponse.CODE_FAILURE, "已关闭", response);
             }
 
             WorkOrderReply reply = new WorkOrderReply();
@@ -217,16 +215,16 @@ public class WorkOrderAction extends BaseAction {
             reply.work_order_id = workOrder.id;
             reply.replier_uuid = bean.accountUuid;
             reply.created_at = TimeKit.currentTimeMillis();
-            if(workOrderDao.addReply(reply)>0){
-                return json(BaseResponse.CODE_SUCCESS,"回复成功",response);
-            }else{
-                return json(BaseResponse.CODE_FAILURE,"回复失败",response);
+            if (workOrderDao.addReply(reply) > 0) {
+                return json(BaseResponse.CODE_SUCCESS, "回复成功", response);
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "回复失败", response);
             }
         }
-        return json(BaseResponse.CODE_FAILURE,"回复失败",response);
+        return json(BaseResponse.CODE_FAILURE, "回复失败", response);
     }
 
-    public String score(ActionBean bean){
+    public String score(ActionBean bean) {
 
         WorkOrderBean.WorkOrderCommentRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderCommentRequest.class);
         BaseResponse response = new BaseResponse();
@@ -237,29 +235,29 @@ public class WorkOrderAction extends BaseAction {
         WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
 
 
-        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
-            if (workOrder.solve_status != WorkOrder.STATUS_SOLVE_WEIFANKUI){
-                return json(BaseResponse.CODE_FAILURE,"已反馈",response);
+        if (workOrder != null && workOrder.addressee_uuid.equals(bean.managerUuid)) {
+            if (workOrder.solve_status != WorkOrder.STATUS_SOLVE_WEIFANKUI) {
+                return json(BaseResponse.CODE_FAILURE, "已反馈", response);
             }
-            if(workOrder.handle_status != WorkOrder.STATUS_HANDLE_DONE){
-                return json(BaseResponse.CODE_FAILURE,"工单未处理",response);
+            if (workOrder.handle_status != WorkOrder.STATUS_HANDLE_DONE) {
+                return json(BaseResponse.CODE_FAILURE, "工单未处理", response);
             }
 
             WorkOrder update = new WorkOrder();
             update.id = workOrder.id;
             update.solve_status = Integer.valueOf(request.solveStatus);
             update.updated_at = TimeKit.currentTimeMillis();
-            if(workOrderDao.updateSolveStatus(update)>0){
-                return json(BaseResponse.CODE_SUCCESS,"反馈成功",response);
-            }else{
-                return json(BaseResponse.CODE_FAILURE,"反馈失败",response);
+            if (workOrderDao.updateSolveStatus(update) > 0) {
+                return json(BaseResponse.CODE_SUCCESS, "反馈成功", response);
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "反馈失败", response);
             }
         }
-        return json(BaseResponse.CODE_FAILURE,"反馈失败",response);
+        return json(BaseResponse.CODE_FAILURE, "反馈失败", response);
 
     }
 
-    public String detail(ActionBean bean){
+    public String detail(ActionBean bean) {
         WorkOrderBean.WorkOrderGetRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderGetRequest.class);
         WorkOrderBean.WorkOrderGetResponse response = new WorkOrderBean.WorkOrderGetResponse();
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
@@ -267,7 +265,7 @@ public class WorkOrderAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
         WorkOrder workOrder = workOrderDao.findOne(Long.valueOf(request.woId));
-        if(workOrder!=null && workOrder.addressee_uuid.equals(bean.managerUuid)){
+        if (workOrder != null && workOrder.addressee_uuid.equals(bean.managerUuid)) {
 
             WorkOrderBean.WorkOrderData data = toData(workOrder, true, true);
             data.orderStatusTxt = WorkOrder.getHandle(workOrder.handle_status);
@@ -275,18 +273,18 @@ public class WorkOrderAction extends BaseAction {
             data.replyList = new ArrayList<>();
 
             List<WorkOrderReply> replyList = workOrderDao.findReplyList(workOrder.id);
-            if(replyList!=null && !replyList.isEmpty()){
+            if (replyList != null && !replyList.isEmpty()) {
                 for (WorkOrderReply reply : replyList) {
                     WorkOrderBean.WOReplyData replyData = new WorkOrderBean.WOReplyData();
                     replyData.content = reply.content;
-                    replyData.replyTimeTxt = TimeKit.format("yyyy-MM-dd HH:mm",reply.created_at);
-                    if(reply.replier_uuid.equals(bean.managerUuid)){
+                    replyData.replyTimeTxt = TimeKit.format("yyyy-MM-dd HH:mm", reply.created_at);
+                    if (reply.replier_uuid.equals(bean.managerUuid)) {
                         replyData.replierName = "管理员";
-                    }else{
+                    } else {
                         AgentJobBean agent = getAgent(bean.managerUuid, reply.replier_uuid);
-                        if(agent!=null){
+                        if (agent != null) {
                             replyData.replierName = agent.name;
-                        }else{
+                        } else {
                             replyData.replierName = "提交者";
                         }
                     }
@@ -294,29 +292,28 @@ public class WorkOrderAction extends BaseAction {
                     data.replyList.add(replyData);
                 }
             }
-            if(workOrder.solve_status!=WorkOrder.STATUS_SOLVE_WEIFANKUI){
-                data.orderResult = "问题"+data.orderResult;
-                if(bean.userType==3){
-                    data.orderResult = "提交人反馈："+data.orderResult;
+            if (workOrder.solve_status != WorkOrder.STATUS_SOLVE_WEIFANKUI) {
+                data.orderResult = "问题" + data.orderResult;
+                if (bean.userType == 3) {
+                    data.orderResult = "提交人反馈：" + data.orderResult;
                 }
                 data.ratable = 0;
-            }else{
-                if(bean.userType==4){
+            } else {
+                if (bean.userType == 4) {
                     data.ratable = 1;
-                }else{
+                } else {
                     data.ratable = 0;
                 }
             }
 
             response.data = data;
-            return json(BaseResponse.CODE_SUCCESS,"获取成功",response);
+            return json(BaseResponse.CODE_SUCCESS, "获取成功", response);
         }
-        return json(BaseResponse.CODE_FAILURE,"获取失败",response);
+        return json(BaseResponse.CODE_FAILURE, "获取失败", response);
     }
 
 
-
-    private WorkOrderBean.WorkOrderData toData(WorkOrder order, boolean isGetUser,boolean isGetCategory) {
+    private WorkOrderBean.WorkOrderData toData(WorkOrder order, boolean isGetUser, boolean isGetCategory) {
         WorkOrderBean.WorkOrderData data = new WorkOrderBean.WorkOrderData();
         data.id = order.id;
         data.woNum = order.wo_num;
@@ -324,10 +321,10 @@ public class WorkOrderAction extends BaseAction {
         data.content = order.content;
         data.submitTimeTxt = TimeKit.format("yyyy-MM-dd HH:mm", order.created_at);
         data.orderResult = WorkOrder.getResult(order.solve_status);
-        if (order.close_status == WorkOrder.STATUS_CLOSED){
+        if (order.close_status == WorkOrder.STATUS_CLOSED) {
             data.orderStatusTxt = "已关闭";
             data.orderStatus = 4;
-        }else{
+        } else {
             data.orderStatusTxt = WorkOrder.getHandle(order.handle_status);
             data.orderStatus = order.handle_status;
         }
@@ -338,29 +335,28 @@ public class WorkOrderAction extends BaseAction {
                     ChannelBean channel = channelClient.getChannel(String.valueOf(agent.channel_id));
                     if (channel != null) {
                         data.channelName = channel.name;
-                    }else{
+                    } else {
                         data.channelName = "";
                     }
                 }
                 data.senderName = agent.name;
             }
         }
-        if(isGetCategory){
+        if (isGetCategory) {
             WorkOrderCategory category = workOrderCategoryDao.findOne(order.category_id);
-            if(category!=null){
+            if (category != null) {
                 data.categoryName = category.name;
             }
-            if(!StringKit.isEmpty(order.category_extra_name)){
-                if(data.categoryName!=null){
-                    data.categoryName += "[" +order.category_extra_name+"]";
-                }else{
+            if (!StringKit.isEmpty(order.category_extra_name)) {
+                if (data.categoryName != null) {
+                    data.categoryName += "[" + order.category_extra_name + "]";
+                } else {
                     data.categoryName = order.category_extra_name;
                 }
             }
         }
         return data;
     }
-
 
 
     private AgentJobBean getAgent(String managerUuid, String userUuid) {
