@@ -26,6 +26,7 @@
     <select id="findMsgRecList" parameterType="MsgRec" resultType="MsgTypeLists">
         select `type`,count(`id`) as count, max(`created_at`) as time from msg_rec
         <where>
+            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
             <choose>
                 <when test="user_type==1">
                     `type` in (1,2,3,6,7)
@@ -37,7 +38,6 @@
                     `type` in (1,2,3,4,5,7)
                 </when>
             </choose>
-            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
         </where>
         GROUP BY `type`
     </select>
