@@ -148,7 +148,7 @@ public class MsgInboxAction extends BaseAction {
 
         List<MsgRec> msgRecList = new ArrayList<>();
         //根据user_type判断不同用户可以查看消息 类型
-        switch (request.userType) {
+        switch (msgRec.user_type) {
             case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
                 msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
                 break;
