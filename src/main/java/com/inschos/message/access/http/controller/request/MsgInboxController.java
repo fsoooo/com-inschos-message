@@ -5,13 +5,9 @@ import com.inschos.message.access.http.controller.action.MsgInboxAction;
 import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
 import com.inschos.message.assist.kit.HttpKit;
-import com.inschos.message.model.MsgInbox;
-import com.inschos.message.model.MsgRec;
-import com.inschos.message.model.MsgSys;
-import com.inschos.message.model.MsgUpdate;
+import com.inschos.message.model.*;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -165,21 +161,5 @@ public class MsgInboxController {
     @ResponseBody
     public String infoMessage(ActionBean actionBean) {
         return msgInboxAction.findMsgInfo(actionBean);
-    }
-
-    /**
-     * 操作消息 （收件箱 读取和删除）
-     *
-     * @param messageId   消息 id
-     * @param operateId   操作代码:默认为1（删除/已读），2（还原/未读）
-     * @param operateType 操作类型:read 更改读取状态，del 更改删除状态
-     * @return json
-     * @access public
-     */
-    @GetActionBeanAnnotation(isCheckAccess = false)
-    @RequestMapping("/update/**")
-    @ResponseBody
-    public String updateMessage(ActionBean actionBean) {
-        return msgInboxAction.updateMsgRec(actionBean);
     }
 }

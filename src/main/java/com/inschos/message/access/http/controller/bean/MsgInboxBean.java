@@ -2,6 +2,8 @@ package com.inschos.message.access.http.controller.bean;
 
 import com.inschos.message.annotation.CheckParams;
 
+import java.util.List;
+
 public class MsgInboxBean {
     //消息 收件箱列表
     public static class InboxListRequest extends BaseRequest {
@@ -64,8 +66,7 @@ public class MsgInboxBean {
 
         public int userType;
 
-        @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)
-        public long messageId;//消息 id
+        public List<MsgUpdateBean> messageIds;
 
         @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)
         public int operateId;//操作代码:默认为1（删除/已读），2（还原/未读）

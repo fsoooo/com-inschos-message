@@ -2,6 +2,7 @@ package com.inschos.message.access.http.controller.action;
 
 
 import com.inschos.message.access.http.controller.bean.*;
+import com.inschos.message.data.dao.MsgInboxDAO;
 import com.inschos.message.data.dao.MsgIndexDAO;
 import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.model.*;
@@ -18,6 +19,8 @@ public class MsgIndexAction extends BaseAction {
     private static final Logger logger = Logger.getLogger(MsgIndexAction.class);
     @Autowired
     private MsgIndexDAO msgIndexDAO;
+    @Autowired
+    private MsgInboxDAO msgInboxDAO;
 
     /**
      * 发送消息
@@ -140,6 +143,68 @@ public class MsgIndexAction extends BaseAction {
             }
         }
         response.data = msgSendResList;
+        return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+    }
+
+    /**
+     * 操作消息 （收件箱 读取和删除）
+     *
+     * @param messageId   消息 id
+     * @param operateId   操作代码:默认为1（删除/已读），2（还原/未读）
+     * @param operateType 操作类型:read 更改读取状态，del 更改删除状态
+     * @return json
+     * @access public
+     */
+    public String updateMsgRec(ActionBean actionBean) {
+        MsgInboxBean.MsgUpdateRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.MsgUpdateRequest.class);
+        BaseResponse response = new BaseResponse();
+        //判空
+        if (request == null) {
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        if(request.userType!=4){
+            return json(BaseResponse.CODE_FAILURE, "no permission", response);
+        }
+        if (request.messageIds == null || request.messageIds.size() == 0) {
+            return json(BaseResponse.CODE_FAILURE, "messageIds is empty", response);
+        }
+        List<MsgUpdateResBean> msgUpdateResList = new ArrayList<>();
+        MsgUpdateResBean msgUpdateRes = new MsgUpdateResBean();
+        for (MsgUpdateBean messageId : request.messageIds) {
+            MsgUpdate msgUpdate = new MsgUpdate();
+            msgUpdate.msg_id = messageId.messageId;
+            msgUpdate.operate_id = request.operateId;
+            switch (request.operateType){
+                case "read":
+                    msgUpdate.operate_type = "sys_status";
+                    int updateStatusRes = msgInboxDAO.updateMsgRecStatus(msgUpdate);
+                    if(updateStatusRes==1){
+                        msgUpdateRes.updateRes = "更新成功";
+                    }else{
+                        msgUpdateRes.updateRes = "更新失败";
+                    }
+                    msgUpdateRes.messageId = messageId.messageId;
+                    msgUpdateResList.add(msgUpdateRes);
+                    break;
+                case "del":
+                    msgUpdate.operate_type = "state";
+                    int updateStateRes = msgInboxDAO.updateMsgRecState(msgUpdate);
+                    if(updateStateRes==1){
+                        msgUpdateRes.updateRes = "更新成功";
+                    }else{
+                        msgUpdateRes.updateRes = "更新失败";
+                    }
+                    msgUpdateRes.messageId = messageId.messageId;
+                    msgUpdateResList.add(msgUpdateRes);
+                    break;
+                default:
+                    msgUpdateRes.messageId = 0;
+                    msgUpdateRes.updateRes = "";
+                    msgUpdateResList.add(msgUpdateRes);
+                    break;
+            }
+        }
+        response.data = msgUpdateResList;
         return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
     }
 }

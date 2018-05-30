@@ -486,42 +486,4 @@ public class MsgInboxAction extends BaseAction {
             }
         }
     }
-
-    /**
-     * 操作消息 （收件箱 读取和删除）
-     *
-     * @param messageId   消息 id
-     * @param operateId   操作代码:默认为1（删除/已读），2（还原/未读）
-     * @param operateType 操作类型:read 更改读取状态，del 更改删除状态
-     * @return json
-     * @access public
-     */
-    public String updateMsgRec(ActionBean actionBean) {
-        MsgInboxBean.MsgUpdateRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.MsgUpdateRequest.class);
-        BaseResponse response = new BaseResponse();
-        //判空
-        if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
-        }
-        if(request.userType!=4){
-            return json(BaseResponse.CODE_FAILURE, "no permission", response);
-        }
-        //调用DAO
-        MsgUpdate msgUpdate = new MsgUpdate();
-        msgUpdate.msg_id = request.messageId;
-        msgUpdate.operate_id = request.operateId;
-        if (request.operateType == "read") {
-            msgUpdate.operate_type = "sys_status";
-            response.data = msgInboxDAO.updateMsgRecStatus(msgUpdate);
-        } else if (request.operateType == "del") {
-            msgUpdate.operate_type = "state";
-            response.data = msgInboxDAO.updateMsgRecState(msgUpdate);
-        }
-
-        if (response.data != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-        } else {
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
-        }
-    }
 }

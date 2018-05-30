@@ -292,13 +292,13 @@
     <update id="updateMsgRecStatus" parameterType="MsgUpdate">
      update msg_rec set
               `sys_status`=#{operate_id}
-            where `msg_id`=#{msg_id}
+            where `id`=#{msg_id}
     </update>
 
     <!--更改收件箱消息 状态-->
     <update id="updateMsgRecState" parameterType="MsgUpdate">
      update msg_rec set
               `state`=#{operate_id}
-            where `msg_id`=#{msg_id}
+            where `id`=#{msg_id}
     </update>
 </mapper>
