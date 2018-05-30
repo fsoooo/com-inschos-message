@@ -173,6 +173,8 @@ public class MsgInboxAction extends BaseAction {
         for (MsgRec msgInboxRes : msgRecList) {
             MsgSys msgSys = new MsgSys();
             msgSys.id = msgInboxRes.msg_id;
+            msgSys.manager_uuid = actionBean.managerUuid;
+            msgSys.account_uuid = actionBean.accountUuid;
             List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
             List<MsgToBean> MsgToBeans = new ArrayList<>();
             for (MsgTo to : msgTo) {
