@@ -13,7 +13,7 @@
 
     <!--msg_model表查询字段-->
     <sql id="Base_Column_List">
-        `id`,`model_code`,`model_name`,`model_content`,`created_user`,`created_user_type`,`status`,`state`,`created_at`,`updated_at`
+        `id`,`model_code`,`model_name`,`model_content`,`model_type`,`created_user`,`created_user_type`,`status`,`state`,`created_at`,`updated_at`
     </sql>
 
     <!--添加模板-->
@@ -33,7 +33,7 @@
     <!--获取收件列表-->
     <select id="findMsgModelList" parameterType="MsgModelList" resultType="MsgModel">
         select
-        `id`,`model_code`,`model_name`
+        `id`,`model_code`,`model_name`,`model_type`
         from msg_model
         <where>
             <choose>

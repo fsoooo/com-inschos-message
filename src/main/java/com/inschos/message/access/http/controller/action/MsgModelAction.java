@@ -1,9 +1,6 @@
 package com.inschos.message.access.http.controller.action;
 
-import com.inschos.message.access.http.controller.bean.ActionBean;
-import com.inschos.message.access.http.controller.bean.BaseRequest;
-import com.inschos.message.access.http.controller.bean.BaseResponse;
-import com.inschos.message.access.http.controller.bean.MsgModelBean;
+import com.inschos.message.access.http.controller.bean.*;
 import com.inschos.message.data.dao.*;
 import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.model.*;
@@ -11,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -99,8 +97,17 @@ public class MsgModelAction extends BaseAction {
         msgModel.model_type = request.modelType;
         msgModelList.msgModel = msgModel;
         List<MsgModel> msgModels = msgModelDAO.findMsgModelList(msgModelList);
-        response.data = msgModels;
-        if (msgModels != null) {
+        List<MsgModelListBean> msgModelListBeans = new ArrayList<>();
+        MsgModelListBean msgModelListBean = new MsgModelListBean();
+        for (MsgModel model : msgModels) {
+            msgModelListBean.id = model.id;
+            msgModelListBean.modelCode = model.model_code;
+            msgModelListBean.modelName = model.model_name;
+            msgModelListBean.modelType = model.model_type;
+            msgModelListBeans.add(msgModelListBean);
+        }
+        response.data = msgModelListBeans;
+        if (msgModelListBeans != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
@@ -125,8 +132,14 @@ public class MsgModelAction extends BaseAction {
         MsgModel msgModel = new MsgModel();
         msgModel.model_code = request.modelCode;
         MsgModel modelInfo = msgModelDAO.findMsgModelInfo(msgModel);
-        response.data = modelInfo;
-        if (modelInfo != null) {
+        MsgModelInfoBean msgModelInfoBean = new MsgModelInfoBean();
+        msgModelInfoBean.id = modelInfo.id;
+        msgModelInfoBean.modelCode = modelInfo.model_code;
+        msgModelInfoBean.modelName = modelInfo.model_name;
+        msgModelInfoBean.modelContent = modelInfo.model_content;
+        msgModelInfoBean.modelType = modelInfo.model_type;
+        response.data = msgModelInfoBean;
+        if (msgModelInfoBean != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);

@@ -74,8 +74,8 @@ public class MsgIndexAction extends BaseAction {
         //TODO 发件人发的消息，类型有限制:个人-顾问消息；代理人，企业，业管
         //赋值
         MsgSys msgSys = new MsgSys();
-        List<MsgSendRes> msgSendResList = new ArrayList<>();
-        MsgSendRes msgSendRes = new MsgSendRes();
+        List<MsgSendResBean> msgSendResList = new ArrayList<>();
+        MsgSendResBean msgSendRes = new MsgSendResBean();
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
         for (MsgToBean msgToBean : request.toUser) {
@@ -101,14 +101,14 @@ public class MsgIndexAction extends BaseAction {
                 msgSys.created_at = date;
                 msgSys.updated_at = date;
                 //调用DAO
-                msgSendRes.to_id = msgToBean.toId;
-                msgSendRes.to_type = msgToBean.toType;
-                msgSendRes.channel_id = msgToBean.channelId;
+                msgSendRes.toId = msgToBean.toId;
+                msgSendRes.toType = msgToBean.toType;
+                msgSendRes.channelId = msgToBean.channelId;
                 int send_result = msgIndexDAO.addMsgSys(msgSys);
                 if (send_result == 1) {
-                    msgSendRes.send_res = "发送成功";
+                    msgSendRes.sendRes = "发送成功";
                 } else {
-                    msgSendRes.send_res = "发送失败";
+                    msgSendRes.sendRes = "发送失败";
                 }
                 msgSendResList.add(msgSendRes);
                 break;
@@ -130,14 +130,14 @@ public class MsgIndexAction extends BaseAction {
                 msgSys.created_at = date;
                 msgSys.updated_at = date;
                 //调用DAO
-                msgSendRes.to_id = msgToBean.toId;
-                msgSendRes.to_type = msgToBean.toType;
-                msgSendRes.channel_id = msgToBean.channelId;
+                msgSendRes.toId = msgToBean.toId;
+                msgSendRes.toType = msgToBean.toType;
+                msgSendRes.channelId = msgToBean.channelId;
                 int send_result = msgIndexDAO.addMsgSys(msgSys);
                 if (send_result == 1) {
-                    msgSendRes.send_res = "发送成功";
+                    msgSendRes.sendRes = "发送成功";
                 } else {
-                    msgSendRes.send_res = "发送失败";
+                    msgSendRes.sendRes = "发送失败";
                 }
                 msgSendResList.add(msgSendRes);
             }
