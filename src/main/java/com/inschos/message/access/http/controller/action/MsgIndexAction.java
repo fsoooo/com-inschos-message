@@ -116,7 +116,7 @@ public class MsgIndexAction extends BaseAction {
                 msgSys.title = request.title;
                 msgSys.content = request.content;
                 msgSys.type = request.type;
-                if (request.attachment.isEmpty()) {
+                if (request.attachment==null) {
                     request.attachment = "";
                 }
                 msgSys.attachment = request.attachment;

@@ -82,13 +82,31 @@ public class MsgInboxAction extends BaseAction {
                 response.data = msgInboxPerson;
                 break;
             default:
+//                if (loginStatus != 0) {
+//                    String insertRes = insertMsgRec(request.userId, request.userType);
+//                }
+//                List<MsgTypeLists> msgInboxDefault = msgInboxDAO.findMsgRecList(msgRec);
+//                MsgInboxListBean msgInboxListBean  = new MsgInboxListBean();
+//                for (MsgTypeLists msgTypeLists : msgInboxDefault) {
+//                    msgInboxListBean.messageType = msgTypeLists
+//                }
+//                response.data = msgInboxDefault;
                 response.data = "";
+
                 break;
         }
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
+    }
+    public String  getInboxList(Object msgInbox){
+        BaseResponse response = new BaseResponse();
+        if(msgInbox!=null){
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        }else{
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         }
     }
 
