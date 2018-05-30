@@ -37,7 +37,7 @@ public class MsgModelController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/add/**")
     @ResponseBody
     public String addMsgModel(ActionBean actionBean) {
@@ -55,7 +55,7 @@ public class MsgModelController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/list/**")
     @ResponseBody
     public String listMsgModel(ActionBean actionBean) {
@@ -70,7 +70,7 @@ public class MsgModelController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/info/**")
     @ResponseBody
     public String infoMsgModel(ActionBean actionBean) {
@@ -87,7 +87,7 @@ public class MsgModelController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/update/**")
     @ResponseBody
     public String updateMsgModel(ActionBean actionBean) {

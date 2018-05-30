@@ -8,9 +8,9 @@ public class MsgRec {
 
     public long id;
 
-    public long manager_uuid = -1;
+    public String manager_uuid = "-1";
 
-    public long account_uuid = -1;
+    public String account_uuid = "-1";
 
     public long channel_id = -1;
 

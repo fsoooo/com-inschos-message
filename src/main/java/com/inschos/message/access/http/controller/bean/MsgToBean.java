@@ -6,5 +6,9 @@ public class MsgToBean {
 
     public int toType;//'收件人类型，，个人1/企业2/代理人3/业管4
 
+    public String toName = "收件人姓名";//收件人姓名
+
     public long channelId = -1;//渠道id
+
+    public String channelName = "渠道名称";//
 }

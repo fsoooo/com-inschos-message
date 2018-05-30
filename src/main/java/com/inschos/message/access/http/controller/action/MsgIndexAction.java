@@ -58,6 +58,9 @@ public class MsgIndexAction extends BaseAction {
         if (request.title.isEmpty() || request.content.isEmpty()) {
             return json(BaseResponse.CODE_FAILURE, "title or content is empty", response);
         }
+        if(request.type == 0){
+            return json(BaseResponse.CODE_FAILURE, "type is empty", response);
+        }
         if (request.fromId == 0 || request.fromType == 0) {
             return json(BaseResponse.CODE_FAILURE, "from_id or from_type is empty", response);
         }
@@ -83,64 +86,37 @@ public class MsgIndexAction extends BaseAction {
                 if (request.fromType != msgStatus.USER_MANAGER) {//只有业管系统消息
                     return json(BaseResponse.CODE_FAILURE, "no permission", response);
                 }
-                //TODO 如果发送的是系统消息,只需要插一次
-                msgSys.title = request.title;
-                msgSys.content = request.content;
-                msgSys.type = request.type;
-                if (request.attachment.isEmpty()) {
-                    request.attachment = "";
-                }
-                msgSys.attachment = request.attachment;
-                msgSys.send_time = request.sendTime;
-                msgSys.from_id = request.fromId;
-                msgSys.from_type = request.fromType;
-                msgSys.to_id = msgToBean.toId;
-                msgSys.to_type = msgToBean.toType;
-                msgSys.channel_id = msgToBean.channelId;
-                msgSys.parent_id = request.parentId;
-                msgSys.created_at = date;
-                msgSys.updated_at = date;
-                //调用DAO
-                msgSendRes.toId = msgToBean.toId;
-                msgSendRes.toType = msgToBean.toType;
-                msgSendRes.channelId = msgToBean.channelId;
-                int send_result = msgIndexDAO.addMsgSys(msgSys);
-                if (send_result == 1) {
-                    msgSendRes.sendRes = "发送成功";
-                } else {
-                    msgSendRes.sendRes = "发送失败";
-                }
-                msgSendResList.add(msgSendRes);
-                break;
-            } else {
-                msgSys.title = request.title;
-                msgSys.content = request.content;
-                msgSys.type = request.type;
-                if (request.attachment==null) {
-                    request.attachment = "";
-                }
-                msgSys.attachment = request.attachment;
-                msgSys.send_time = request.sendTime;
-                msgSys.from_id = request.fromId;
-                msgSys.from_type = request.fromType;
-                msgSys.to_id = msgToBean.toId;
-                msgSys.to_type = msgToBean.toType;
-                msgSys.channel_id = msgToBean.channelId;
-                msgSys.parent_id = request.parentId;
-                msgSys.created_at = date;
-                msgSys.updated_at = date;
-                //调用DAO
-                msgSendRes.toId = msgToBean.toId;
-                msgSendRes.toType = msgToBean.toType;
-                msgSendRes.channelId = msgToBean.channelId;
-                int send_result = msgIndexDAO.addMsgSys(msgSys);
-                if (send_result == 1) {
-                    msgSendRes.sendRes = "发送成功";
-                } else {
-                    msgSendRes.sendRes = "发送失败";
-                }
-                msgSendResList.add(msgSendRes);
             }
+            msgSys.manager_uuid = actionBean.managerUuid;
+            msgSys.account_uuid = actionBean.accountUuid;
+            msgSys.title = request.title;
+            msgSys.content = request.content;
+            msgSys.type = request.type;
+            if (request.attachment == null) {
+                request.attachment = "";
+            }
+            msgSys.attachment = request.attachment;
+            msgSys.send_time = request.sendTime;
+            msgSys.from_id = request.fromId;
+            msgSys.from_type = request.fromType;
+            msgSys.to_id = msgToBean.toId;
+            msgSys.to_type = msgToBean.toType;
+            msgSys.channel_id = msgToBean.channelId;
+            msgSys.parent_id = request.parentId;
+            msgSys.created_at = date;
+            msgSys.updated_at = date;
+            //调用DAO
+            msgSendRes.toId = msgToBean.toId;
+            msgSendRes.toType = msgToBean.toType;
+            msgSendRes.channelId = msgToBean.channelId;
+
+            int send_result = msgIndexDAO.addMsgSys(msgSys);
+            if (send_result == 1) {
+                msgSendRes.sendRes = "发送成功";
+            } else {
+                msgSendRes.sendRes = "发送失败";
+            }
+            msgSendResList.add(msgSendRes);
         }
         response.data = msgSendResList;
         return json(BaseResponse.CODE_SUCCESS, "操作成功", response);

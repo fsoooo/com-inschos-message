@@ -53,78 +53,48 @@ public class MsgInboxAction extends BaseAction {
         }
         msgRec.user_id = request.userId;
         msgRec.user_type = request.userType;
+        msgRec.manager_uuid = actionBean.managerUuid;
+        msgRec.account_uuid = actionBean.accountUuid;
         MsgStatus msgStatus = new MsgStatus();
         //根据user_type判断不同用户可以查看消息 类型
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<MsgTypeLists> msgInboxList = new ArrayList<>();
         switch (request.userType) {
             case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
                 List<MsgTypeLists> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
-                List<MsgInboxListBean> msgInboxListManagers = new ArrayList<>();
-                for (MsgTypeLists msgTypeLists : msgInboxManager) {
-                    MsgInboxListBean msgInboxListManager = new MsgInboxListBean();
-                    msgInboxListManager.messageType = msgTypeLists.type;
-                    msgInboxListManager.messageTypeText = MsgStatus.getMsgType(msgTypeLists.type);
-                    msgInboxListManager.unReadCount = msgTypeLists.count;
-                    msgInboxListManager.unReadCountText = msgTypeLists.count + "条新消息";
-                    msgInboxListManager.time = msgTypeLists.time;
-                    msgInboxListManager.timeTxt = sdf.format(new Date(Long.valueOf(msgTypeLists.time)));
-                    msgInboxListManagers.add(msgInboxListManager);
-                }
-                response.data = msgInboxListManagers;
+                msgInboxList = msgInboxManager;
                 break;
             case 3://企业用户
-                String insertResCompany = insertMsgRec(request.userId, request.userType);
+                String insertResCompany = insertMsgRec(msgRec);
                 List<MsgTypeLists> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
-                List<MsgInboxListBean> msgInboxListCompanys = new ArrayList<>();
-                for (MsgTypeLists msgTypeLists : msgInboxCompany) {
-                    MsgInboxListBean msgInboxListCompany = new MsgInboxListBean();
-                    msgInboxListCompany.messageType = msgTypeLists.type;
-                    msgInboxListCompany.messageTypeText = MsgStatus.getMsgType(msgTypeLists.type);
-                    msgInboxListCompany.unReadCount = msgTypeLists.count;
-                    msgInboxListCompany.unReadCountText = msgTypeLists.count + "条新消息";
-                    msgInboxListCompany.time = msgTypeLists.time;
-                    msgInboxListCompany.timeTxt = sdf.format(new Date(Long.valueOf(msgTypeLists.time)));
-                    msgInboxListCompanys.add(msgInboxListCompany);
-                }
-                response.data = msgInboxListCompanys;
+                msgInboxList = msgInboxCompany;
                 break;
             case 2://代理人用户
-                String insertResAgent = insertMsgRec(request.userId, request.userType);
+                String insertResAgent = insertMsgRec(msgRec);
                 List<MsgTypeLists> msgInboxAgent = msgInboxDAO.findMsgRecList(msgRec);
-                List<MsgInboxListBean> msgInboxListAgents = new ArrayList<>();
-
-                for (MsgTypeLists msgTypeLists : msgInboxAgent) {
-                    MsgInboxListBean msgInboxListAgent = new MsgInboxListBean();
-                    msgInboxListAgent.messageType = msgTypeLists.type;
-                    msgInboxListAgent.messageTypeText = MsgStatus.getMsgType(msgTypeLists.type);
-                    msgInboxListAgent.unReadCount = msgTypeLists.count;
-                    msgInboxListAgent.unReadCountText = msgTypeLists.count + "条新消息";
-                    msgInboxListAgent.time = msgTypeLists.time;
-                    msgInboxListAgent.timeTxt = sdf.format(new Date(Long.valueOf(msgTypeLists.time)));
-                    msgInboxListAgents.add(msgInboxListAgent);
-                }
-                response.data = msgInboxListAgents;
+                msgInboxList = msgInboxAgent;
                 break;
             case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                String insertResPerson = insertMsgRec(request.userId, request.userType);
+                String insertResPerson = insertMsgRec(msgRec);
                 List<MsgTypeLists> msgInboxPerson = msgInboxDAO.findMsgRecList(msgRec);
-                List<MsgInboxListBean> msgInboxListPersons = new ArrayList<>();
-                for (MsgTypeLists msgTypeLists : msgInboxPerson) {
-                    MsgInboxListBean msgInboxListPerson = new MsgInboxListBean();
-                    msgInboxListPerson.messageType = msgTypeLists.type;
-                    msgInboxListPerson.messageTypeText = MsgStatus.getMsgType(msgTypeLists.type);
-                    msgInboxListPerson.unReadCount = msgTypeLists.count;
-                    msgInboxListPerson.unReadCountText = msgTypeLists.count + "条新消息";
-                    msgInboxListPerson.time = msgTypeLists.time;
-                    msgInboxListPerson.timeTxt = sdf.format(new Date(Long.valueOf(msgTypeLists.time)));
-                    msgInboxListPersons.add(msgInboxListPerson);
-                }
-                response.data = msgInboxListPersons;
-                break;
-            default:
-                response.data = "";
+                msgInboxList = msgInboxPerson;
                 break;
         }
+        if(msgInboxList==null){
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
+        List<MsgInboxListBean> msgInboxLists = new ArrayList<>();
+        for (MsgTypeLists msgTypeLists : msgInboxList) {
+            MsgInboxListBean msgInboxListBean = new MsgInboxListBean();
+            msgInboxListBean.messageType = msgTypeLists.type;
+            msgInboxListBean.messageTypeText = MsgStatus.getMsgType(msgTypeLists.type);
+            msgInboxListBean.unReadCount = msgTypeLists.count;
+            msgInboxListBean.unReadCountText = msgTypeLists.count + "条新消息";
+            msgInboxListBean.time = msgTypeLists.time;
+            msgInboxListBean.timeTxt = sdf.format(new Date(Long.valueOf(msgTypeLists.time)));
+            msgInboxLists.add(msgInboxListBean);
+        }
+        response.data = msgInboxLists;
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
@@ -167,173 +137,63 @@ public class MsgInboxAction extends BaseAction {
         msgRec.user_id = request.userId;
         msgRec.user_type = request.userType;
         msgRec.type = request.messageType;
+        msgRec.manager_uuid = actionBean.managerUuid;
+        msgRec.account_uuid = actionBean.accountUuid;
         MsgStatus msgStatus = new MsgStatus();
         MsgInboxListTypeBean msgInboxListTypeBean = new MsgInboxListTypeBean();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<MsgRec> msgRecList = new ArrayList<>();
         //根据user_type判断不同用户可以查看消息 类型
         switch (request.userType) {
             case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
                 List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecListByType(msgRec);
-                List<MsgInboxListTypeBean> msgInboxListTypeManagers = new ArrayList<>();
-                for (MsgRec msgInboxRes : msgInboxManager) {
-                    MsgInboxListTypeBean msgInboxListTypeManager = new MsgInboxListTypeBean();
-                    msgInboxListTypeManager.id = msgInboxRes.id;
-                    msgInboxListTypeManager.title = msgInboxRes.msgSys.title;
-                    msgInboxListTypeManager.content = msgInboxRes.msgSys.content;
-                    msgInboxListTypeManager.messageType = msgInboxRes.type;
-                    msgInboxListTypeManager.messageTypeText = MsgStatus.getMsgType(msgInboxRes.type);
-                    msgInboxListTypeManager.readFlag = msgInboxRes.sys_status;
-                    msgInboxListTypeManager.time = msgInboxRes.created_at;
-                    msgInboxListTypeManager.timeTxt = sdf.format(new Date(Long.valueOf(msgInboxRes.created_at)));
-                    msgInboxListTypeManagers.add(msgInboxListTypeManager);
-                }
-                response.data = msgInboxListTypeManagers;
+                msgRecList = msgInboxManager;
                 break;
             case 3://企业用户
-                String insertResCompany = insertMsgRec(request.userId, request.userType);
+                String insertResCompany = insertMsgRec(msgRec);
                 List<MsgRec> msgInboxCompany = msgInboxDAO.findMsgRecListByType(msgRec);
-                List<MsgInboxListTypeBean> msgInboxListTypeCompanys = new ArrayList<>();
-                for (MsgRec msgInboxRes : msgInboxCompany) {
-                    MsgInboxListTypeBean msgInboxListTypeCompany = new MsgInboxListTypeBean();
-                    msgInboxListTypeCompany.id = msgInboxRes.id;
-                    msgInboxListTypeCompany.title = msgInboxRes.msgSys.title;
-                    msgInboxListTypeCompany.content = msgInboxRes.msgSys.content;
-                    msgInboxListTypeCompany.messageType = msgInboxRes.type;
-                    msgInboxListTypeCompany.messageTypeText = MsgStatus.getMsgType(msgInboxRes.type);
-                    msgInboxListTypeCompany.readFlag = msgInboxRes.sys_status;
-                    msgInboxListTypeCompany.time = msgInboxRes.created_at;
-                    msgInboxListTypeCompany.timeTxt = sdf.format(new Date(Long.valueOf(msgInboxRes.created_at)));
-                    msgInboxListTypeCompanys.add(msgInboxListTypeCompany);
-                }
-                response.data = msgInboxListTypeCompanys;
+                msgRecList = msgInboxCompany;
                 break;
             case 2://代理人用户
-                String insertResAgent = insertMsgRec(request.userId, request.userType);
+                String insertResAgent = insertMsgRec(msgRec);
                 List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecListByType(msgRec);
-                List<MsgInboxListTypeBean> msgInboxListTypeAgents = new ArrayList<>();
-                for (MsgRec msgInboxRes : msgInboxAgent) {
-                    MsgInboxListTypeBean msgInboxListTypeAgent = new MsgInboxListTypeBean();
-                    msgInboxListTypeAgent.id = msgInboxRes.id;
-                    msgInboxListTypeAgent.title = msgInboxRes.msgSys.title;
-                    msgInboxListTypeAgent.content = msgInboxRes.msgSys.content;
-                    msgInboxListTypeAgent.messageType = msgInboxRes.type;
-                    msgInboxListTypeAgent.messageTypeText = MsgStatus.getMsgType(msgInboxRes.type);
-                    msgInboxListTypeAgent.readFlag = msgInboxRes.sys_status;
-                    msgInboxListTypeAgent.time = msgInboxRes.created_at;
-                    msgInboxListTypeAgent.timeTxt = sdf.format(new Date(Long.valueOf(msgInboxRes.created_at)));
-                    msgInboxListTypeAgents.add(msgInboxListTypeAgent);
-                }
-                response.data = msgInboxListTypeAgents;
+                msgRecList = msgInboxAgent;
                 break;
             case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                String insertResPerson = insertMsgRec(request.userId, request.userType);
+                String insertResPerson = insertMsgRec(msgRec);
                 List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecListByType(msgRec);
-                List<MsgInboxListTypeBean> msgInboxListTypePersons = new ArrayList<>();
-                for (MsgRec msgInboxRes : msgInboxPerson) {
-                    MsgInboxListTypeBean msgInboxListTypePerson = new MsgInboxListTypeBean();
-                    msgInboxListTypePerson.id = msgInboxRes.id;
-                    msgInboxListTypePerson.title = msgInboxRes.msgSys.title;
-                    msgInboxListTypePerson.content = msgInboxRes.msgSys.content;
-                    msgInboxListTypePerson.messageType = msgInboxRes.type;
-                    msgInboxListTypePerson.messageTypeText = MsgStatus.getMsgType(msgInboxRes.type);
-                    msgInboxListTypePerson.readFlag = msgInboxRes.sys_status;
-                    msgInboxListTypePerson.time = msgInboxRes.created_at;
-                    msgInboxListTypePerson.timeTxt = sdf.format(new Date(Long.valueOf(msgInboxRes.created_at)));
-                    msgInboxListTypePersons.add(msgInboxListTypePerson);
-                }
-                response.data = msgInboxListTypePersons;
-                break;
-            default:
-                response.data = "";
+                msgRecList = msgInboxPerson;
                 break;
         }
-        if (response.data != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-        } else {
+        if(msgRecList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
-    }
-
-    /**
-     * 消息 根据parentId获取消息列表
-     * TODO  先不改
-     * @param userId        用户id
-     * @param userType      用户类型:个人用户 1/企业用户 2/代理人 3/业管用户4
-     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @param messageType   消息 类型:客户消息5/顾问消息7/,默认是顾问消息和客户消息，根据用户类型判断
-     * @param parentId
-     * @param pageNum       当前页码 ，可不传，默认为1
-     * @param lastId        上一页最大id ，可不传，默认为
-     * @param limit         每页显示行数，可不传，默认为
-     * @return json
-     * @access public
-     */
-    public String findMsgResListByParent(ActionBean actionBean) {
-        MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.InboxListRequest.class);
-        BaseResponse response = new BaseResponse();
-        //判空
-        if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
+        for (MsgRec msgInboxRes : msgRecList) {
+            MsgSys msgSys = new MsgSys();
+            msgSys.id = msgInboxRes.msg_id;
+            List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
+            List<MsgToBean> MsgToBeans = new ArrayList<>();
+            for (MsgTo to : msgTo) {
+                MsgToBean msgToBean = new MsgToBean();
+                msgToBean.toId = to.to_id;
+                msgToBean.toType = to.to_type;
+                msgToBean.channelId = to.channel_id;
+                MsgToBeans.add(msgToBean);
+            }
+            MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
+            msgInboxListType.id = msgInboxRes.id;
+            msgInboxListType.title = msgInboxRes.msgSys.title;
+            msgInboxListType.content = msgInboxRes.msgSys.content;
+            msgInboxListType.messageType = msgInboxRes.type;
+            msgInboxListType.messageTypeText = MsgStatus.getMsgType(msgInboxRes.type);
+            msgInboxListType.readFlag = msgInboxRes.sys_status;
+            msgInboxListType.time = msgInboxRes.created_at;
+            msgInboxListType.timeTxt = sdf.format(new Date(Long.valueOf(msgInboxRes.created_at)));
+            msgInboxListType.msgToBean = MsgToBeans;
+            msgInboxListTypeBeans.add(msgInboxListType);
         }
-        if (request.messageType == 0) {
-            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
-        }
-        if (request.parentId == 0) {
-            return json(BaseResponse.CODE_FAILURE, "parentId is empty", response);
-        }
-        //调用DAO
-        MsgRec msgRec = new MsgRec();
-        msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
-        msgRec.sys_status = request.messageStatus;
-        msgRec.user_id = request.userId;
-        msgRec.user_type = request.userType;
-        msgRec.type = request.messageType;
-        msgRec.parent_id = request.parentId;
-        MsgStatus msgStatus = new MsgStatus();
-        logger.info(msgRec.user_id);
-        logger.info(msgRec.user_type);
-        logger.info(msgRec.type);
-        logger.info(msgRec.parent_id);
-        //根据user_type判断不同用户可以查看消息 类型
-        //TODO 判断登录
-        int loginStatus = 1;
-        switch (request.userType) {
-            //TODO 还不确定业管和企业用户是否可以查看
-//            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-//                List<MsgTypeLists> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
-//                response.data = msgInboxManager;
-//                break;
-//            case 3://企业用户
-//                if (loginStatus != 0) {
-//                    String insertRes = insertMsgRec(request.userId, request.userType);
-//                }
-//                List<MsgTypeLists> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
-//                response.data = msgInboxCompany;
-//                break;
-            case 2://代理人用户
-                if (request.messageType != 5) {
-                    return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
-                }
-                if (loginStatus != 0) {
-                    String insertRes = insertMsgRec(request.userId, request.userType);
-                }
-                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecListByParent(msgRec);
-                response.data = msgInboxAgent;
-                break;
-            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                if (request.messageType != 7) {
-                    return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
-                }
-                if (loginStatus != 0) {
-                    String insertRes = insertMsgRec(request.userId, request.userType);
-                }
-                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecListByParent(msgRec);
-                response.data = msgInboxPerson;
-                break;
-            default:
-                response.data = "";
-                break;
-        }
+        response.data = msgInboxListTypeBeans;
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
@@ -359,7 +219,12 @@ public class MsgInboxAction extends BaseAction {
         MsgRec msgRec = new MsgRec();
         MsgSys msgSys = new MsgSys();
         msgRec.id = request.messageId;
+        msgRec.manager_uuid = actionBean.managerUuid;
+        msgRec.account_uuid = actionBean.accountUuid;
         MsgRec msgInfo = msgInboxDAO.findMsgInfo(msgRec);
+        if(msgInfo==null){
+            return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
+        }
         MsgInboxInfoBean msgInboxInfoBean = new MsgInboxInfoBean();
         msgInboxInfoBean.id = msgInfo.id;
         msgInboxInfoBean.title = msgInfo.msgSys.title;
@@ -370,6 +235,8 @@ public class MsgInboxAction extends BaseAction {
         msgInboxInfoBean.time = msgInfo.created_at;
         msgInboxInfoBean.timeTxt = sdf.format(new Date(Long.valueOf(msgInfo.created_at)));
         msgSys.id = msgInfo.msg_id;
+        msgSys.manager_uuid = actionBean.managerUuid;
+        msgSys.account_uuid = actionBean.accountUuid;
         List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
         List<MsgToBean> MsgToBeans = new ArrayList<>();
         for (MsgTo to : msgTo) {
@@ -381,7 +248,7 @@ public class MsgInboxAction extends BaseAction {
         }
         msgInboxInfoBean.msgToBean = MsgToBeans;
         response.data = msgInboxInfoBean;
-        if (msgInfo != null) {
+        if (msgInboxInfoBean != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
@@ -397,16 +264,13 @@ public class MsgInboxAction extends BaseAction {
      * @return mixed
      * @access public
      */
-    public String insertMsgRec(long userId, int userType) {
+    public String insertMsgRec(MsgRec msgRec) {
         BaseResponse response = new BaseResponse();
         //判空
-        if (userId == 0 || userType == 0) {
-            return json(BaseResponse.CODE_FAILURE, "userId or userType is empty", response);
+        if (msgRec==null) {
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
         //查询消息 系统表有没有未插入的数据，没有的话，返回执行结束，有的话继续执行（赋值，插入，改变状态）
-        MsgRec msgRec = new MsgRec();
-        msgRec.user_id = userId;
-        msgRec.user_type = userType;
         List<MsgSys> MsgSys = msgInboxDAO.findUserMsgRes(msgRec);
         //判断集合是否为空
         if (null == MsgSys || MsgSys.size() == 0) {
@@ -515,6 +379,144 @@ public class MsgInboxAction extends BaseAction {
     }
 
     /**
+     * 消息 详情
+     *
+     * @param messageId 消息 id
+     * @return json
+     * @access public
+     */
+    public String findMsgOutboxInfo(ActionBean actionBean) {
+        MsgInboxBean.MsgInfoRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.MsgInfoRequest.class);
+        BaseResponse response = new BaseResponse();
+        //判空
+        if (request == null) {
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        MsgSys msgSys = new MsgSys();
+        msgSys.id = request.messageId;
+        msgSys.manager_uuid = actionBean.managerUuid;
+        msgSys.account_uuid = actionBean.accountUuid;
+        MsgSys msgSysInfo = msgInboxDAO.findMsgSysInfo(msgSys);
+        if(msgSysInfo==null){
+            return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        MsgInboxInfoBean msgInboxInfoBean = new MsgInboxInfoBean();
+        msgInboxInfoBean.id = msgSysInfo.id;
+        msgInboxInfoBean.title = msgSysInfo.title;
+        msgInboxInfoBean.content = msgSysInfo.content;
+        msgInboxInfoBean.messageType = msgSysInfo.type;
+        msgInboxInfoBean.messageTypeText = MsgStatus.getMsgType(msgSysInfo.type);
+        msgInboxInfoBean.readFlag = msgSysInfo.status;
+        msgInboxInfoBean.time = msgSysInfo.created_at;
+        msgInboxInfoBean.timeTxt = sdf.format(new Date(Long.valueOf(msgSysInfo.created_at)));
+        List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
+        List<MsgToBean> MsgToBeans = new ArrayList<>();
+        for (MsgTo to : msgTo) {
+            MsgToBean msgToBean = new MsgToBean();
+            msgToBean.toId = to.to_id;
+            msgToBean.toType = to.to_type;
+            msgToBean.channelId = to.channel_id;
+            MsgToBeans.add(msgToBean);
+        }
+        msgInboxInfoBean.msgToBean = MsgToBeans;
+        response.data = msgInboxInfoBean;
+        if (msgSysInfo != null) {
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
+        }
+    }
+
+    /**
+     * 消息 根据parentId获取消息列表
+     * TODO  先不改
+     *
+     * @param userId        用户id
+     * @param userType      用户类型:个人用户 1/企业用户 2/代理人 3/业管用户4
+     * @param messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @param messageType   消息 类型:客户消息5/顾问消息7/,默认是顾问消息和客户消息，根据用户类型判断
+     * @param parentId
+     * @param pageNum       当前页码 ，可不传，默认为1
+     * @param lastId        上一页最大id ，可不传，默认为
+     * @param limit         每页显示行数，可不传，默认为
+     * @return json
+     * @access public
+     */
+    public String findMsgResListByParent(ActionBean actionBean) {
+        MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.InboxListRequest.class);
+        BaseResponse response = new BaseResponse();
+        //判空
+        if (request == null) {
+            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+        }
+        if (request.messageType == 0) {
+            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
+        }
+        if (request.parentId == 0) {
+            return json(BaseResponse.CODE_FAILURE, "parentId is empty", response);
+        }
+        //调用DAO
+        MsgRec msgRec = new MsgRec();
+        msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgRec.sys_status = request.messageStatus;
+        msgRec.user_id = request.userId;
+        msgRec.user_type = request.userType;
+        msgRec.type = request.messageType;
+        msgRec.parent_id = request.parentId;
+        MsgStatus msgStatus = new MsgStatus();
+        logger.info(msgRec.user_id);
+        logger.info(msgRec.user_type);
+        logger.info(msgRec.type);
+        logger.info(msgRec.parent_id);
+        //根据user_type判断不同用户可以查看消息 类型
+        //TODO 判断登录
+        int loginStatus = 1;
+        switch (request.userType) {
+            //TODO 还不确定业管和企业用户是否可以查看
+//            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
+//                List<MsgTypeLists> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
+//                response.data = msgInboxManager;
+//                break;
+//            case 3://企业用户
+//                if (loginStatus != 0) {
+//                    String insertRes = insertMsgRec(msgRec);;
+//                }
+//                List<MsgTypeLists> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
+//                response.data = msgInboxCompany;
+//                break;
+            case 2://代理人用户
+                if (request.messageType != 5) {
+                    return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
+                }
+                if (loginStatus != 0) {
+                    String insertRes = insertMsgRec(msgRec);;
+                }
+                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecListByParent(msgRec);
+                response.data = msgInboxAgent;
+                break;
+            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
+                if (request.messageType != 7) {
+                    return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
+                }
+                if (loginStatus != 0) {
+                    String insertRes = insertMsgRec(msgRec);;
+                }
+                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecListByParent(msgRec);
+                response.data = msgInboxPerson;
+                break;
+            default:
+                response.data = "";
+                break;
+        }
+        if (response.data != null) {
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
+    }
+
+    /**
      * 消息 根据parentId获取消息列表
      *
      * @param userId        用户id
@@ -583,40 +585,6 @@ public class MsgInboxAction extends BaseAction {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
-        }
-    }
-
-    /**
-     * 消息 详情
-     *
-     * @param messageId 消息 id
-     * @return json
-     * @access public
-     */
-    public String findMsgOutboxInfo(ActionBean actionBean){
-        MsgInboxBean.MsgInfoRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.MsgInfoRequest.class);
-        BaseResponse response = new BaseResponse();
-        //判空
-        if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
-        }
-        MsgRec msgRec = new MsgRec();
-        msgRec.id = request.messageId;
-        MsgRec msgInfo = msgInboxDAO.findMsgInfo(msgRec);
-        response.data = msgInfo;
-        if (msgInfo != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-        } else {
-            MsgSys msgSys = new MsgSys();
-            msgSys.id = request.messageId;
-            MsgSys msgSysInfo = msgInboxDAO.findMsgSysInfo(msgSys);
-            if (msgSysInfo != null) {
-                response.data = msgSysInfo;
-                return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-            } else {
-                response.data = "";
-                return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
-            }
         }
     }
 

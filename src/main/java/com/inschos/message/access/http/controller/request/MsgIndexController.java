@@ -46,7 +46,7 @@ public class MsgIndexController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/add/**")
     @ResponseBody
     public String addMessage(ActionBean actionBean) {
@@ -62,7 +62,7 @@ public class MsgIndexController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/update/**")
     @ResponseBody
     public String updateMessage(ActionBean actionBean) {

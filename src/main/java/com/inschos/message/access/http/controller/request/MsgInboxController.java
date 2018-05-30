@@ -41,7 +41,7 @@ public class MsgInboxController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/list/inbox/**")
     @ResponseBody
     public String listInbox(ActionBean actionBean) {
@@ -61,7 +61,7 @@ public class MsgInboxController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/list/inbox/type/**")
     @ResponseBody
     public String listInboxByType(ActionBean actionBean) {
@@ -82,7 +82,7 @@ public class MsgInboxController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/list/inbox/parent/**")
     @ResponseBody
     public String listInboxByParent(ActionBean actionBean) {
@@ -96,7 +96,7 @@ public class MsgInboxController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/info/inbox/**")
     @ResponseBody
     public String infoMessage(ActionBean actionBean) {
@@ -115,7 +115,7 @@ public class MsgInboxController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/list/outbox/**")
     @ResponseBody
     public String listOutbox(ActionBean actionBean) {
@@ -135,7 +135,7 @@ public class MsgInboxController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/list/outbox/type/**")
     @ResponseBody
     public String listOutboxByType(ActionBean actionBean) {
@@ -156,7 +156,7 @@ public class MsgInboxController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/list/outbox/parent/**")
     @ResponseBody
     public String listOutboxByParent(ActionBean actionBean) {
@@ -170,7 +170,7 @@ public class MsgInboxController {
      * @return json
      * @access public
      */
-    @GetActionBeanAnnotation(isCheckAccess = false)
+    @GetActionBeanAnnotation
     @RequestMapping("/info/outbox/**")
     @ResponseBody
     public String infoMessageOutbox(ActionBean actionBean) {
