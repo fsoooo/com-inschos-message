@@ -90,6 +90,20 @@ public class MsgInboxController {
     }
 
     /**
+     * 消息 详情
+     *
+     * @param messageId 消息 id
+     * @return json
+     * @access public
+     */
+    @GetActionBeanAnnotation(isCheckAccess = false)
+    @RequestMapping("/info/inbox/**")
+    @ResponseBody
+    public String infoMessage(ActionBean actionBean) {
+        return msgInboxAction.findMsgInboxInfo(actionBean);
+    }
+
+    /**
      * 消息 发件箱列表
      *
      * @param userId        用户id
@@ -150,16 +164,16 @@ public class MsgInboxController {
     }
 
     /**
-     * 消息 详情
+     * 消息 详情-发件
      *
      * @param messageId 消息 id
      * @return json
      * @access public
      */
     @GetActionBeanAnnotation(isCheckAccess = false)
-    @RequestMapping("/info/**")
+    @RequestMapping("/info/outbox/**")
     @ResponseBody
-    public String infoMessage(ActionBean actionBean) {
-        return msgInboxAction.findMsgInfo(actionBean);
+    public String infoMessageOutbox(ActionBean actionBean) {
+        return msgInboxAction.findMsgOutboxInfo(actionBean);
     }
 }

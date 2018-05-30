@@ -144,6 +144,15 @@ public class MsgInboxDAO {
     }
 
     /**
+     *
+     * @param msgSys
+     * @return
+     */
+    public List<MsgTo> findMsgTo(MsgSys msgSys){
+        return msgInboxMapper.findMsgTo(msgSys);
+    }
+
+    /**
      * 删除/读取消息 （update）
      *
      * @param msgUpdate

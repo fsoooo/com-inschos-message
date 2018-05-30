@@ -44,6 +44,8 @@ public interface MsgInboxMapper {
     // 消息 详情(findMsgInfo)
     MsgRec findMsgInfo(MsgRec msgRec);
 
+    List<MsgTo> findMsgTo(MsgSys msgSys);//定义返回数据类型-集合
+
     // 删除/读取消息 (updateMsgRec)
     int updateMsgRecStatus(MsgUpdate msgUpdate);
 

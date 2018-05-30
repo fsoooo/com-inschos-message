@@ -25,40 +25,26 @@
     <!--TODO 消息类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/-->
     <select id="findMsgRecList" parameterType="MsgRec" resultType="MsgTypeLists">
         select `type`,count(`id`) as count, max(`created_at`) as time from msg_rec
-        <choose>
-            <when test="user_type==1">
-                <where>
+        <where>
+            <choose>
+                <when test="user_type==1">
                     `type` in (1,2,3,6,7)
-                </where>
-                GROUP BY `type`
-            </when>
-            <when test="user_type==2">
-                <where>
+                </when>
+                <when test="user_type==2">
                     `type` in (1,2,3,5,6,7)
-                </where>
-                GROUP BY `type`
-            </when>
-            <when test="user_type==3">
-                <where>
+                </when>
+                <when test="user_type==3">
                     `type` in (1,2,3,4,5,7)
-                </where>
-                GROUP BY `type`
-            </when>
-            <when test="user_type==4">
-                GROUP BY `type`
-            </when>
-            <otherwise>
-                <where>
-                    `type` in (1,2,3,6,7)
-                </where>
-                GROUP BY `type`
-            </otherwise>
-        </choose>
+                </when>
+            </choose>
+        </where>
+        GROUP BY `type`
     </select>
 
     <select id="findMsgRecListByType" parameterType="MsgRec" resultMap="selectMsgRecAndSys">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`,
-        `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`,`msg_sys`.`content`,`msg_sys`.`type`,
+        `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`,
+        `msg_sys`.`title`,`msg_sys`.`content`,`msg_sys`.`type`,
         `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
         from msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         <where>
@@ -129,13 +115,15 @@
                     msg_rec.id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0 AND msg_rec.parent_id =#{parent_id} limit #{page.start},1)
+                    msg_rec.id&gt;=(select id from msg_rec where sys_status=#{sys_status} AND msg_rec.state=0 AND
+                    msg_rec.parent_id =#{parent_id} limit #{page.start},1)
                 </when>
                 <otherwise>
                     1=1
                 </otherwise>
             </choose>
-            AND msg_rec.state = 0 AND msg_rec.user_id =#{user_id} AND msg_rec.user_type =#{user_type} AND msg_rec.type =#{type} AND msg_rec.parent_id =#{parent_id} limit #{page.offset}
+            AND msg_rec.state = 0 AND msg_rec.user_id =#{user_id} AND msg_rec.user_type =#{user_type} AND msg_rec.type
+            =#{type} AND msg_rec.parent_id =#{parent_id} limit #{page.offset}
         </where>
     </select>
     <!--联查映射-->
@@ -301,4 +289,10 @@
               `state`=#{operate_id}
             where `id`=#{msg_id}
     </update>
+
+    <select id="findMsgTo" parameterType="MsgSys" resultType="MsgTo">
+        select `to_id`,`to_type`,`channel_id`,`status`
+        from msg_sys
+        where `id`=#{id}
+    </select>
 </mapper>

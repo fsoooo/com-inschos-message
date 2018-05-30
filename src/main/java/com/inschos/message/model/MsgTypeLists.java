@@ -6,6 +6,6 @@ public class MsgTypeLists {
 
     public Long count;
 
-    public String time;
+    public long time;
 
 }
