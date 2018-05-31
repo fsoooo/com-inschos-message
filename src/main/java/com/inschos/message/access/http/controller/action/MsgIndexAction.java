@@ -145,9 +145,9 @@ public class MsgIndexAction extends BaseAction {
 
                 List<String> childrenId = channelClient.getChildrenId(String.valueOf(msgToBean.channelId), true);
                 AgentJobBean searchAgents = new AgentJobBean();
-                searchAgents.channel_ids = childrenId;
+                searchAgents.channelIdList = childrenId;
                 searchAgents.manager_uuid = managerUuid;
-                searchAgents.search_time = TimeKit.curTimeMillis2Str();
+                searchAgents.search_cur_time = TimeKit.curTimeMillis2Str();
                 List<AgentJobBean> agents = agentJobClient.getAgentsByChannels(searchAgents);
                 if(agents!=null){
                     personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));

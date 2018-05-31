@@ -48,8 +48,8 @@ public class AgentJobBean {
     /** 任职状态： 0离职 1在职*/
     public int status;
 
-    public List<String> channel_ids;
+    public List<String> channelIdList;
 
-    public String search_time;
+    public String search_cur_time;
 
 }
