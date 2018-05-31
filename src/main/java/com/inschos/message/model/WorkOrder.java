@@ -24,6 +24,7 @@ public class WorkOrder {
 
     public final static int STATUS_SOLVE_OK = 3;
 
+
     /** */
     public long id;
 

@@ -115,5 +115,22 @@
             and `state`=1
         </where>
     </select>
+    
+
+    <select id="untreatedCount" parameterType="WorkOrder" resultType="int">
+        select
+        count(1)
+        from work_order
+        <where>
+            `type`=#{type}
+            <if test='addressee_uuid!=null'>
+                and addressee_uuid = #{addressee_uuid}
+            </if>
+            <if test="handle_status">
+                and handle_status=#{handle_status}
+            </if>
+            and `state`=1
+        </where>
+    </select>
 
 </mapper>
