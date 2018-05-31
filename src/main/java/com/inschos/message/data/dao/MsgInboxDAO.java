@@ -92,7 +92,7 @@ public class MsgInboxDAO {
      * @access public
      */
     public List<MsgSys> findUserMsgRes(MsgRec msgRec) {
-        return msgInboxMapper.findUserMsgRes(msgRec);
+        return msgInboxMapper.findUserMsgRec(msgRec);
     }
 
     /**
@@ -107,7 +107,7 @@ public class MsgInboxDAO {
     }
 
     public MsgSys findMsgSysRes(MsgSys msgSys){
-        return msgInboxMapper.findMsgSysRes(msgSys);
+        return msgInboxMapper.findMsgSysRec(msgSys);
     }
 
     /**

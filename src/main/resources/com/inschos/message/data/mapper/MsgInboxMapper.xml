@@ -42,14 +42,14 @@
         GROUP BY `type`
     </select>
 
-    <select id="findMsgRecCount" resultType="MsgCount">
+    <select id="findMsgRecCount" parameterType="MsgRec" resultType="MsgCount">
         select count(`id`) as count_num from msg_rec
         <where>
             AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND sys_status = 1
         </where>
     </select>
 
-    <select id="findMsgSysCount" resultType="MsgCount">
+    <select id="findMsgSysCount" parameterType="MsgRec" resultType="MsgCount">
         select count(`id`) as count_num from msg_sys
         <where>
             AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1
@@ -100,14 +100,14 @@
     </resultMap>
 
     <!--获取未接收列表-->
-    <select id="findUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
+    <select id="findUserMsgRec" parameterType="MsgRec" resultType="MsgSys">
         select `id`,`type`
         from  msg_sys
         where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 1 AND state = 1
     </select>
 
     <!--从消息发送对象表获取未读消息-->
-    <select id="findMsgToRecord" parameterType="MsgRes" resultType="MsgSys">
+    <select id="findMsgToRecord" parameterType="MsgRec" resultType="MsgSys">
         select `msg_id` as id
         from  msg_to_record
         where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
@@ -120,7 +120,7 @@
     </insert>
 
     <!--获取消息主体表信息-->
-    <select id="findMsgSysRes" parameterType="MsgSys" resultType="MsgSys">
+    <select id="findMsgSysRec" parameterType="MsgSys" resultType="MsgSys">
         select `type`
         from  msg_sys
         where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND id =#{id}
