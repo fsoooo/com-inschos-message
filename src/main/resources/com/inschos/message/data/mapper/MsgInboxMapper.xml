@@ -27,17 +27,17 @@
         select `type`,count(`id`) as count, max(`created_at`) as time from msg_rec
         <where>
             manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
-            <choose>
-                <when test="user_type==1">
-                    `type` in (1,2,3,6,7)
-                </when>
-                <when test="user_type==2">
-                    `type` in (1,2,3,5,6,7)
-                </when>
-                <when test="user_type==3">
-                    `type` in (1,2,3,4,5,7)
-                </when>
-            </choose>
+            <!--<choose>-->
+                <!--<when test="user_type==1">-->
+                    <!--and `type` in (1,2,3,6,7)-->
+                <!--</when>-->
+                <!--<when test="user_type==2">-->
+                    <!--and `type` in (1,2,3,5,6,7)-->
+                <!--</when>-->
+                <!--<when test="user_type==3">-->
+                    <!--and `type` in (1,2,3,4,5,7)-->
+                <!--</when>-->
+            <!--</choose>-->
         </where>
         GROUP BY `type`
     </select>
