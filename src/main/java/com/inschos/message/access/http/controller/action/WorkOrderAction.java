@@ -46,6 +46,8 @@ public class WorkOrderAction extends BaseAction {
         WorkOrder workOrder = new WorkOrder();
         workOrder.addressee_uuid = actionBean.accountUuid;
         workOrder.handle_status = 1;
+        workOrder.close_status = 1;
+        workOrder.solve_status = 1;
         workOrder.type = WorkOrder.TYPE_MANAGER;
 
         int count = workOrderDao.untreatedCount(workOrder);

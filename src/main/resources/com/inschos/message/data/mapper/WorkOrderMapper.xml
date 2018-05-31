@@ -117,6 +117,7 @@
     </select>
 
 
+
     <select id="untreatedCount" parameterType="WorkOrder" resultType="int">
         select
         count(1)
@@ -125,6 +126,12 @@
             `type`=#{type}
             <if test='addressee_uuid!=null'>
                 and addressee_uuid = #{addressee_uuid}
+            </if>
+            <if test="sender_uuid!=null">
+                and solve_status=#{solve_status}
+            </if>
+            <if test="close_status>0">
+                and close_status=#{close_status}
             </if>
             <if test="handle_status">
                 and handle_status=#{handle_status}
