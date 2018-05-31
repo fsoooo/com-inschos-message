@@ -25,12 +25,12 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 收件箱列表(获取所有类型的列表)
      *
-     * @params userId        用户id
-     * @params userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @params messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
-     * @params pageNum       当前页码 ，可不传，默认为1
-     * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
+     * @paramss userId        用户id
+     * @paramss userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @paramss messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
+     * @paramss pageNum       当前页码 ，可不传，默认为1
+     * @paramss lastId        上一页最大id ，可不传，默认为
+     * @paramss limit         每页显示行数，可不传，默认为
      * @return json
      * <p>
      * 业管可以查看所有人、所有类型的消息，返回按消息分类展示
@@ -46,37 +46,22 @@ public class MsgInboxAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
+        if(bean.managerUuid==null){
+            bean.managerUuid = "-1";
+        }
         //调用DAO
         MsgRec msgRec = new MsgRec();
         msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
-        if (request.messageStatus != 0) {
-            msgRec.sys_status = request.messageStatus;
-        }
-        msgRec.user_id = Long.valueOf(bean.userId);
+        msgRec.sys_status = request.messageStatus;
+        msgRec.user_id = Integer.parseInt(bean.managerUuid);//Long.valueOf(bean.userId)
         msgRec.user_type = bean.userType;
         msgRec.manager_uuid = bean.managerUuid;
         msgRec.account_uuid = bean.accountUuid;
-
+        MsgStatus msgStatus = new MsgStatus();
         //根据user_type判断不同用户可以查看消息 类型
-
-        List<MsgTypeLists> msgInboxList = null;
-        switch (msgRec.user_type) {
-            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-                msgInboxList = msgInboxDAO.findMsgRecList(msgRec);
-                break;
-            case 3://企业用户
-                String insertResCompany = insertMsgRec(msgRec);
-                msgInboxList = msgInboxDAO.findMsgRecList(msgRec);
-                break;
-            case 2://代理人用户
-                String insertResAgent = insertMsgRec(msgRec);
-                msgInboxList = msgInboxDAO.findMsgRecList(msgRec);
-                break;
-            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                String insertResPerson = insertMsgRec(msgRec);
-                msgInboxList = msgInboxDAO.findMsgRecList(msgRec);
-                break;
-        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String insertRes = insertMsgRec(msgRec);
+        List<MsgTypeLists> msgInboxList = msgInboxDAO.findMsgRecList(msgRec);
         if(msgInboxList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
@@ -93,7 +78,11 @@ public class MsgInboxAction extends BaseAction {
 
             msgInboxLists.add(msgInboxListBean);
         }
-        response.data = msgInboxLists;
+        MsgCount msgCount = msgInboxDAO.findMsgRecCount(msgRec);
+        MsgListbean msgListbean = new MsgListbean();
+        msgListbean.countNum = msgCount.count_num;
+        msgListbean.msgLists = msgInboxLists;
+        response.data = msgListbean;
         int size = msgInboxLists.size();
         if (StringKit.isInteger(request.pageNum)) {
             response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
@@ -110,13 +99,13 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 收件箱列表(获取所有类型的列表)
      *
-     * @params userId        用户id
-     * @params userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @params messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
-     * @params pageNum       当前页码 ，可不传，默认为1
-     * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
+     * @paramss userId        用户id
+     * @paramss userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @paramss messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @paramss messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @paramss pageNum       当前页码 ，可不传，默认为1
+     * @paramss lastId        上一页最大id ，可不传，默认为
+     * @paramss limit         每页显示行数，可不传，默认为
      * @return json
      * 消息 列表组成：消息 系统表里收件人id为-1的（系统消息）+ 消息 系统表里收件人id为user_id的（订阅消息、私信）
      * 匹配消息 系统表和消息 收件箱表，向用户收件箱里插入相应的数据，并修改消息 系统表的状态
@@ -139,32 +128,16 @@ public class MsgInboxAction extends BaseAction {
         if (request.messageStatus != 0) {
             msgRec.sys_status = request.messageStatus;
         }
-        msgRec.user_id = Long.valueOf(bean.userId);
+        if(bean.managerUuid==null){
+            bean.managerUuid = "-1";
+        }
+        msgRec.user_id = Integer.parseInt(bean.managerUuid);//Long.valueOf(bean.userId);
         msgRec.user_type = bean.userType;
         msgRec.type = request.messageType;
         msgRec.manager_uuid = bean.managerUuid;
         msgRec.account_uuid = bean.accountUuid;
-
-
-        List<MsgRec> msgRecList = new ArrayList<>();
-        //根据user_type判断不同用户可以查看消息 类型
-        switch (msgRec.user_type) {
-            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-                msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
-                break;
-            case 3://企业用户
-                String insertResCompany = insertMsgRec(msgRec);
-                msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
-                break;
-            case 2://代理人用户
-                String insertResAgent = insertMsgRec(msgRec);
-                msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
-                break;
-            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                String insertResPerson = insertMsgRec(msgRec);
-                msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
-                break;
-        }
+        String insertRes = insertMsgRec(msgRec);
+        List<MsgRec> msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
         if(msgRecList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
@@ -211,7 +184,7 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 详情
      *
-     * @params messageId 消息 id
+     * @paramss messageId 消息 id
      * @return json
      * @access public
      */
@@ -225,6 +198,11 @@ public class MsgInboxAction extends BaseAction {
         MsgRec msgRec = new MsgRec();
         MsgSys msgSys = new MsgSys();
         msgRec.id = request.messageId;
+        if(actionBean.managerUuid==null){
+            actionBean.managerUuid = "-1";
+        }
+        msgRec.user_id = Integer.parseInt(actionBean.managerUuid);
+        msgRec.user_type = actionBean.userType;
         msgRec.manager_uuid = actionBean.managerUuid;
         msgRec.account_uuid = actionBean.accountUuid;
         MsgRec msgInfo = msgInboxDAO.findMsgInfo(msgRec);
@@ -261,8 +239,8 @@ public class MsgInboxAction extends BaseAction {
      * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
      * TODO 传参统一用小驼峰命名规则
      *
-     * @params userId|用户ID(收件人)
-     * @params userType|发件人类型，用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
+     * @paramss userId|用户ID(收件人)
+     * @paramss userType|发件人类型，用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
      * @return mixed
      * @access public
      */
@@ -272,8 +250,14 @@ public class MsgInboxAction extends BaseAction {
         if (msgRec==null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        //查询消息 系统表有没有未插入的数据，没有的话，返回执行结束，有的话继续执行（赋值，插入，改变状态）
-        List<MsgSys> MsgSys = msgInboxDAO.findUserMsgRes(msgRec);
+        //TODO 查询消息发送对象表里的数据
+        List<MsgSys> MsgSys = msgInboxDAO.findMsgToRecord(msgRec);
+//        $table->string('manager_uuid')->comment('业管uuid');
+//        $table->string('account_uuid')->comment('账户uuid');
+//        $table->integer('status')->comment('消息状态：默认为未读1/已读2')->default(1);
+
+        //todo 查询消息 系统表有没有未插入的数据，没有的话，返回执行结束，有的话继续执行（赋值，插入，改变状态）
+        //List<MsgSys> MsgSys = msgInboxDAO.findUserMsgRes(msgRec);
         //判断集合是否为空
         if (null == MsgSys || MsgSys.size() == 0) {
             return json(BaseResponse.CODE_SUCCESS, "未查看消息为空", response);
@@ -283,17 +267,19 @@ public class MsgInboxAction extends BaseAction {
         List<Integer> insertResList = new ArrayList();
         for (MsgSys sys : MsgSys) {
             msgRec.msg_id = sys.id;
-            msgRec.type = sys.type;
-            msgRec.parent_id = sys.parent_id;
-            msgRec.sys_status = 0;
-            msgRec.state = 0;
+            MsgSys msgSysRes = msgInboxDAO.findMsgSysRes(sys);
+            msgRec.type = msgSysRes.type;
+            msgRec.sys_status = 1;//未读
+            msgRec.state = 1;//未读
             msgRec.created_at = date;
             msgRec.updated_at = date;
             int insertRes = msgInboxDAO.insertMsgRec(msgRec);
             if (insertRes != 0) {
                 MsgSys updateSys = new MsgSys();
                 updateSys.id = sys.id;
-                updateSys.status = 1;
+                updateSys.status = 2;//已读
+                updateSys.manager_uuid = msgRec.manager_uuid;
+                updateSys.account_uuid = msgRec.account_uuid;
                 int updateRes = msgInboxDAO.updateMsgSysStatus(updateSys);
             }
             //TODO  更改msg_sys消息读取状态
@@ -306,12 +292,12 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 发件箱列表
      *
-     * @params userId        用户id
-     * @params userType      用户类型:用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
-     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
-     * @params pageNum       当前页码 ，可不传，默认为1
-     * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
+     * @paramss userId        用户id
+     * @paramss userType      用户类型:用户类型:个人用户 1/企业用户 2/代理人 3/业管用户 4
+     * @paramss messageStatus 消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
+     * @paramss pageNum       当前页码 ，可不传，默认为1
+     * @paramss lastId        上一页最大id ，可不传，默认为
+     * @paramss limit         每页显示行数，可不传，默认为
      * @return json
      * @access public
      * TODO 发件箱要不要按分类展示
@@ -331,6 +317,7 @@ public class MsgInboxAction extends BaseAction {
         msgSys.manager_uuid = actionBean.managerUuid;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<MsgTypeLists>  msgOutboxs = msgInboxDAO.findMsgSysList(msgSys);
+        long newLastId = 0;
         if(msgOutboxs==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
@@ -345,7 +332,17 @@ public class MsgInboxAction extends BaseAction {
             msgInboxListBean.timeTxt = sdf.format(new Date(Long.valueOf(msgOutbox.time)));
             msgInboxLists.add(msgInboxListBean);
         }
-        response.data = msgInboxLists;
+        MsgCount msgCount = msgInboxDAO.findMsgSysCount(msgSys);
+        MsgListbean msgListbean = new MsgListbean();
+        msgListbean.countNum = msgCount.count_num;
+        msgListbean.msgLists = msgInboxLists;
+        response.data = msgListbean;
+        int size = msgInboxLists.size();
+        if (StringKit.isInteger(request.pageNum)) {
+            response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
+        } else if (StringKit.isInteger(request.lastId)) {
+            response.page = setPageBean(newLastId, request.pageSize, 0, size);
+        }
         if (msgInboxLists != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
@@ -356,13 +353,13 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 发件箱列表-某一分类列表
      *
-     * @params userId        用户id
-     * @params userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @params messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
-     * @params pageNum       当前页码 ，可不传，默认为1
-     * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
+     * @paramss userId        用户id
+     * @paramss userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
+     * @paramss messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
+     * @paramss messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
+     * @paramss pageNum       当前页码 ，可不传，默认为1
+     * @paramss lastId        上一页最大id ，可不传，默认为
+     * @paramss limit         每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
@@ -390,6 +387,7 @@ public class MsgInboxAction extends BaseAction {
         msgSys.manager_uuid = actionBean.managerUuid;
         MsgStatus msgStatus = new MsgStatus();
         List<MsgSys> msgResList = msgInboxDAO.findMsgSysListByType(msgSys);
+        long newLastId = 0;
         if(msgResList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
@@ -422,6 +420,12 @@ public class MsgInboxAction extends BaseAction {
             msgInboxListTypeBeans.add(msgInboxListType);
         }
         response.data = msgInboxListTypeBeans;
+        int size = msgInboxListTypeBeans.size();
+        if (StringKit.isInteger(request.pageNum)) {
+            response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
+        } else if (StringKit.isInteger(request.lastId)) {
+            response.page = setPageBean(newLastId, request.pageSize, 0, size);
+        }
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
@@ -432,7 +436,7 @@ public class MsgInboxAction extends BaseAction {
     /**
      * 消息 详情
      *
-     * @params messageId 消息 id
+     * @paramss messageId 消息 id
      * @return json
      * @access public
      */
@@ -476,166 +480,6 @@ public class MsgInboxAction extends BaseAction {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
-        }
-    }
-
-    /**
-     * 消息 根据parentId获取消息列表
-     * TODO  先不改
-     *
-     * @params userId        用户id
-     * @params userType      用户类型:个人用户 1/企业用户 2/代理人 3/业管用户4
-     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @params messageType   消息 类型:客户消息5/顾问消息7/,默认是顾问消息和客户消息，根据用户类型判断
-     * @params parentId
-     * @params pageNum       当前页码 ，可不传，默认为1
-     * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
-     * @return json
-     * @access public
-     */
-    public String findMsgResListByParent(ActionBean actionBean) {
-        MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.InboxListRequest.class);
-        BaseResponse response = new BaseResponse();
-        //判空
-        if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
-        }
-        if (request.messageType == 0) {
-            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
-        }
-        if (request.parentId == 0) {
-            return json(BaseResponse.CODE_FAILURE, "parentId is empty", response);
-        }
-        //调用DAO
-        MsgRec msgRec = new MsgRec();
-        msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
-        msgRec.sys_status = request.messageStatus;
-        msgRec.user_id = request.userId;
-        msgRec.user_type = request.userType;
-        msgRec.type = request.messageType;
-        msgRec.parent_id = request.parentId;
-        MsgStatus msgStatus = new MsgStatus();
-        logger.info(msgRec.user_id);
-        logger.info(msgRec.user_type);
-        logger.info(msgRec.type);
-        logger.info(msgRec.parent_id);
-        //根据user_type判断不同用户可以查看消息 类型
-        //TODO 判断登录
-        int loginStatus = 1;
-        switch (request.userType) {
-            //TODO 还不确定业管和企业用户是否可以查看
-//            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-//                List<MsgTypeLists> msgInboxManager = msgInboxDAO.findMsgRecList(msgRec);
-//                response.data = msgInboxManager;
-//                break;
-//            case 3://企业用户
-//                if (loginStatus != 0) {
-//                    String insertRes = insertMsgRec(msgRec);;
-//                }
-//                List<MsgTypeLists> msgInboxCompany = msgInboxDAO.findMsgRecList(msgRec);
-//                response.data = msgInboxCompany;
-//                break;
-            case 2://代理人用户
-                if (request.messageType != 5) {
-                    return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
-                }
-                if (loginStatus != 0) {
-                    String insertRes = insertMsgRec(msgRec);;
-                }
-                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecListByParent(msgRec);
-                response.data = msgInboxAgent;
-                break;
-            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                if (request.messageType != 7) {
-                    return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
-                }
-                if (loginStatus != 0) {
-                    String insertRes = insertMsgRec(msgRec);;
-                }
-                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecListByParent(msgRec);
-                response.data = msgInboxPerson;
-                break;
-            default:
-                response.data = "";
-                break;
-        }
-        if (response.data != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-        } else {
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
-        }
-    }
-
-    /**
-     * 消息 根据parentId获取消息列表
-     *
-     * @params userId        用户id
-     * @params userType      用户类型:个人用户 1/企业用户 2//代理人 3/业管用户4
-     * @params messageStatus 消息 状态:未读 1/已读 2/全部 3/（非必传，默认为1）
-     * @params messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
-     * @params parentId
-     * @params pageNum       当前页码 ，可不传，默认为1
-     * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
-     * @return json
-     * @access public
-     */
-    public String findMsgSysListByParent(ActionBean actionBean) {
-        MsgInboxBean.OutboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.OutboxListRequest.class);
-        BaseResponse response = new BaseResponse();
-        //判空
-        if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
-        }
-        if (request.messageType == 0) {
-            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
-        }
-        if (request.parentId == 0) {
-            return json(BaseResponse.CODE_FAILURE, "parentId is empty", response);
-        }
-        //调用DAO
-        MsgSys msgSys = new MsgSys();
-        msgSys.page = setPage(request.lastId, request.pageNum, request.limit);
-        msgSys.status = request.messageStatus;
-        msgSys.from_id = request.userId;
-        msgSys.from_type = request.userType;
-        msgSys.type = request.messageType;
-        msgSys.parent_id = request.parentId;
-        MsgStatus msgStatus = new MsgStatus();
-        //根据user_type判断不同用户可以查看消息 类型
-        switch (request.userType) {
-            //TODO 还不确定业管和企业用户是否可以查看
-//            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-//               List<MsgSys> msgOutboxManager = msgInboxDAO.findMsgSysListByParent(msgSys);
-//                response.data = msgOutboxManager;
-//                break;
-//            case 3://企业用户
-//                List<MsgSys> msgOutboxCompany = msgInboxDAO.findMsgSysListByParent(msgSys);
-//                response.data = msgOutboxCompany;
-//                break;
-            case 2://代理人用户
-                if (request.messageType != 5) {
-                    return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
-                }
-                List<MsgSys> msgOutboxAgent = msgInboxDAO.findMsgSysListByParent(msgSys);
-                response.data = msgOutboxAgent;
-                break;
-            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                if (request.messageType != 7) {
-                    return json(BaseResponse.CODE_FAILURE, "messageStatus is error", response);
-                }
-                List<MsgSys> msgOutboxPerson = msgInboxDAO.findMsgSysListByParent(msgSys);
-                response.data = msgOutboxPerson;
-                break;
-            default:
-                response.data = "";
-                break;
-        }
-        if (response.data != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-        } else {
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
     }
 

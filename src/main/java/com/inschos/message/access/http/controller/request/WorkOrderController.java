@@ -32,7 +32,7 @@ public class WorkOrderController {
     /**
      * 创建工单
      *
-     * @param actionBean     工单
+     * @params actionBean     工单
      * @return json
      * @access public
      */
@@ -42,6 +42,21 @@ public class WorkOrderController {
     public String addWork(ActionBean actionBean){
         return workOrderAction.addWork(actionBean);
     }
+
+    /**
+     * 工单，工单的气泡数量
+     *
+     * @param actionBean     工单
+     * @return json
+     * @access public
+     */
+    @GetActionBeanAnnotation
+    @RequestMapping(value = "/untreated_count/**",method = RequestMethod.POST)
+    @ResponseBody
+    public String untreatedCount(ActionBean actionBean){
+        return workOrderAction.untreatedCount(actionBean);
+    }
+
 
     @GetActionBeanAnnotation
     @RequestMapping("/agent/my")

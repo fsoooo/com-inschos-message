@@ -13,9 +13,24 @@
     resultType-指定sql输出结果所映射的java对象类型
     -->
 
-    <insert id="addMsgSys" parameterType="MsgSys">
-        insert into  msg_sys(`title`,`content`,`attachment`,`manager_uuid`,`account_uuid`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`channel_id`,`parent_id`,`status`,`state`,`send_time`,`created_at`,`updated_at`)
-        values(#{title},#{content},#{attachment},#{manager_uuid},#{account_uuid},#{type},#{from_id},#{from_type},#{to_id},#{to_type},#{channel_id},#{parent_id},#{status},#{state},#{send_time},#{created_at},#{updated_at})
+    <insert id="addMsgSys" parameterType="MsgSys"  useGeneratedKeys="true" keyProperty="id">
+        insert into  msg_sys(`title`,`content`,`attachment`,`manager_uuid`,`account_uuid`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`channel_id`,`status`,`state`,`send_time`,`created_at`,`updated_at`)
+        values(#{title},#{content},#{attachment},#{manager_uuid},#{account_uuid},#{type},#{from_id},#{from_type},#{to_id},#{to_type},#{channel_id},#{status},#{state},#{send_time},#{created_at},#{updated_at})
+    </insert>
+
+    <insert id="addMessage" parameterType="MsgSys"  useGeneratedKeys="true" keyProperty="id">
+        insert into  msg_sys(`title`,`content`,`attachment`,`manager_uuid`,`account_uuid`,`business_id`,`type`,`from_id`,`from_type`,`status`,`state`,`send_time`,`created_at`,`updated_at`)
+        values(#{title},#{content},#{attachment},#{manager_uuid},#{account_uuid},#{business_id},#{type},#{from_id},#{from_type},#{status},#{state},#{send_time},#{created_at},#{updated_at})
+    </insert>
+
+    <insert id="addMessageRecord">
+        insert into msg_record(`msg_id`,`rec_id`,`type`,`status`,`created_at`,`updated_at`)
+        values(#{msg_id},#{rec_id},#{type},#{status},#{created_at},#{updated_at})
+    </insert>
+
+    <insert id="addMessageToRecord">
+        insert into msg_to_record(`msg_id`,`manager_uuid`,`account_uuid`,`status`,`created_at`,`updated_at`)
+         values(#{msg_id},#{manager_uuid},#{account_uuid},#{status},#{created_at},#{updated_at})
     </insert>
 
 </mapper>

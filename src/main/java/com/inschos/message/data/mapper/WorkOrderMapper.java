@@ -25,4 +25,8 @@ public interface WorkOrderMapper {
     /** 通过type 和 发送 、接收人 查询记录总数   */
     int selectCount(WorkOrder search);
 
+
+    int untreatedCount(WorkOrder search);
+
+
 }

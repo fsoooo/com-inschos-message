@@ -79,5 +79,10 @@ public class WorkOrderDaoImpl extends BaseDao implements WorkOrderDao {
     }
 
 
+    @Override
+    public int untreatedCount(WorkOrder search) {
+        return workOrderMapper.untreatedCount(search);
+    }
+
 
 }

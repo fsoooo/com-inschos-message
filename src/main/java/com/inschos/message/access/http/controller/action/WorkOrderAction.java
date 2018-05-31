@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Component
 public class WorkOrderAction extends BaseAction {
@@ -40,7 +41,24 @@ public class WorkOrderAction extends BaseAction {
     private WorkOrderCategoryDao workOrderCategoryDao;
 
 
-    public String listToMe(ActionBean bean, String method) {
+    public String untreatedCount(ActionBean actionBean){
+        WorkOrderBean.UntreatedCountResponse response = new WorkOrderBean.UntreatedCountResponse();
+        WorkOrder workOrder = new WorkOrder();
+        workOrder.addressee_uuid = actionBean.accountUuid;
+        workOrder.handle_status = 1;
+        workOrder.close_status = 1;
+        workOrder.solve_status = 1;
+        workOrder.type = WorkOrder.TYPE_MANAGER;
+
+        int count = workOrderDao.untreatedCount(workOrder);
+
+        response.count = count;
+
+        return json(BaseResponse.CODE_SUCCESS, "获取成功", response);
+
+    }
+
+    public String listToMe(ActionBean bean,String method) {
         WorkOrderBean.WorkOrderListRequest request = requst2Bean(bean.body, WorkOrderBean.WorkOrderListRequest.class);
         WorkOrderBean.WorkOrderListResponse response = new WorkOrderBean.WorkOrderListResponse();
 
@@ -129,7 +147,7 @@ public class WorkOrderAction extends BaseAction {
     /**
      * 创建工单
      *
-     * @params actionBean 工单
+     * @paramss actionBean 工单
      * @return json
      * @access public
      */
@@ -147,6 +165,9 @@ public class WorkOrderAction extends BaseAction {
         //获取当前时间戳(毫秒值)
         long date = TimeKit.currentTimeMillis();
 
+        //工单号
+        String code = getStringRandom(6);
+
         //赋值
         WorkOrder workOrder = new WorkOrder();
         workOrder.title = request.title;
@@ -159,6 +180,7 @@ public class WorkOrderAction extends BaseAction {
         workOrder.close_status = WorkOrder.STATUS_CLOSE_NO;
         workOrder.solve_status = WorkOrder.STATUS_SOLVE_WEIFANKUI;
         workOrder.handle_status = WorkOrder.STATUS_HANDLE_WAITING;
+//        workOrder.wo_num = code;
         workOrder.created_at = date;
         workOrder.updated_at = date;
         workOrder.state = 1;
@@ -365,6 +387,33 @@ public class WorkOrderAction extends BaseAction {
             return agentJobClient.getAgent(managerUuid, Long.valueOf(accountBean.userId));
         }
         return null;
+    }
+
+
+
+
+    /**
+     * 生成随机数字和字母
+     *
+     * @param length
+     * @return
+     */
+    public String getStringRandom(int length) {
+        String val = "";
+        Random random = new Random();
+        //参数length，表示生成几位随机数
+        for (int i = 0; i < length; i++) {
+            String charOrNum = random.nextInt(2) % 2 == 0 ? "char" : "num";
+            //输出字母还是数字
+            if ("char".equalsIgnoreCase(charOrNum)) {
+                //输出是大写字母还是小写字母
+                int temp = random.nextInt(2) % 2 == 0 ? 65 : 97;
+                val += (char) (random.nextInt(26) + temp);
+            } else if ("num".equalsIgnoreCase(charOrNum)) {
+                val += String.valueOf(random.nextInt(10));
+            }
+        }
+        return val;
     }
 
 }
