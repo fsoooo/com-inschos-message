@@ -23,8 +23,12 @@ public interface MsgInboxMapper {
     //收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
     int insertMsgRec(MsgRec msgRec);
 
+    MsgCount findMsgRecCount(MsgRec msgRec);
+
     //更改系统消息读取状态
     int updateMsgSysStatus(MsgSys msgSys);
+
+    MsgCount findMsgSysCount(MsgSys msgSys);
 
     // 发件箱列表(findMsgSysList)
     List<MsgTypeLists> findMsgSysList(MsgSys msgSys);

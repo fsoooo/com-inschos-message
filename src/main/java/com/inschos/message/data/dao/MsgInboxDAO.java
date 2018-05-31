@@ -34,6 +34,24 @@ public class MsgInboxDAO {
     }
 
     /**
+     * 获取消息总数
+     * @param msgRec
+     * @return
+     */
+    public MsgCount findMsgRecCount(MsgRec msgRec){
+        return msgInboxMapper.findMsgRecCount(msgRec);
+    }
+
+    /**
+     * 获取消息总数
+     * @param msgSys
+     * @return
+     */
+    public MsgCount findMsgSysCount(MsgSys msgSys){
+        return msgInboxMapper.findMsgSysCount(msgSys);
+    }
+
+    /**
      * 收件箱列表查询-按消息分类
      *
      * @params msgRec

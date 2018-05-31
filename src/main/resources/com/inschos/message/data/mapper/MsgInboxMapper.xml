@@ -42,6 +42,20 @@
         GROUP BY `type`
     </select>
 
+    <select id="findMsgRecCount" resultType="MsgCount">
+        select count(`id`) as count_num from msg_rec
+        <where>
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND sys_status = 1
+        </where>
+    </select>
+
+    <select id="findMsgSysCount" resultType="MsgCount">
+        select count(`id`) as count_num from msg_Sys
+        <where>
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND status = 0
+        </where>
+    </select>
+
     <select id="findMsgRecListByType" parameterType="MsgRec" resultMap="selectMsgRecAndSys">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`,
         `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`,
@@ -230,4 +244,5 @@
             </choose>
         </where>
     </update>
+
 </mapper>

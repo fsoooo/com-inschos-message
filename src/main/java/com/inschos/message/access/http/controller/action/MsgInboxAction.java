@@ -78,7 +78,11 @@ public class MsgInboxAction extends BaseAction {
 
             msgInboxLists.add(msgInboxListBean);
         }
-        response.data = msgInboxLists;
+        MsgCount msgCount = msgInboxDAO.findMsgRecCount(msgRec);
+        MsgListbean msgListbean = new MsgListbean();
+        msgListbean.countNum = msgCount.count_num;
+        msgListbean.msgLists = msgInboxLists;
+        response.data = msgListbean;
         int size = msgInboxLists.size();
         if (StringKit.isInteger(request.pageNum)) {
             response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
@@ -321,7 +325,11 @@ public class MsgInboxAction extends BaseAction {
             msgInboxListBean.timeTxt = sdf.format(new Date(Long.valueOf(msgOutbox.time)));
             msgInboxLists.add(msgInboxListBean);
         }
-        response.data = msgInboxLists;
+        MsgCount msgCount = msgInboxDAO.findMsgSysCount(msgSys);
+        MsgListbean msgListbean = new MsgListbean();
+        msgListbean.countNum = msgCount.count_num;
+        msgListbean.msgLists = msgInboxLists;
+        response.data = msgListbean;
         int size = msgInboxLists.size();
         if (StringKit.isInteger(request.pageNum)) {
             response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
