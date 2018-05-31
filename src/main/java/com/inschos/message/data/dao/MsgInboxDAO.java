@@ -96,6 +96,21 @@ public class MsgInboxDAO {
     }
 
     /**
+     * 从消息发送对象表获取未读消息
+     *
+     * @params msgRec
+     * @return list
+     * @access public
+     */
+    public List<MsgSys> findMsgToRecord(MsgRec msgRec){
+        return msgInboxMapper.findMsgToRecord(msgRec);
+    }
+
+    public MsgSys findMsgSysRes(MsgSys msgSys){
+        return msgInboxMapper.findMsgSysRes(msgSys);
+    }
+
+    /**
      * 发件箱列表查询
      *
      * @params msgSys

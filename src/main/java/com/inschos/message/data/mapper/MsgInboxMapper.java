@@ -20,6 +20,12 @@ public interface MsgInboxMapper {
     //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
     List<MsgSys> findUserMsgRes(MsgRec msgRec);
 
+    //从消息发送对象表获取未读消息
+    List<MsgSys> findMsgToRecord(MsgRec msgRec);
+
+    //获取消息主体表信息
+    MsgSys findMsgSysRes(MsgSys msgSys);
+
     //收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
     int insertMsgRec(MsgRec msgRec);
 

@@ -48,7 +48,7 @@ public class MsgIndexAction extends BaseAction {
      * TODO 附件格式，只存储，不操作。(端上获取key,传参,存储)
      * TODO 个人用户可以跟代理人（顾问）联系。待确定用户之间的联系方式
      */
-    public String addMessage(ActionBean actionBean) {
+    public String addMessage(ActionBean actionBean){
         MsgIndexBean request = JsonKit.json2Bean(actionBean.body, MsgIndexBean.class);
         BaseResponse response = new BaseResponse();
         //判空
@@ -67,59 +67,101 @@ public class MsgIndexAction extends BaseAction {
         //消息配置
         MsgStatus msgStatus = new MsgStatus();
         //TODO 权限判断 个人1/企业2/代理人3/业管4
-        if (request.toUser.size() > 1 && request.fromType == msgStatus.USER_PERSON) {//只有个人用户不能发送多条和系统消息
+        //只有个人用户不能发送多条和系统消息
+        if (request.toUser.size() > 1 && request.fromType == msgStatus.USER_PERSON) {
             return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
-        //TODO 系统消息toId和toType都等于-1，多发，和私信
-        //TODO 发件人发的消息，类型有限制:个人-顾问消息；代理人，企业，业管
-        //赋值
-        MsgSys msgSys = new MsgSys();
-        List<MsgSendResBean> msgSendResList = new ArrayList<>();
-        MsgSendResBean msgSendRes = new MsgSendResBean();
-        //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
-        for (MsgToBean msgToBean : request.toUser) {
-            if (msgToBean.toId == msgStatus.MSG_SYS_KEY || msgToBean.toType == msgStatus.MSG_SYS_KEY) {
-                if (request.fromType != msgStatus.USER_MANAGER) {//只有业管系统消息
-                    return json(BaseResponse.CODE_FAILURE, "no permission", response);
-                }
-            }
-            if(actionBean.managerUuid==null){
-                actionBean.managerUuid = "-1";
-            }
-            msgSys.manager_uuid = actionBean.managerUuid;
-            msgSys.account_uuid = actionBean.accountUuid;
-            msgSys.title = request.title;
-            msgSys.content = request.content;
-            msgSys.type = request.type;
-            if (request.attachment == null) {
-                request.attachment = "";
-            }
-            msgSys.attachment = request.attachment;
-            msgSys.send_time = request.sendTime;
-            msgSys.from_id =  Integer.parseInt(actionBean.managerUuid);
-            msgSys.from_type = actionBean.userType;
-            msgSys.to_id = msgToBean.toId;
-            msgSys.to_type = msgToBean.toType;
-            msgSys.channel_id = msgToBean.channelId;
-            msgSys.parent_id = request.parentId;
-            msgSys.created_at = date;
-            msgSys.updated_at = date;
-            //调用DAO
-            msgSendRes.toId = msgToBean.toId;
-            msgSendRes.toType = msgToBean.toType;
-            msgSendRes.channelId = msgToBean.channelId;
-
-            int send_result = msgIndexDAO.addMsgSys(msgSys);
-            if (send_result == 1) {
-                msgSendRes.sendRes = "发送成功";
-            } else {
-                msgSendRes.sendRes = "发送失败";
-            }
-            msgSendResList.add(msgSendRes);
+        if(actionBean.managerUuid==null){
+            actionBean.managerUuid = "-1";
         }
-        response.data = msgSendResList;
-        return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        MsgSys msgSys = new MsgSys();
+        msgSys.manager_uuid = actionBean.managerUuid;
+        msgSys.account_uuid = actionBean.accountUuid;
+        msgSys.business_id = request.businessId;
+        msgSys.title = request.title;
+        msgSys.content = request.content;
+        msgSys.type = request.type;
+        if (request.attachment == null) {
+            request.attachment = "";
+        }
+        msgSys.attachment = request.attachment;
+        msgSys.send_time = request.sendTime;
+        msgSys.from_id =  Integer.parseInt(actionBean.managerUuid);
+        msgSys.from_type = actionBean.userType;
+        msgSys.created_at = date;
+        msgSys.updated_at = date;
+        int send_result = msgIndexDAO.addMessage(msgSys);
+        AddMsgRecord addMsgRecord = new AddMsgRecord();
+        if(send_result>0){
+            addMsgRecord.toUser = request.toUser;
+            addMsgRecord.messageId = msgSys.id;
+            String add_record =  addMsgRecord(addMsgRecord);
+            if(add_record!=null){
+                return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            }else{
+                return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            }
+        }else{
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
+    }
+
+    /**
+     * 处理没有收件人的发送操作
+     * @param addMsgRecord
+     * @return
+     */
+    public String addMsgRecord(AddMsgRecord addMsgRecord){
+        BaseResponse response = new BaseResponse();
+        long date = new Date().getTime();
+        for (MsgToBean msgToBean : addMsgRecord.toUser) {
+            MsgRecord msgRecord = new MsgRecord();
+            if(msgToBean.toId==0||msgToBean.toType==0){//没有代理人，只有渠道id
+                //TODO 发件记录表插一条数据
+                msgRecord.msg_id = addMsgRecord.messageId;
+                msgRecord.rec_id = msgToBean.channelId;
+                msgRecord.type = 5;
+                msgRecord.state = 1;
+                msgRecord.status = 1;
+                msgRecord.created_at = date;
+                msgRecord.updated_at = date;
+                int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
+                //TODO 调用RPC,获取渠道下所有的代理人
+                List<PersonRecord> personRecords = new ArrayList<>();
+                for (PersonRecord personRecord : personRecords) {
+                    MsgToRecord msgToRecord = new MsgToRecord();
+                    msgToRecord.account_uuid = personRecord.accountUuid;
+                    msgToRecord.manager_uuid = personRecord.managerUuid;
+                    msgToRecord.msg_id = addMsgRecord.messageId;
+                    msgToRecord.status = 1;
+                    msgToRecord.state = 1;
+                    msgToRecord.created_at = date;
+                    msgToRecord.updated_at = date;
+                    int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
+                }
+            }else{
+                msgRecord.msg_id = addMsgRecord.messageId;
+                msgRecord.rec_id = msgToBean.toId;
+                msgRecord.type = msgToBean.toType;
+                msgRecord.state = 1;
+                msgRecord.status = 1;
+                msgRecord.created_at = date;
+                msgRecord.updated_at = date;
+                int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
+                PersonRecord personRecord = new PersonRecord();
+                MsgToRecord msgToRecord = new MsgToRecord();
+                msgToRecord.account_uuid = personRecord.accountUuid;
+                msgToRecord.manager_uuid = personRecord.managerUuid;
+                msgToRecord.msg_id = addMsgRecord.messageId;
+                msgToRecord.status = 1;
+                msgToRecord.state = 1;
+                msgToRecord.created_at = date;
+                msgToRecord.updated_at = date;
+                int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
+            }
+        }
+        return json(BaseResponse.CODE_FAILURE, "操作失败", response);
     }
 
     /**
@@ -202,4 +244,5 @@ public class MsgIndexAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
     }
+
 }

@@ -25,6 +25,6 @@ public class MsgIndexBean {
 
     public String sendTime;//'发送时间:可为空。需要延时发送的，发送时间不为空'
 
-    public long parentId = 0;//消息父级id，可为空，默认为0，没有父级id
+    public String businessId = "-1";//业务id
 
 }

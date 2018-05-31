@@ -1,9 +1,7 @@
 package com.inschos.message.data.dao;
 
-import com.inschos.message.data.mapper.MsgIndexMapper;
-import com.inschos.message.data.mapper.MsgModelMapper;
-import com.inschos.message.model.MsgRec;
-import com.inschos.message.model.MsgSys;
+import com.inschos.message.data.mapper.*;
+import com.inschos.message.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +28,18 @@ public class MsgIndexDAO {
      */
     public int addMsgSys(MsgSys msgSys){
         return msgIndexMapper.addMsgSys(msgSys);
+    }
+
+    public int addMessage(MsgSys msgSys){
+            return msgIndexMapper.addMessage(msgSys);
+    }
+
+    public int addMessageRecord(MsgRecord msgRecord){
+        return msgIndexMapper.addMessageRecord(msgRecord);
+    }
+
+    public int addMessageToRecord(MsgToRecord msgToRecord){
+        return msgIndexMapper.addMessageToRecord(msgToRecord);
     }
 
 }

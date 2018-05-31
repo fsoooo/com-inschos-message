@@ -103,7 +103,14 @@
     <select id="findUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
         select `id`,`type`
         from  msg_sys
-        where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 1 AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1
+        where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 1 AND state = 1
+    </select>
+
+    <!--从消息发送对象表获取未读消息-->
+    <select id="findMsgToRecord" parameterType="MsgRes" resultType="MsgSys">
+        select `msg_id` as id
+        from  msg_to_record
+        where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
     </select>
 
     <!--收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）-->
@@ -111,6 +118,13 @@
         insert into  msg_rec(`manager_uuid`,`account_uuid`,`channel_id`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`type`,`created_at`,`updated_at`)
         values(#{manager_uuid},#{account_uuid},#{channel_id},#{msg_id},#{user_id},#{user_type},#{sys_status},#{state},#{type},#{created_at},#{updated_at})
     </insert>
+
+    <!--获取消息主体表信息-->
+    <select id="findMsgSysRes" parameterType="MsgSys" resultType="MsgSys">
+        select `type`
+        from  msg_sys
+        where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND id =#{id}
+    </select>
 
     <!--更改消息读取状态-->
     <update id="updateMsgSysStatus" parameterType="MsgSys">
