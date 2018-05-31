@@ -3,11 +3,12 @@ package com.inschos.message.model;
 public class MsgStatus {
 
     /**
-     * 消息列表状态(未读/已读/删除)
+     * 消息列表状态(未读/已读/全部/删除)
      */
     public final static int MSG_READ = 1;
     public final static int MSG_UNREAD = 2;
-    public final static int MSG_DEL = 3;
+    public final static int MSG_All = 3;
+    public final static int MSG_DEL = 4;
 
     public static String getListStatus(int listStatus) {
         String result;
@@ -19,6 +20,9 @@ public class MsgStatus {
                 result = "已读";
                 break;
             case 3:
+                result = "全部";
+                break;
+            case 4:
                 result = "删除";
                 break;
             default:
@@ -99,4 +103,10 @@ public class MsgStatus {
         }
         return result;
     }
+
+    /**
+     * 系统消息，收件人id，type值
+     */
+    public final static int MSG_SYS_KEY = -1;
+
 }

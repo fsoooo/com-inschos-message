@@ -1,9 +1,6 @@
 package com.inschos.message.access.http.controller.action;
 
-import com.inschos.message.access.http.controller.bean.ActionBean;
-import com.inschos.message.access.http.controller.bean.BaseRequest;
-import com.inschos.message.access.http.controller.bean.BaseResponse;
-import com.inschos.message.access.http.controller.bean.MsgModelBean;
+import com.inschos.message.access.http.controller.bean.*;
 import com.inschos.message.data.dao.*;
 import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.model.*;
@@ -11,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -23,13 +21,13 @@ public class MsgModelAction extends BaseAction {
     private Page page;
 
     /**
-     * 添加站内信模板
+     * 添加消息 模板
      *
-     * @param modelName       模板名称（不能一样）
-     * @param modelContent    模板内容
-     * @param modelType       模板类型
-     * @param createdUser     创建者姓名
-     * @param createdUserType 创建者类型
+     * @params modelName       模板名称（不能一样）
+     * @params modelContent    模板内容
+     * @params modelType       模板类型
+     * @params createdUser     创建者姓名
+     * @params createdUserType 创建者类型
      * @return json
      * @access public
      */
@@ -40,7 +38,8 @@ public class MsgModelAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if (request.createdUserType != 4) {//TODO 只有业管才能添加模板 ??
+        MsgStatus msgStatus = new MsgStatus();
+        if (request.createdUserType != msgStatus.USER_MANAGER) {//TODO 只有业管才能添加模板 ??
             return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //获取当前时间戳(毫秒值)
@@ -73,13 +72,13 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板列表
+     * 消息 模板列表
      *
-     * @param pageNum     当前页码 ，可不传，默认为1
-     * @param lastId      上一页最大id ，可不传，默认为
-     * @param limit       每页显示行数，可不传，默认为
-     * @param modelStatus 模板状态（审核通过0/未通过1/已删除2）
-     * @param modelSype   模板类型
+     * @params pageNum     当前页码 ，可不传，默认为1
+     * @params lastId      上一页最大id ，可不传，默认为
+     * @params limit       每页显示行数，可不传，默认为
+     * @params modelStatus 模板状态（审核通过0/未通过1/已删除2）
+     * @params modelSype   模板类型
      * @return json
      * @access public
      */
@@ -98,8 +97,17 @@ public class MsgModelAction extends BaseAction {
         msgModel.model_type = request.modelType;
         msgModelList.msgModel = msgModel;
         List<MsgModel> msgModels = msgModelDAO.findMsgModelList(msgModelList);
-        response.data = msgModels;
-        if (msgModels != null) {
+        List<MsgModelListBean> msgModelListBeans = new ArrayList<>();
+        MsgModelListBean msgModelListBean = new MsgModelListBean();
+        for (MsgModel model : msgModels) {
+            msgModelListBean.id = model.id;
+            msgModelListBean.modelCode = model.model_code;
+            msgModelListBean.modelName = model.model_name;
+            msgModelListBean.modelType = model.model_type;
+            msgModelListBeans.add(msgModelListBean);
+        }
+        response.data = msgModelListBeans;
+        if (msgModelListBeans != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
@@ -107,9 +115,9 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板详情
+     * 消息 模板详情
      *
-     * @param modelCode 模板代码
+     * @params modelCode 模板代码
      * @return json
      * @access public
      */
@@ -124,8 +132,14 @@ public class MsgModelAction extends BaseAction {
         MsgModel msgModel = new MsgModel();
         msgModel.model_code = request.modelCode;
         MsgModel modelInfo = msgModelDAO.findMsgModelInfo(msgModel);
-        response.data = modelInfo;
-        if (modelInfo != null) {
+        MsgModelInfoBean msgModelInfoBean = new MsgModelInfoBean();
+        msgModelInfoBean.id = modelInfo.id;
+        msgModelInfoBean.modelCode = modelInfo.model_code;
+        msgModelInfoBean.modelName = modelInfo.model_name;
+        msgModelInfoBean.modelContent = modelInfo.model_content;
+        msgModelInfoBean.modelType = modelInfo.model_type;
+        response.data = msgModelInfoBean;
+        if (msgModelInfoBean != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
@@ -133,13 +147,13 @@ public class MsgModelAction extends BaseAction {
     }
 
     /**
-     * 站内信模板操作（审核、删除）
+     * 消息 模板操作（审核、删除）
      *
-     * @param modelCode 模板代码
-     * @param status    模板状态（审核通过1，删除2）
-     * @param modelType 模板类型
-     * @param userId    操作人id
-     * @param userType  操作人类型（只有业管可以审核和删除）
+     * @params modelCode 模板代码
+     * @params status    模板状态（审核通过1，删除2）
+     * @params modelType 模板类型
+     * @params userId    操作人id
+     * @params userType  操作人类型（只有业管可以审核和删除）
      * @return json
      * @access public
      */
@@ -150,7 +164,8 @@ public class MsgModelAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if (request.userType != 4) {//只有业管用户才能操作站内信模板
+        MsgStatus msgStatus = new MsgStatus();
+        if (request.userType != msgStatus.USER_MANAGER) {//TODO 只有业管用户才能操作消息 模板？？
             return json(BaseResponse.CODE_FAILURE, "no permission", response);
         }
         //赋值
@@ -198,7 +213,7 @@ public class MsgModelAction extends BaseAction {
     /**
      * 生成随机数字和字母
      *
-     * @param length
+     * @params length
      * @return
      */
     public String getStringRandom(int length) {

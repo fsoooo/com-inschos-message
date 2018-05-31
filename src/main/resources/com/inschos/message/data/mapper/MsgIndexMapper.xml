@@ -14,8 +14,8 @@
     -->
 
     <insert id="addMsgSys" parameterType="MsgSys">
-        insert into  msg_sys(`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`status`,`state`,`send_time`,`created_at`,`updated_at`)
-        values(#{title},#{content},#{attachment},#{type},#{from_id},#{from_type},#{to_id},#{to_type},#{status},#{state},#{send_time},#{created_at},#{updated_at})
+        insert into  msg_sys(`title`,`content`,`attachment`,`manager_uuid`,`account_uuid`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`channel_id`,`parent_id`,`status`,`state`,`send_time`,`created_at`,`updated_at`)
+        values(#{title},#{content},#{attachment},#{manager_uuid},#{account_uuid},#{type},#{from_id},#{from_type},#{to_id},#{to_type},#{channel_id},#{parent_id},#{status},#{state},#{send_time},#{created_at},#{updated_at})
     </insert>
 
 </mapper>

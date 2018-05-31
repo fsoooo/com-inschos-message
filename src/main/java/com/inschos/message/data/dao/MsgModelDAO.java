@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 站内信模板处理数据访问对象（按功能划分DAO）
+ * 消息 模板处理数据访问对象（按功能划分DAO）
  * 模板添加（addModel），模板列表查询(findModelList)，模板详情查询(findModelInfo)，模板更新(updateModel)
  */
 @Component
@@ -17,7 +17,7 @@ public class MsgModelDAO {
     private MsgModelMapper msgModelMapper;
 
     /**
-     * 添加站内信模板
+     * 添加消息 模板
      *
      * @param modelName       模板名称（不能一样）
      * @param modelContent    模板内容
@@ -42,7 +42,7 @@ public class MsgModelDAO {
     }
 
     /**
-     * 站内信模板列表
+     * 消息 模板列表
      *
      * @param pageNum     当前页码 ，可不传，默认为1
      * @param lastId      上一页最大id ，可不传，默认为
@@ -68,7 +68,7 @@ public class MsgModelDAO {
     }
 
     /**
-     * 站内信模板操作（审核、删除）
+     * 消息 模板操作（审核、删除）
      *
      * @param modelCode 模板代码
      * @param status    模板状态（审核通过1，删除2）
@@ -83,7 +83,7 @@ public class MsgModelDAO {
     }
 
     /**
-     * 站内信模板更新
+     * 消息 模板更新
      *
      * @param modelCode 模板代码
      * @param status    模板状态（审核通过1，删除2）
@@ -97,7 +97,7 @@ public class MsgModelDAO {
     }
 
     /**
-     * 站内信模板更新
+     * 消息 模板更新
      *
      * @param modelCode 模板代码
      * @param modelType 模板类型

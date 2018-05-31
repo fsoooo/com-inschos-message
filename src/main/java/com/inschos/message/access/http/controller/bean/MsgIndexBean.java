@@ -1,23 +1,30 @@
 package com.inschos.message.access.http.controller.bean;
 
+import com.inschos.message.annotation.CheckParams;
+
 import java.util.List;
 
 public class MsgIndexBean {
 
     public String title;//'标题'
 
+    @CheckParams(stringType = CheckParams.StringType.STRING, minLen = 1)
     public String content;//'内容'
 
     public String attachment;//'附件，上传附件的URL,可为空'
 
-    public String type;//'站内信类型:系统通知、保单消息、理赔消息，其他（站内信分类，可为空）'
+    public int type;//'消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
 
-    public long from_id;//'发件人ID
+    @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)
+    public long fromId;//'发件人ID
 
-    public int from_type;//'发件人类型，个人用户1/企业用户2/业管用户等3'
+    @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)
+    public int fromType;//'发件人类型，个人1/企业2/代理人3/业管4
 
-    public List<MsgToBean> to_user;
+    public List<MsgToBean> toUser;
 
-    public String send_time;//'发送时间:可为空。需要延时发送的，发送时间不为空'
+    public String sendTime;//'发送时间:可为空。需要延时发送的，发送时间不为空'
+
+    public long parentId = 0;//消息父级id，可为空，默认为0，没有父级id
 
 }

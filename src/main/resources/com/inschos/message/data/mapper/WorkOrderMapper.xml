@@ -115,7 +115,7 @@
             and `state`=1
         </where>
     </select>
-    
+
 
     <select id="untreatedCount" parameterType="WorkOrder" resultType="int">
         select

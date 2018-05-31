@@ -13,7 +13,7 @@ import java.util.List;
 public class BaseAction {
     public <T> T requst2Bean(String body, Class<T> clazz) {
         T bean = JsonKit.json2Bean(body, clazz);
-        if(bean ==null){
+        if (bean == null) {
             try {
                 bean = clazz.newInstance();
             } catch (InstantiationException e) {
