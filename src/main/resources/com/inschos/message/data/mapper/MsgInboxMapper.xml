@@ -133,6 +133,12 @@
             where `id`=#{id} AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
     </update>
 
+    <update id="updateMsgToRecord" parameterType="MsgSys">
+     update msg_to_record set
+              `status`=#{status}
+            where `msg_id`=#{id} AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+    </update>
+
     <!--获取发件箱列表-->
     <select id="findMsgSysList" parameterType="MsgSys" resultType="MsgTypeLists">
         select `type`,count(`id`) as count, max(`send_time`) as time from msg_sys

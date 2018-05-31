@@ -34,6 +34,9 @@ public interface MsgInboxMapper {
     //更改系统消息读取状态
     int updateMsgSysStatus(MsgSys msgSys);
 
+    int updateMsgToRecord(MsgSys msgSys);
+
+
     MsgCount findMsgSysCount(MsgSys msgSys);
 
     // 发件箱列表(findMsgSysList)

@@ -84,6 +84,11 @@ public class MsgInboxDAO {
         return msgInboxMapper.updateMsgSysStatus(msgSys);
     }
 
+    public int updateMsgToRecord(MsgSys msgSys) {
+        return msgInboxMapper.updateMsgToRecord(msgSys);
+    }
+
+
     /**
      * 用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
      *
