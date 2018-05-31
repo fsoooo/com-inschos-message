@@ -52,7 +52,7 @@
     <select id="findMsgSysCount" resultType="MsgCount">
         select count(`id`) as count_num from msg_sys
         <where>
-            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND status = 1
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1
         </where>
     </select>
 
