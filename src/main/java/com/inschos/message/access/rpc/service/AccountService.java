@@ -11,4 +11,6 @@ public interface AccountService {
     AccountBean getAccount(String token);
 
     AccountBean findByUuid(String uuid);
+
+    AccountBean findByUser(long sysId, int userType, String userId);
 }
