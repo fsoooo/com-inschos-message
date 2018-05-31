@@ -304,7 +304,7 @@ public class WorkOrderAction extends BaseAction {
                         replyData.replierName = "管理员";
                     } else {
                         AgentJobBean agent = getAgent(bean.managerUuid, reply.replier_uuid);
-                        if (agent != null) {
+                        if (agent != null && !StringKit.isEmpty(agent.name)) {
                             replyData.replierName = agent.name;
                         } else {
                             replyData.replierName = "提交者";

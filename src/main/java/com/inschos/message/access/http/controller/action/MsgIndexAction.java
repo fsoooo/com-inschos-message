@@ -2,6 +2,13 @@ package com.inschos.message.access.http.controller.action;
 
 
 import com.inschos.message.access.http.controller.bean.*;
+import com.inschos.message.access.rpc.bean.AccountBean;
+import com.inschos.message.access.rpc.bean.AgentJobBean;
+import com.inschos.message.access.rpc.client.AccountClient;
+import com.inschos.message.access.rpc.client.AgentJobClient;
+import com.inschos.message.access.rpc.client.ChannelClient;
+import com.inschos.message.assist.kit.ListKit;
+import com.inschos.message.assist.kit.TimeKit;
 import com.inschos.message.data.dao.MsgInboxDAO;
 import com.inschos.message.data.dao.MsgIndexDAO;
 import com.inschos.message.assist.kit.JsonKit;
@@ -21,6 +28,13 @@ public class MsgIndexAction extends BaseAction {
     private MsgIndexDAO msgIndexDAO;
     @Autowired
     private MsgInboxDAO msgInboxDAO;
+
+    @Autowired
+    private ChannelClient channelClient;
+    @Autowired
+    private AgentJobClient agentJobClient;
+    @Autowired
+    private AccountClient accountClient;
 
     /**
      * 发送消息
@@ -96,7 +110,7 @@ public class MsgIndexAction extends BaseAction {
         if(send_result>0){
             addMsgRecord.toUser = request.toUser;
             addMsgRecord.messageId = msgSys.id;
-            String add_record =  addMsgRecord(addMsgRecord);
+            String add_record =  addMsgRecord(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
             if(add_record!=null){
                 return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
             }else{
@@ -112,13 +126,14 @@ public class MsgIndexAction extends BaseAction {
      * @param addMsgRecord
      * @return
      */
-    public String addMsgRecord(AddMsgRecord addMsgRecord){
+    public String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid){
         BaseResponse response = new BaseResponse();
         long date = new Date().getTime();
+        List<Long> personIds = new ArrayList<>();
         for (MsgToBean msgToBean : addMsgRecord.toUser) {
             MsgRecord msgRecord = new MsgRecord();
             if(msgToBean.toId==0||msgToBean.toType==0){//没有代理人，只有渠道id
-                //TODO 发件记录表插一条数据
+
                 msgRecord.msg_id = addMsgRecord.messageId;
                 msgRecord.rec_id = msgToBean.channelId;
                 msgRecord.type = 5;
@@ -127,20 +142,17 @@ public class MsgIndexAction extends BaseAction {
                 msgRecord.created_at = date;
                 msgRecord.updated_at = date;
                 int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
-                //TODO 调用RPC,获取渠道下所有的代理人
-                List<PersonRecord> personRecords = new ArrayList<>();
-                for (PersonRecord personRecord : personRecords) {
-                    MsgToRecord msgToRecord = new MsgToRecord();
-                    msgToRecord.account_uuid = personRecord.accountUuid;
-                    msgToRecord.manager_uuid = personRecord.managerUuid;
-                    msgToRecord.msg_id = addMsgRecord.messageId;
-                    msgToRecord.status = 1;
-                    msgToRecord.state = 1;
-                    msgToRecord.created_at = date;
-                    msgToRecord.updated_at = date;
-                    int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
+
+                List<String> childrenId = channelClient.getChildrenId(String.valueOf(msgToBean.channelId), true);
+                AgentJobBean searchAgents = new AgentJobBean();
+                searchAgents.channel_ids = childrenId;
+                searchAgents.manager_uuid = managerUuid;
+                searchAgents.search_time = TimeKit.curTimeMillis2Str();
+                List<AgentJobBean> agents = agentJobClient.getAgentsByChannels(searchAgents);
+                if(agents!=null){
+                    personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
                 }
-            }else{
+            }else if(msgToBean.toType==1){
                 msgRecord.msg_id = addMsgRecord.messageId;
                 msgRecord.rec_id = msgToBean.toId;
                 msgRecord.type = msgToBean.toType;
@@ -149,17 +161,33 @@ public class MsgIndexAction extends BaseAction {
                 msgRecord.created_at = date;
                 msgRecord.updated_at = date;
                 int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
-                PersonRecord personRecord = new PersonRecord();
-                MsgToRecord msgToRecord = new MsgToRecord();
-                msgToRecord.account_uuid = personRecord.accountUuid;
-                msgToRecord.manager_uuid = personRecord.managerUuid;
-                msgToRecord.msg_id = addMsgRecord.messageId;
-                msgToRecord.status = 1;
-                msgToRecord.state = 1;
-                msgToRecord.created_at = date;
-                msgToRecord.updated_at = date;
-                int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
+
+                AgentJobBean agentJobBean = agentJobClient.getAgentById(msgToBean.toId);
+                if(agentJobBean!=null){
+                    personIds.add(agentJobBean.person_id);
+                }
+
             }
+        }
+        List<Long> uniquePList = ListKit.toUnique(personIds);
+        List<String> accountUuids = new ArrayList<>();
+        for (Long personId : uniquePList) {
+            AccountBean accountBean = accountClient.findByUser(sysId, AccountBean.USER_TYPE_AGENT, String.valueOf(personId));
+            if(accountBean!=null){
+                accountUuids.add(accountBean.accountUuid);
+            }
+        }
+
+        for (String accountUuid : accountUuids) {
+            MsgToRecord msgToRecord = new MsgToRecord();
+            msgToRecord.account_uuid = accountUuid;
+            msgToRecord.manager_uuid = managerUuid;
+            msgToRecord.msg_id = addMsgRecord.messageId;
+            msgToRecord.status = 1;
+            msgToRecord.state = 1;
+            msgToRecord.created_at = date;
+            msgToRecord.updated_at = date;
+            int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
         }
         return json(BaseResponse.CODE_FAILURE, "操作失败", response);
     }

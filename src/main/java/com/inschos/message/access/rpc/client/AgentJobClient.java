@@ -46,5 +46,14 @@ public class AgentJobClient {
             return null;
         }
     }
+    public AgentJobBean getAgentById(long agentId){
+        try {
+            AgentJobService service = getService();
+            return service!=null?service.getAgentById(agentId):null;
+        }catch (Exception e){
+            L.log.error("remote fail {}",e.getMessage(),e);
+            return null;
+        }
+    }
 
 }
