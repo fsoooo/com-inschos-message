@@ -51,6 +51,19 @@ public class WorkOrderBean {
         public List<WOCategoryData> data;
     }
 
+    public static class UntreatedCountResponse extends BaseResponse{
+        public long count;
+    }
+
+    public static class update extends BaseRequest{
+
+        public long id;
+
+        public String title;
+
+        public String content;
+    }
+
     public static class addWork extends BaseRequest{
 
         @CheckParams(stringType = CheckParams.StringType.STRING,maxLen =100 )
@@ -61,7 +74,7 @@ public class WorkOrderBean {
         public long categoryId; //工单分类
 
         public String categoryExtraName; //自定义分类名
-        
+
         public int state = 1;//删除标识 0删除 1未删除
 
     }
@@ -117,4 +130,12 @@ public class WorkOrderBean {
         public String replierName;
 
     }
+
+
+    public static class Untreated{
+
+        public long count;
+
+    }
+
 }

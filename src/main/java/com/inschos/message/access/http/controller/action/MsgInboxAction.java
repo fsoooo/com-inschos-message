@@ -2,6 +2,7 @@ package com.inschos.message.access.http.controller.action;
 
 import com.inschos.message.access.http.controller.bean.*;
 import com.inschos.message.assist.kit.StringKit;
+import com.inschos.message.assist.kit.TimeKit;
 import com.inschos.message.data.dao.MsgInboxDAO;
 import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.model.*;
@@ -38,34 +39,34 @@ public class MsgInboxAction extends BaseAction {
      * todo 只要用户接收消息 ，系统表就默认已经读取了，不在插入
      * @access public
      */
-    public String findMsgRecList(ActionBean actionBean) {
-        MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.InboxListRequest.class);
+    public String findMsgRecList(ActionBean bean) {
+        MsgInboxBean.InboxListRequest request = requst2Bean(bean.body, MsgInboxBean.InboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if(actionBean.managerUuid==null){
-            actionBean.managerUuid = "-1";
+        if(bean.managerUuid==null){
+            bean.managerUuid = "-1";
         }
         //调用DAO
         MsgRec msgRec = new MsgRec();
         msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
         msgRec.sys_status = request.messageStatus;
-        msgRec.user_id = Integer.parseInt(actionBean.managerUuid);
-        msgRec.user_type = actionBean.userType;
-        msgRec.manager_uuid = actionBean.managerUuid;
-        msgRec.account_uuid = actionBean.accountUuid;
+        msgRec.user_id = Integer.parseInt(bean.managerUuid);//Long.valueOf(bean.userId)
+        msgRec.user_type = bean.userType;
+        msgRec.manager_uuid = bean.managerUuid;
+        msgRec.account_uuid = bean.accountUuid;
         MsgStatus msgStatus = new MsgStatus();
         //根据user_type判断不同用户可以查看消息 类型
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String insertRes = insertMsgRec(msgRec);
-        logger.info(insertRes);
         List<MsgTypeLists> msgInboxList = msgInboxDAO.findMsgRecList(msgRec);
         if(msgInboxList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
         List<MsgInboxListBean> msgInboxLists = new ArrayList<>();
+        long newLastId = 0;
         for (MsgTypeLists msgTypeLists : msgInboxList) {
             MsgInboxListBean msgInboxListBean = new MsgInboxListBean();
             msgInboxListBean.messageType = msgTypeLists.type;
@@ -73,10 +74,17 @@ public class MsgInboxAction extends BaseAction {
             msgInboxListBean.unReadCount = msgTypeLists.count;
             msgInboxListBean.unReadCountText = msgTypeLists.count + "条新消息";
             msgInboxListBean.time = msgTypeLists.time;
-            msgInboxListBean.timeTxt = sdf.format(new Date(Long.valueOf(msgTypeLists.time)));
+            msgInboxListBean.timeTxt = TimeKit.format("yyyy-MM-dd HH:mm:ss",msgTypeLists.time);
+
             msgInboxLists.add(msgInboxListBean);
         }
         response.data = msgInboxLists;
+        int size = msgInboxLists.size();
+        if (StringKit.isInteger(request.pageNum)) {
+            response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
+        } else if (StringKit.isInteger(request.lastId)) {
+            response.page = setPageBean(newLastId, request.pageSize, 0, size);
+        }
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
@@ -100,8 +108,8 @@ public class MsgInboxAction extends BaseAction {
      * todo 只要用户接收消息 ，系统表就默认已经读取了，不在插入
      * @access public
      */
-    public String findMsgResListByType(ActionBean actionBean) {
-        MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(actionBean.body, MsgInboxBean.InboxListRequest.class);
+    public String findMsgResListByType(ActionBean bean) {
+        MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(bean.body, MsgInboxBean.InboxListRequest.class);
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
@@ -116,49 +124,26 @@ public class MsgInboxAction extends BaseAction {
         if (request.messageStatus != 0) {
             msgRec.sys_status = request.messageStatus;
         }
-        if(actionBean.managerUuid==null){
-            actionBean.managerUuid = "-1";
+        if(bean.managerUuid==null){
+            bean.managerUuid = "-1";
         }
-        msgRec.user_id = Integer.parseInt(actionBean.managerUuid);
-        msgRec.user_type = actionBean.userType;
+        msgRec.user_id = Integer.parseInt(bean.managerUuid);//Long.valueOf(bean.userId);
+        msgRec.user_type = bean.userType;
         msgRec.type = request.messageType;
-        msgRec.manager_uuid = actionBean.managerUuid;
-        msgRec.account_uuid = actionBean.accountUuid;
-        MsgStatus msgStatus = new MsgStatus();
-        MsgInboxListTypeBean msgInboxListTypeBean = new MsgInboxListTypeBean();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        List<MsgRec> msgRecList = new ArrayList<>();
-        //根据user_type判断不同用户可以查看消息 类型
-        switch (actionBean.userType) {
-            case 4://业管用户-查看的收件箱列表：所有用户的和发给业管自己的
-                List<MsgRec> msgInboxManager = msgInboxDAO.findMsgRecListByType(msgRec);
-                msgRecList = msgInboxManager;
-                break;
-            case 3://企业用户
-                String insertResCompany = insertMsgRec(msgRec);
-                List<MsgRec> msgInboxCompany = msgInboxDAO.findMsgRecListByType(msgRec);
-                msgRecList = msgInboxCompany;
-                break;
-            case 2://代理人用户
-                String insertResAgent = insertMsgRec(msgRec);
-                List<MsgRec> msgInboxAgent = msgInboxDAO.findMsgRecListByType(msgRec);
-                msgRecList = msgInboxAgent;
-                break;
-            case 1://个人用户-判断登录信息，再向收件箱表里插入数据
-                String insertResPerson = insertMsgRec(msgRec);
-                List<MsgRec> msgInboxPerson = msgInboxDAO.findMsgRecListByType(msgRec);
-                msgRecList = msgInboxPerson;
-                break;
-        }
+        msgRec.manager_uuid = bean.managerUuid;
+        msgRec.account_uuid = bean.accountUuid;
+        String insertRes = insertMsgRec(msgRec);
+        List<MsgRec> msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
         if(msgRecList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
         List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
+        long newLastId = 0;
         for (MsgRec msgInboxRes : msgRecList) {
             MsgSys msgSys = new MsgSys();
             msgSys.id = msgInboxRes.msg_id;
-            msgSys.manager_uuid = actionBean.managerUuid;
-            msgSys.account_uuid = actionBean.accountUuid;
+            msgSys.manager_uuid = bean.managerUuid;
+            msgSys.account_uuid = bean.accountUuid;
             List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
             List<MsgToBean> MsgToBeans = new ArrayList<>();
             for (MsgTo to : msgTo) {
@@ -176,16 +161,20 @@ public class MsgInboxAction extends BaseAction {
             msgInboxListType.messageTypeText = MsgStatus.getMsgType(msgInboxRes.type);
             msgInboxListType.readFlag = msgInboxRes.sys_status;
             msgInboxListType.time = msgInboxRes.created_at;
-            msgInboxListType.timeTxt = sdf.format(new Date(Long.valueOf(msgInboxRes.created_at)));
+            msgInboxListType.timeTxt = TimeKit.format("yyyy-MM-dd HH:mm:ss",msgInboxRes.created_at);
             msgInboxListType.msgToBean = MsgToBeans;
+            newLastId = msgInboxRes.id;
             msgInboxListTypeBeans.add(msgInboxListType);
         }
         response.data = msgInboxListTypeBeans;
-        if (response.data != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-        } else {
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+
+        int size = msgInboxListTypeBeans.size();
+        if (StringKit.isInteger(request.pageNum)) {
+            response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
+        } else if (StringKit.isInteger(request.lastId)) {
+            response.page = setPageBean(newLastId, request.pageSize, 0, size);
         }
+        return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
     }
 
     /**
@@ -202,7 +191,6 @@ public class MsgInboxAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         MsgRec msgRec = new MsgRec();
         MsgSys msgSys = new MsgSys();
         msgRec.id = request.messageId;
@@ -225,7 +213,7 @@ public class MsgInboxAction extends BaseAction {
         msgInboxInfoBean.messageTypeText = MsgStatus.getMsgType(msgInfo.type);
         msgInboxInfoBean.readFlag = msgInfo.sys_status;
         msgInboxInfoBean.time = msgInfo.created_at;
-        msgInboxInfoBean.timeTxt = sdf.format(new Date(Long.valueOf(msgInfo.created_at)));
+        msgInboxInfoBean.timeTxt = TimeKit.format("yyyy-MM-dd HH:mm:ss",msgInfo.created_at);
         msgSys.id = msgInfo.msg_id;
         msgSys.manager_uuid = actionBean.managerUuid;
         msgSys.account_uuid = actionBean.accountUuid;
@@ -240,11 +228,7 @@ public class MsgInboxAction extends BaseAction {
         }
         msgInboxInfoBean.msgToBean = MsgToBeans;
         response.data = msgInboxInfoBean;
-        if (msgInboxInfoBean != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
-        } else {
-            return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
-        }
+        return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
     }
 
     /**
@@ -256,7 +240,7 @@ public class MsgInboxAction extends BaseAction {
      * @return mixed
      * @access public
      */
-    public String insertMsgRec(MsgRec msgRec) {
+    private String insertMsgRec(MsgRec msgRec) {
         BaseResponse response = new BaseResponse();
         //判空
         if (msgRec==null) {
@@ -270,7 +254,7 @@ public class MsgInboxAction extends BaseAction {
         }
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
-        List insertResList = new ArrayList();
+        List<Integer> insertResList = new ArrayList();
         for (MsgSys sys : MsgSys) {
             msgRec.msg_id = sys.id;
             msgRec.type = sys.type;
@@ -322,6 +306,7 @@ public class MsgInboxAction extends BaseAction {
         msgSys.manager_uuid = actionBean.managerUuid;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<MsgTypeLists>  msgOutboxs = msgInboxDAO.findMsgSysList(msgSys);
+        long newLastId = 0;
         if(msgOutboxs==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
@@ -337,6 +322,12 @@ public class MsgInboxAction extends BaseAction {
             msgInboxLists.add(msgInboxListBean);
         }
         response.data = msgInboxLists;
+        int size = msgInboxLists.size();
+        if (StringKit.isInteger(request.pageNum)) {
+            response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
+        } else if (StringKit.isInteger(request.lastId)) {
+            response.page = setPageBean(newLastId, request.pageSize, 0, size);
+        }
         if (msgInboxLists != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {
@@ -381,6 +372,7 @@ public class MsgInboxAction extends BaseAction {
         msgSys.manager_uuid = actionBean.managerUuid;
         MsgStatus msgStatus = new MsgStatus();
         List<MsgSys> msgResList = msgInboxDAO.findMsgSysListByType(msgSys);
+        long newLastId = 0;
         if(msgResList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
@@ -413,6 +405,12 @@ public class MsgInboxAction extends BaseAction {
             msgInboxListTypeBeans.add(msgInboxListType);
         }
         response.data = msgInboxListTypeBeans;
+        int size = msgInboxListTypeBeans.size();
+        if (StringKit.isInteger(request.pageNum)) {
+            response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
+        } else if (StringKit.isInteger(request.lastId)) {
+            response.page = setPageBean(newLastId, request.pageSize, 0, size);
+        }
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
         } else {

@@ -19,6 +19,8 @@ public interface WorkOrderDao {
     /** 通过type 和 发送 、接收人 查询记录总数   */
     int findCount(WorkOrder search);
 
+    int untreatedCount(WorkOrder search);
+
     List<WorkOrderCategory> findCategoryList();
 
     int addReply(WorkOrderReply reply);
