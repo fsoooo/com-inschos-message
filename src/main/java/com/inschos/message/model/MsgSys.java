@@ -35,7 +35,7 @@ public class MsgSys {
 
     public String send_time;//'发送时间:可为空。需要延时发送的，发送时间不为空'
 
-    public int state = 0;//'删除标识:默认为0，1未删除'
+    public int state = 1;//'删除标识:默认为0，1未删除'
 
     public long created_at;//'创建时间，毫秒'
 

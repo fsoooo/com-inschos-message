@@ -31,18 +31,18 @@ public class MsgIndexController {
     /**
      * 发送消息
      *
-     * @param title|标题
-     * @param content|内容
-     * @param attachment|附件:上传附件的URL,可为空
-     * @param type|消息                            类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/
-     * @param fromId|发件人ID
-     * @param fromType|发件人类型:用户类型:个人用户           1/企业用户 2/代理人 3/业管用户 4
-     * @param toId|收件人id
-     * @param toType|收件人类型:用户类型:个人用户             1/企业用户 2/代理人 3/业管用户 4
-     * @param channelId|渠道id
-     * @param status|读取状态:标识消息                   是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
-     * @param sendTime|发送时间:默认为空。需要延时发送的，发送时间不为空
-     * @param parentId|消息父级id
+     * @params title|标题
+     * @params content|内容
+     * @params attachment|附件:上传附件的URL,可为空
+     * @params type|消息                            类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/
+     * @params fromId|发件人ID
+     * @params fromType|发件人类型:用户类型:个人用户           1/企业用户 2/代理人 3/业管用户 4
+     * @params toId|收件人id
+     * @params toType|收件人类型:用户类型:个人用户             1/企业用户 2/代理人 3/业管用户 4
+     * @params channelId|渠道id
+     * @params status|读取状态:标识消息                   是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
+     * @params sendTime|发送时间:默认为空。需要延时发送的，发送时间不为空
+     * @params parentId|消息父级id
      * @return json
      * @access public
      */
@@ -56,9 +56,10 @@ public class MsgIndexController {
     /**
      * 操作消息 （收件箱 读取和删除）
      *
-     * @param messageId   消息 id
-     * @param operateId   操作代码:默认为1（删除/已读），2（还原/未读）
-     * @param operateType 操作类型:read 更改读取状态，del 更改删除状态
+     * @params messageId   消息 id
+     * @params operateId   操作代码:默认为1（删除/已读），2（还原/未读）
+     * @params operateType 操作类型:read 更改读取状态，del 更改删除状态
+     * @params operateAll  操作全部：1是，2否
      * @return json
      * @access public
      */

@@ -16,17 +16,6 @@ public class MsgModelBean {
 
         @CheckParams(stringType = CheckParams.StringType.STRING, minLen = 1)
         public int modelType;//'模板类型'
-
-        @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)
-        public long createdUser;//'创建用户id'
-
-        @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)
-        public int createdUserType;//'创建用户type'
-
-        public int status = 0;//'审核状态:默认为0审核中，1审核通过，2审核失败'
-
-        public int state = 0;//'删除标识:默认为0，1未删除'
-
     }
 
     //消息 模板列表

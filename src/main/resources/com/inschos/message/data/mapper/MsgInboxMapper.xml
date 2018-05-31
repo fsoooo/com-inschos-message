@@ -18,7 +18,7 @@
 
     <!--msg_sys查询字段-->
     <sql id="Sys_Column_List">
-        `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`parent_id`,`status`,`send_time`,`state`,`created_at`,`updated_at`
+        `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`status`,`send_time`,`state`,`created_at`,`updated_at`
     </sql>
 
     <!--获取收件列表 TODO 收件箱总列表，返回按messageType  GroupBy 之后返回(类型，数量，和最大时间值)-->
@@ -33,11 +33,11 @@
                 <when test="user_type==2">
                     `type` in (1,2,3,5,6,7)
                 </when>
-                <when test="user_type==3">
+                <when test="user_type==4">
                     `type` in (1,2,3,4,5,7)
                 </when>
             </choose>
-            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1
         </where>
         GROUP BY `type`
     </select>
@@ -50,39 +50,21 @@
         from msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         <where>
             <choose>
-                <when test="user_type==4">
-                    <choose>
-                        <when test="page.lastId>0">
-                            msg_rec.id&gt;#{page.lastId}
-                        </when>
-                        <when test="page.start>0">
-                            msg_rec.id&gt;=(select id from msg_rec where  msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.sys_status=#{sys_status} AND msg_rec.state=0
-                            limit #{page.start},1
-                            )
-                        </when>
-                        <otherwise>
-                            1=1
-                        </otherwise>
-                    </choose>
-                   AND msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.state = 0 AND msg_rec.type =#{type} limit #{page.offset}
+                <when test="page.lastId>0">
+                    msg_rec.id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    msg_rec.id&gt;=(select id from msg_rec where msg_rec.manager_uuid =#{manager_uuid} AND
+                    msg_rec.account_uuid =#{account_uuid} AND msg_rec.sys_status=#{sys_status} AND msg_rec.state=1
+                    limit #{page.start},1
+                    )
                 </when>
                 <otherwise>
-                    <choose>
-                        <when test="page.lastId>0">
-                            msg_rec.id&gt;#{page.lastId}
-                        </when>
-                        <when test="page.start>0">
-                            msg_rec.id&gt;=(select id from msg_rec where  msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.sys_status=#{sys_status} AND msg_rec.state=0
-                            limit #{page.start},1
-                            )
-                        </when>
-                        <otherwise>
-                            1=1
-                        </otherwise>
-                    </choose>
-                    AND msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.state = 0 AND msg_rec.type =#{type} limit #{page.offset}
+                    1=1
                 </otherwise>
             </choose>
+            AND msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.state = 1
+            AND msg_rec.type =#{type} limit #{page.offset}
         </where>
     </select>
     <!--联查映射-->
@@ -103,51 +85,11 @@
         </association>
     </resultMap>
 
-    <select id="findMsgRecListByParent" parameterType="MsgRec" resultMap="selectMsgRecAndSysByParent">
-        select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`,
-        `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`,
-        `msg_sys`.`content`,`msg_sys`.`type`,
-        `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`
-        from msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
-        <where>
-            <choose>
-                <when test="page.lastId>0">
-                    msg_rec.id&gt;#{page.lastId}
-                </when>
-                <when test="page.start>0">
-                    msg_rec.id&gt;=(select id from msg_rec where msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.sys_status=#{sys_status} AND msg_rec.state=0 AND msg_rec.parent_id =#{parent_id} limit #{page.start},1)
-                </when>
-                <otherwise>
-                    1=1
-                </otherwise>
-            </choose>
-            AND msg_rec.state = 0 AND msg_rec.user_id =#{user_id} AND msg_rec.user_type =#{user_type} AND msg_rec.type
-            =#{type} AND msg_rec.parent_id =#{parent_id} AND msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} limit #{page.offset}
-        </where>
-    </select>
-    <!--联查映射-->
-    <resultMap id="selectMsgRecAndSysByParent" type="MsgRec" autoMapping="true">
-        <!--主表的主键id-->
-        <id column="id" property="id"/>
-        <association property="msgSys" javaType="MsgSys">
-            <!--todo 附表的主键id-->
-            <!--<id column="id" property="id" />-->
-            <result column="title" property="title"/>
-            <result column="content" property="content"/>
-            <result column="type" property="type"/>
-            <result column="from_id" property="from_id"/>
-            <result column="from_type" property="from_type"/>
-            <result column="status" property="status"/>
-            <result column="send_time" property="send_time"/>
-            <result column="state" property="state"/>
-        </association>
-    </resultMap>
-
     <!--获取未接收列表-->
     <select id="findUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
-        select `id`,`type`,`parent_id`
+        select `id`,`type`
         from  msg_sys
-        where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 0 AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+        where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 0 AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1
     </select>
 
     <!--收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）-->
@@ -174,11 +116,11 @@
                 <when test="from_type==2">
                     `type` in (1,2,3,5,6,7)
                 </when>
-                <when test="from_type==3">
+                <when test="from_type==4">
                     `type` in (1,2,3,4,5,7)
                 </when>
             </choose>
-            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1
         </where>
         GROUP BY `type`
     </select>
@@ -194,36 +136,16 @@
                     id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    id&gt;=(select id from msg_sys where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} status=#{status} AND state=0 AND type =#{type} limit
+                    id&gt;=(select id from msg_sys where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+                    status=#{status} AND state=1 AND type =#{type} limit
                     #{page.start},1)
                 </when>
                 <otherwise>
                     1=1
                 </otherwise>
             </choose>
-            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 0 AND type =#{type} limit #{page.offset}
-        </where>
-    </select>
-
-    <!--根据parentId获取收件列表-->
-    <select id="findMsgSysListByParent" parameterType="MsgSys" resultType="MsgSys">
-        select
-        <include refid="Sys_Column_List"/>
-        from msg_sys
-        <where>
-            <choose>
-                <when test="page.lastId>0">
-                    id&gt;#{page.lastId}
-                </when>
-                <when test="page.start>0">
-                    id&gt;=(select id from msg_sys where  manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} status=#{status} AND state=0 AND type =#{type} AND parent_id
-                    =#{parent_id} limit #{page.start},1)
-                </when>
-                <otherwise>
-                    1=1
-                </otherwise>
-            </choose>
-           AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 0 AND type =#{type} AND parent_id =#{parent_id} limit #{page.offset}
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type} limit
+            #{page.offset}
         </where>
     </select>
 
@@ -233,7 +155,6 @@
         from  msg_rec LEFT JOIN msg_sys ON msg_rec.msg_id = msg_sys.id
         where `msg_rec`.`id`=#{id} AND  `msg_rec`.`manager_uuid` =#{manager_uuid} AND `msg_rec`.`account_uuid` =#{account_uuid}
     </select>
-
     <!--联查映射-->
     <resultMap id="MsgRecAndSysInfo" type="MsgRec" autoMapping="true">
         <!--主表的主键id-->
@@ -258,6 +179,13 @@
         select
         <include refid="Sys_Column_List"/>
         from msg_sys
+        where `id`=#{id} AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+    </select>
+
+    <!--获取发件人信息-->
+    <select id="findMsgTo" parameterType="MsgSys" resultType="MsgTo">
+        select `to_id`,`to_type`,`channel_id`,`status`
+        from msg_sys
         where `id`=#{id} AND  manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
     </select>
 
@@ -275,9 +203,31 @@
             where `id`=#{msg_id} AND  manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
     </update>
 
-    <select id="findMsgTo" parameterType="MsgSys" resultType="MsgTo">
-        select `to_id`,`to_type`,`channel_id`,`status`
-        from msg_sys
-        where `id`=#{id} AND  manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
-    </select>
+    <!--更改所有的状态-->
+    <update id="updateAllMsgRecStatus" parameterType="MsgUpdate">
+        update msg_rec set
+        `sys_status`=#{operate_id}
+        <where>
+            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+            <choose>
+                <when test="type!=-1">
+                    AND type=#{type}
+                </when>
+            </choose>
+        </where>
+    </update>
+
+    <!--更改所有的状态-->
+    <update id="updateAllMsgRecState" parameterType="MsgUpdate">
+        update msg_rec set
+        `state`=#{operate_id}
+        <where>
+            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+            <choose>
+                <when test="type!=-1">
+                    AND type=#{type}
+                </when>
+            </choose>
+        </where>
+    </update>
 </mapper>

@@ -25,17 +25,17 @@ public class MsgIndexAction extends BaseAction {
     /**
      * 发送消息
      *
-     * @params title|标题
-     * @params content|内容
-     * @params attachment|附件:上传附件的URL,可为空
-     * @params type|消息                            类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/
-     * @params fromId|发件人ID
-     * @params fromType|发件人类型:用户类型:个人用户           1/企业用户 2/代理人 3/业管用户 4
-     * @params toId|收件人id
-     * @params toType|收件人类型:用户类型:个人用户             1/企业用户 2/代理人 3/业管用户 4
-     * @params status|读取状态:标识消息                   是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
-     * @params sendTime|发送时间:默认为空。需要延时发送的，发送时间不为空
-     * @params parentId|消息父级id
+     * @paramss title|标题
+     * @paramss content|内容
+     * @paramss attachment|附件:上传附件的URL,可为空
+     * @paramss type|消息                            类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/
+     * @paramss fromId|发件人ID
+     * @paramss fromType|发件人类型:用户类型:个人用户           1/企业用户 2/代理人 3/业管用户 4
+     * @paramss toId|收件人id
+     * @paramss toType|收件人类型:用户类型:个人用户             1/企业用户 2/代理人 3/业管用户 4
+     * @paramss status|读取状态:标识消息                   是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
+     * @paramss sendTime|发送时间:默认为空。需要延时发送的，发送时间不为空
+     * @paramss parentId|消息父级id
      * @return json
      * @access public
      * <p>
@@ -61,9 +61,6 @@ public class MsgIndexAction extends BaseAction {
         if(request.type == 0){
             return json(BaseResponse.CODE_FAILURE, "type is empty", response);
         }
-        if (request.fromId == 0 || request.fromType == 0) {
-            return json(BaseResponse.CODE_FAILURE, "from_id or from_type is empty", response);
-        }
         if (request.toUser == null || request.toUser.size() == 0) {
             return json(BaseResponse.CODE_FAILURE, "to_user is empty", response);
         }
@@ -87,6 +84,9 @@ public class MsgIndexAction extends BaseAction {
                     return json(BaseResponse.CODE_FAILURE, "no permission", response);
                 }
             }
+            if(actionBean.managerUuid==null){
+                actionBean.managerUuid = "-1";
+            }
             msgSys.manager_uuid = actionBean.managerUuid;
             msgSys.account_uuid = actionBean.accountUuid;
             msgSys.title = request.title;
@@ -97,8 +97,8 @@ public class MsgIndexAction extends BaseAction {
             }
             msgSys.attachment = request.attachment;
             msgSys.send_time = request.sendTime;
-            msgSys.from_id = request.fromId;
-            msgSys.from_type = request.fromType;
+            msgSys.from_id =  Integer.parseInt(actionBean.managerUuid);
+            msgSys.from_type = actionBean.userType;
             msgSys.to_id = msgToBean.toId;
             msgSys.to_type = msgToBean.toType;
             msgSys.channel_id = msgToBean.channelId;
@@ -125,9 +125,9 @@ public class MsgIndexAction extends BaseAction {
     /**
      * 操作消息 （收件箱 读取和删除）
      *
-     * @params messageId   消息 id
-     * @params operateId   操作代码:默认为1（删除/已读），2（还原/未读）
-     * @params operateType 操作类型:read 更改读取状态，del 更改删除状态
+     * @paramss messageId   消息 id
+     * @paramss operateId   操作代码:默认为1（删除/已读），2（还原/未读）
+     * @paramss operateType 操作类型:read 更改读取状态，del 更改删除状态
      * @return json
      * @access public
      */
@@ -138,49 +138,68 @@ public class MsgIndexAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "params is empty", response);
         }
-        if(request.userType!=4){
-            return json(BaseResponse.CODE_FAILURE, "no permission", response);
-        }
-        if (request.messageIds == null || request.messageIds.size() == 0) {
-            return json(BaseResponse.CODE_FAILURE, "messageIds is empty", response);
-        }
-        List<MsgUpdateResBean> msgUpdateResList = new ArrayList<>();
-        MsgUpdateResBean msgUpdateRes = new MsgUpdateResBean();
-        for (MsgUpdateBean messageId : request.messageIds) {
+        if(request.operateAll==0){//批量操作
+            if (request.messageIds == null || request.messageIds.size() == 0) {
+                return json(BaseResponse.CODE_FAILURE, "messageIds is empty", response);
+            }
+            List<MsgUpdateResBean> msgUpdateResList = new ArrayList<>();
+            MsgUpdateResBean msgUpdateRes = new MsgUpdateResBean();
+            for (MsgUpdateBean messageId : request.messageIds) {
+                MsgUpdate msgUpdate = new MsgUpdate();
+                msgUpdate.msg_id = messageId.messageId;
+                msgUpdate.operate_id = request.operateId;
+                msgUpdate.type = request.messageType;
+                msgUpdate.manager_uuid = actionBean.managerUuid;
+                msgUpdate.account_uuid = actionBean.accountUuid;
+                switch (request.operateType){
+                    case "read":
+                        msgUpdate.operate_type = "sys_status";
+                        int updateStatusRes = msgInboxDAO.updateMsgRecStatus(msgUpdate);
+                        if(updateStatusRes==1){
+                            msgUpdateRes.updateRes = "更新成功";
+                        }else{
+                            msgUpdateRes.updateRes = "更新失败";
+                        }
+                        msgUpdateRes.messageId = messageId.messageId;
+                        msgUpdateResList.add(msgUpdateRes);
+                        break;
+                    case "del":
+                        msgUpdate.operate_type = "state";
+                        int updateStateRes = msgInboxDAO.updateMsgRecState(msgUpdate);
+                        if(updateStateRes==1){
+                            msgUpdateRes.updateRes = "更新成功";
+                        }else{
+                            msgUpdateRes.updateRes = "更新失败";
+                        }
+                        msgUpdateRes.messageId = messageId.messageId;
+                        msgUpdateResList.add(msgUpdateRes);
+                        break;
+                }
+            }
+            response.data = msgUpdateResList;
+        }else if(request.operateAll==1){//处理全部
             MsgUpdate msgUpdate = new MsgUpdate();
-            msgUpdate.msg_id = messageId.messageId;
             msgUpdate.operate_id = request.operateId;
+            msgUpdate.manager_uuid = actionBean.managerUuid;
+            msgUpdate.account_uuid = actionBean.accountUuid;
+            msgUpdate.type = request.messageType;
             switch (request.operateType){
                 case "read":
                     msgUpdate.operate_type = "sys_status";
-                    int updateStatusRes = msgInboxDAO.updateMsgRecStatus(msgUpdate);
-                    if(updateStatusRes==1){
-                        msgUpdateRes.updateRes = "更新成功";
-                    }else{
-                        msgUpdateRes.updateRes = "更新失败";
-                    }
-                    msgUpdateRes.messageId = messageId.messageId;
-                    msgUpdateResList.add(msgUpdateRes);
+                    int updateStatusRes = msgInboxDAO.updateAllMsgRecStatus(msgUpdate);
+                    response.data = updateStatusRes;
                     break;
                 case "del":
                     msgUpdate.operate_type = "state";
-                    int updateStateRes = msgInboxDAO.updateMsgRecState(msgUpdate);
-                    if(updateStateRes==1){
-                        msgUpdateRes.updateRes = "更新成功";
-                    }else{
-                        msgUpdateRes.updateRes = "更新失败";
-                    }
-                    msgUpdateRes.messageId = messageId.messageId;
-                    msgUpdateResList.add(msgUpdateRes);
-                    break;
-                default:
-                    msgUpdateRes.messageId = 0;
-                    msgUpdateRes.updateRes = "";
-                    msgUpdateResList.add(msgUpdateRes);
+                    int updateStateRes = msgInboxDAO.updateAllMsgRecState(msgUpdate);
+                    response.data = updateStateRes;
                     break;
             }
         }
-        response.data = msgUpdateResList;
-        return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        if(response.data!=null&&response.data!="0"){
+            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        }else{
+            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        }
     }
 }
