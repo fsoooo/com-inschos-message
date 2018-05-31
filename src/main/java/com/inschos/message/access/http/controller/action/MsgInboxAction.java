@@ -280,7 +280,8 @@ public class MsgInboxAction extends BaseAction {
                 updateSys.status = 2;//已读
                 updateSys.manager_uuid = msgRec.manager_uuid;
                 updateSys.account_uuid = msgRec.account_uuid;
-                int updateRes = msgInboxDAO.updateMsgSysStatus(updateSys);
+                int updateRes = msgInboxDAO.updateMsgToRecord(updateSys);
+                //int updateRes = msgInboxDAO.updateMsgSysStatus(updateSys);
             }
             //TODO  更改msg_sys消息读取状态
             insertResList.add(insertRes);
