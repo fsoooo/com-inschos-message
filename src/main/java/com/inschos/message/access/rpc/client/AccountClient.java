@@ -44,6 +44,18 @@ public class AccountClient{
             return null;
         }
     }
+    public AccountBean findByUser(long sysId, int userType, String userId){
+        try {
+            AccountService service = getService();
+            return service!=null?service.findByUser(sysId,userType,userId):null;
+
+        }catch (Exception e){
+            L.log.error("remote fail {}",e.getMessage(),e);
+            return null;
+        }
+    }
+
+
 
 
 }

@@ -7,6 +7,8 @@ import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by IceAnt on 2018/5/21.
  */
@@ -33,4 +35,17 @@ public class ChannelClient {
             return null;
         }
     }
+
+    public List<String> getChildrenId(String channelId, boolean needSelf){
+        try {
+            ChannelService service = getService();
+            return service!=null?service.getChildrenChannelIdById(channelId,needSelf):null;
+
+        }catch (Exception e){
+            L.log.error("remote fail {}",e.getMessage(),e);
+            return null;
+        }
+    }
+
+
 }

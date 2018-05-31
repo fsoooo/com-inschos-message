@@ -1,5 +1,7 @@
 package com.inschos.message.access.rpc.bean;
 
+import java.util.List;
+
 /**
  * Created by IceAnt on 2018/5/21.
  */
@@ -45,5 +47,9 @@ public class AgentJobBean {
 
     /** 任职状态： 0离职 1在职*/
     public int status;
+
+    public List<String> channel_ids;
+
+    public String search_time;
 
 }

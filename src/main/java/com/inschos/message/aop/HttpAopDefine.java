@@ -119,6 +119,7 @@ public class HttpAopDefine {
                 bean.username = accountBean.username;
                 bean.email = accountBean.email;
                 bean.phone = accountBean.phone;
+                bean.sysId = accountBean.sysId;
             }else{
                 return false;
             }
