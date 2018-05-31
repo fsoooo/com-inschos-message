@@ -20,7 +20,6 @@ public class MsgInboxAction extends BaseAction {
     private static final Logger logger = Logger.getLogger(MsgInboxAction.class);
     @Autowired
     private MsgInboxDAO msgInboxDAO;
-    private Page page;
 
     /**
      * 消息 收件箱列表(获取所有类型的列表)
@@ -386,14 +385,12 @@ public class MsgInboxAction extends BaseAction {
         msgSys.type = request.messageType;
         msgSys.account_uuid = actionBean.accountUuid;
         msgSys.manager_uuid = actionBean.managerUuid;
-        MsgStatus msgStatus = new MsgStatus();
         List<MsgSys> msgResList = msgInboxDAO.findMsgSysListByType(msgSys);
         long newLastId = 0;
         if(msgResList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        MsgInboxListTypeBean msgInboxListTypeBean = new MsgInboxListTypeBean();
         List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
         for (MsgSys sys : msgResList) {
             msgSys.account_uuid = actionBean.accountUuid;
@@ -423,7 +420,8 @@ public class MsgInboxAction extends BaseAction {
         response.data = msgInboxListTypeBeans;
         int size = msgInboxListTypeBeans.size();
         if (StringKit.isInteger(request.pageNum)) {
-            response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
+            int total = msgInboxDAO.findMsgSysCountByType(msgSys);
+            response.page = setPageBean(request.pageNum, request.pageSize, total, size);
         } else if (StringKit.isInteger(request.lastId)) {
             response.page = setPageBean(newLastId, request.pageSize, 0, size);
         }

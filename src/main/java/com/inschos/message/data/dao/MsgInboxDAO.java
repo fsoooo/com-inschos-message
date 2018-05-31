@@ -137,6 +137,10 @@ public class MsgInboxDAO {
         return msgInboxMapper.findMsgSysListByType(msgSys);
     }
 
+    public int findMsgSysCountByType(MsgSys msgSys) {
+        return msgInboxMapper.findMsgSysCountByType(msgSys);
+    }
+
     /**
      * 发件箱列表查询
      *

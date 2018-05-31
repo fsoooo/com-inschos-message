@@ -42,8 +42,13 @@ public interface MsgInboxMapper {
     // 发件箱列表(findMsgSysList)
     List<MsgTypeLists> findMsgSysList(MsgSys msgSys);
 
-    //某一分类的收件箱的列表(findMsgSysListByType)MsgRec
+    //某一分类的发件箱的列表
     List<MsgSys> findMsgSysListByType(MsgSys msgSys);
+
+    //某一分类的发件箱的数
+    int findMsgSysCountByType(MsgSys msgSys);
+
+
 
     //发件箱详情
     MsgSys findMsgSysInfo(MsgSys msgSys);
