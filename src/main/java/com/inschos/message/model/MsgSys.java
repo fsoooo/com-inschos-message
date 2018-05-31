@@ -31,7 +31,7 @@ public class MsgSys {
 
     public long parent_id = -1;//消息父级id
 
-    public int status = 0;//'读取状态:标识消息 是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0'
+    public int status = 1;//'读取状态:标识消息 是否已被读取,未读1/已读2.避免重复向收件箱表插入数据,默认为1'
 
     public String send_time;//'发送时间:可为空。需要延时发送的，发送时间不为空'
 

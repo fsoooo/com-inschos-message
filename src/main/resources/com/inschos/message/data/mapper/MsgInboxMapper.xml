@@ -50,9 +50,9 @@
     </select>
 
     <select id="findMsgSysCount" resultType="MsgCount">
-        select count(`id`) as count_num from msg_Sys
+        select count(`id`) as count_num from msg_sys
         <where>
-            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND status = 0
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND status = 1
         </where>
     </select>
 
@@ -103,7 +103,7 @@
     <select id="findUserMsgRes" parameterType="MsgRec" resultType="MsgSys">
         select `id`,`type`
         from  msg_sys
-        where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 0 AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1
+        where `to_id`=#{user_id} AND `to_type`=#{user_type} AND `status` = 1 AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1
     </select>
 
     <!--收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）-->
