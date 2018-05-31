@@ -262,15 +262,15 @@ public class MsgInboxAction extends BaseAction {
         for (MsgSys sys : MsgSys) {
             msgRec.msg_id = sys.id;
             msgRec.type = sys.type;
-            msgRec.sys_status = 1;
-            msgRec.state = 1;
+            msgRec.sys_status = 1;//未读
+            msgRec.state = 1;//未读
             msgRec.created_at = date;
             msgRec.updated_at = date;
             int insertRes = msgInboxDAO.insertMsgRec(msgRec);
             if (insertRes != 0) {
                 MsgSys updateSys = new MsgSys();
                 updateSys.id = sys.id;
-                updateSys.status = 1;
+                updateSys.status = 2;//已读
                 updateSys.manager_uuid = msgRec.manager_uuid;
                 updateSys.account_uuid = msgRec.account_uuid;
                 int updateRes = msgInboxDAO.updateMsgSysStatus(updateSys);
