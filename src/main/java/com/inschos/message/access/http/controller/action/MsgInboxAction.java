@@ -262,7 +262,7 @@ public class MsgInboxAction extends BaseAction {
         for (MsgSys sys : MsgSys) {
             msgRec.msg_id = sys.id;
             msgRec.type = sys.type;
-            msgRec.sys_status = 0;
+            msgRec.sys_status = 1;
             msgRec.state = 1;
             msgRec.created_at = date;
             msgRec.updated_at = date;
