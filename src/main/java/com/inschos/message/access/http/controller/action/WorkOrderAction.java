@@ -290,7 +290,6 @@ public class WorkOrderAction extends BaseAction {
         if (workOrder != null && workOrder.addressee_uuid.equals(bean.managerUuid)) {
 
             WorkOrderBean.WorkOrderData data = toData(workOrder, true, true);
-            data.orderStatusTxt = WorkOrder.getHandle(workOrder.handle_status);
 
             data.replyList = new ArrayList<>();
 
