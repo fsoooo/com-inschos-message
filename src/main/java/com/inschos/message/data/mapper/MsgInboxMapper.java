@@ -12,31 +12,43 @@ import java.util.List;
 //4、Mapper接口方法的输出参数类型和mapper.xml中定义的每个sql的resultType的类型相同
 public interface MsgInboxMapper {
     // 收件箱列表(findMsgRecList)MsgTypeLists
-    List<MsgTypeLists> findMsgRecList(MsgRec msgRec);//定义返回数据类型-集合
+    List<MsgTypeLists> findMsgRecList(MsgRec msgRec);
 
     //某一分类的收件箱的列表(findMsgRecListByType)MsgRec
-    List<MsgRec> findMsgRecListByType(MsgRec msgRec);//定义返回数据类型-集合
-
-    //按parent_id获取收件列表(findMsgRecListByParent)MsgRec
-    List<MsgRec> findMsgRecListByParent(MsgRec msgRec);//定义返回数据类型-集合
+    List<MsgRec> findMsgRecListByType(MsgRec msgRec);
 
     //用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
-    List<MsgSys> findUserMsgRes(MsgRec msgRec);
+    List<MsgSys> findUserMsgRec(MsgRec msgRec);
+
+    //从消息发送对象表获取未读消息
+    List<MsgSys> findMsgToRecord(MsgRec msgRec);
+
+    //获取消息主体表信息
+    MsgSys findMsgSysRec(MsgSys msgSys);
 
     //收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
     int insertMsgRec(MsgRec msgRec);
 
+    MsgCount findMsgRecCount(MsgRec msgRec);
+
     //更改系统消息读取状态
     int updateMsgSysStatus(MsgSys msgSys);
+
+    int updateMsgToRecord(MsgSys msgSys);
+
+
+    MsgCount findMsgSysCount(MsgSys msgSys);
 
     // 发件箱列表(findMsgSysList)
     List<MsgTypeLists> findMsgSysList(MsgSys msgSys);
 
-    //某一分类的收件箱的列表(findMsgSysListByType)MsgRec
-    List<MsgSys> findMsgSysListByType(MsgSys msgSys);//定义返回数据类型-集合
+    //某一分类的发件箱的列表
+    List<MsgSys> findMsgSysListByType(MsgSys msgSys);
 
-    //按parent_id获取收件列表(findMsgSysListByParent)MsgRec
-    List<MsgSys> findMsgSysListByParent(MsgSys msgSys);//定义返回数据类型-集合
+    //某一分类的发件箱的数
+    int findMsgSysCountByType(MsgSys msgSys);
+
+
 
     //发件箱详情
     MsgSys findMsgSysInfo(MsgSys msgSys);
@@ -44,12 +56,18 @@ public interface MsgInboxMapper {
     // 消息 详情(findMsgInfo)
     MsgRec findMsgInfo(MsgRec msgRec);
 
-    List<MsgTo> findMsgTo(MsgSys msgSys);//定义返回数据类型-集合
+    List<MsgTo> findMsgTo(MsgSys msgSys);
 
     // 删除/读取消息 (updateMsgRec)
     int updateMsgRecStatus(MsgUpdate msgUpdate);
 
     // 删除/读取消息 (updateMsgRec)
     int updateMsgRecState(MsgUpdate msgUpdate);
+
+    // 删除/读取消息 (updateMsgRec)
+    int updateAllMsgRecStatus(MsgUpdate msgUpdate);
+
+    // 删除/读取消息 (updateMsgRec)
+    int updateAllMsgRecState(MsgUpdate msgUpdate);
 
 }

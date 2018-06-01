@@ -66,6 +66,10 @@ public class MsgInboxBean {
 
         public int userType;
 
+        public int operateAll;//操作全部
+
+        public int messageType;//消息类型
+
         public List<MsgUpdateBean> messageIds;
 
         @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)

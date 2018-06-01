@@ -25,7 +25,7 @@ public class MsgInboxDAO {
     /**
      * 收件箱列表查询
      *
-     * @param msgRec
+     * @params msgRec
      * @return list
      * @access public
      */
@@ -34,9 +34,27 @@ public class MsgInboxDAO {
     }
 
     /**
+     * 获取消息总数
+     * @param msgRec
+     * @return
+     */
+    public MsgCount findMsgRecCount(MsgRec msgRec){
+        return msgInboxMapper.findMsgRecCount(msgRec);
+    }
+
+    /**
+     * 获取消息总数
+     * @param msgSys
+     * @return
+     */
+    public MsgCount findMsgSysCount(MsgSys msgSys){
+        return msgInboxMapper.findMsgSysCount(msgSys);
+    }
+
+    /**
      * 收件箱列表查询-按消息分类
      *
-     * @param msgRec
+     * @params msgRec
      * @return list
      * @access public
      */
@@ -45,20 +63,9 @@ public class MsgInboxDAO {
     }
 
     /**
-     * 收件箱列表查询-按parent_id
-     *
-     * @param msgRec
-     * @return list
-     * @access public
-     */
-    public List<MsgRec> findMsgRecListByParent(MsgRec msgRec) {
-        return msgInboxMapper.findMsgRecListByParent(msgRec);
-    }
-
-    /**
      * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
      *
-     * @param msgRec
+     * @params msgRec
      * @return int
      * @access public
      */
@@ -69,7 +76,7 @@ public class MsgInboxDAO {
     /**
      * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
      *
-     * @param msgSys
+     * @params msgSys
      * @return int
      * @access public
      */
@@ -77,21 +84,41 @@ public class MsgInboxDAO {
         return msgInboxMapper.updateMsgSysStatus(msgSys);
     }
 
+    public int updateMsgToRecord(MsgSys msgSys) {
+        return msgInboxMapper.updateMsgToRecord(msgSys);
+    }
+
+
     /**
      * 用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
      *
-     * @param msgRec
+     * @params msgRec
      * @return list
      * @access public
      */
     public List<MsgSys> findUserMsgRes(MsgRec msgRec) {
-        return msgInboxMapper.findUserMsgRes(msgRec);
+        return msgInboxMapper.findUserMsgRec(msgRec);
+    }
+
+    /**
+     * 从消息发送对象表获取未读消息
+     *
+     * @params msgRec
+     * @return list
+     * @access public
+     */
+    public List<MsgSys> findMsgToRecord(MsgRec msgRec){
+        return msgInboxMapper.findMsgToRecord(msgRec);
+    }
+
+    public MsgSys findMsgSysRes(MsgSys msgSys){
+        return msgInboxMapper.findMsgSysRec(msgSys);
     }
 
     /**
      * 发件箱列表查询
      *
-     * @param msgSys
+     * @params msgSys
      * @return list
      * @access public
      */
@@ -102,7 +129,7 @@ public class MsgInboxDAO {
     /**
      * 发件箱列表查询-按消息分类
      *
-     * @param msgSys
+     * @params msgSys
      * @return list
      * @access public
      */
@@ -110,21 +137,14 @@ public class MsgInboxDAO {
         return msgInboxMapper.findMsgSysListByType(msgSys);
     }
 
-    /**
-     * 收件箱列表查询-按消息分类
-     *
-     * @param msgSys
-     * @return list
-     * @access public
-     */
-    public List<MsgSys> findMsgSysListByParent(MsgSys msgSys) {
-        return msgInboxMapper.findMsgSysListByParent(msgSys);
+    public int findMsgSysCountByType(MsgSys msgSys) {
+        return msgInboxMapper.findMsgSysCountByType(msgSys);
     }
 
     /**
      * 发件箱列表查询
      *
-     * @param msgSys
+     * @params msgSys
      * @return msgSys
      * @access public
      */
@@ -135,7 +155,7 @@ public class MsgInboxDAO {
     /**
      * 消息 详情查询
      *
-     * @param msgRec
+     * @params msgRec
      * @return msgRec
      * @access public
      */
@@ -145,7 +165,7 @@ public class MsgInboxDAO {
 
     /**
      *
-     * @param msgSys
+     * @params msgSys
      * @return
      */
     public List<MsgTo> findMsgTo(MsgSys msgSys){
@@ -155,7 +175,7 @@ public class MsgInboxDAO {
     /**
      * 删除/读取消息 （update）
      *
-     * @param msgUpdate
+     * @params msgUpdate
      * @return int
      * @access public
      */
@@ -166,12 +186,34 @@ public class MsgInboxDAO {
     /**
      * 删除/读取消息 （update）
      *
-     * @param msgUpdate
+     * @params msgUpdate
      * @return int
      * @access public
      */
     public int updateMsgRecState(MsgUpdate msgUpdate) {
         return msgInboxMapper.updateMsgRecState(msgUpdate);
+    }
+
+    /**
+     * 删除/读取消息 （update）
+     *
+     * @params msgUpdate
+     * @return int
+     * @access public
+     */
+    public int updateAllMsgRecStatus(MsgUpdate msgUpdate) {
+        return msgInboxMapper.updateAllMsgRecStatus(msgUpdate);
+    }
+
+    /**
+     * 删除/读取消息 （update）
+     *
+     * @params msgUpdate
+     * @return int
+     * @access public
+     */
+    public int updateAllMsgRecState(MsgUpdate msgUpdate) {
+        return msgInboxMapper.updateAllMsgRecState(msgUpdate);
     }
 
 

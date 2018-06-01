@@ -37,8 +37,8 @@ public class MsgStatus {
      */
     public final static int USER_PERSON = 1;
     public final static int USER_COMPANY = 2;
-    public final static int USER_AGENT = 3;
-    public final static int USER_MANAGER = 4;
+    public final static int USER_MANAGER = 3;
+    public final static int USER_AGENT = 4;
 
     public static String getUserType(int userType) {
         String result;
@@ -50,10 +50,10 @@ public class MsgStatus {
                 result = "企业用户";
                 break;
             case 3:
-                result = "代理人用户";
+                result = "业管用户";
                 break;
             case 4:
-                result = "业管用户";
+                result = "代理人用户";
                 break;
             default:
                 result = "--";
