@@ -123,7 +123,7 @@
     <select id="findMsgSysRec" parameterType="MsgSys" resultType="MsgSys">
         select `type`
         from  msg_sys
-        where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND id =#{id}
+        where  id =#{id}
     </select>
 
     <!--更改消息读取状态-->

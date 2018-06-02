@@ -373,7 +373,6 @@ public class MsgInboxAction extends BaseAction {
         if (request.messageType == 0) {
             return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
         }
-
         //调用DAO
         MsgSys msgSys = new MsgSys();
         msgSys.page = setPage(request.lastId, request.pageNum, request.limit);
