@@ -13,12 +13,12 @@
 
     <!--msg_rec表查询字段-->
     <sql id="Rec_Column_List">
-        `id`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`
+        `id`,`manager_uuid`,`account_uuid`,`channel_id`,`msg_id`,`user_id`,`type`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`
     </sql>
 
     <!--msg_sys查询字段-->
     <sql id="Sys_Column_List">
-        `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`status`,`send_time`,`state`,`created_at`,`updated_at`
+        `id`,`manager_uuid`,`account_uuid`,`business_id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`status`,`send_time`,`state`,`created_at`,`updated_at`
     </sql>
 
     <!--获取收件列表 TODO 收件箱总列表，返回按messageType  GroupBy 之后返回(类型，数量，和最大时间值)-->
