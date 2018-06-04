@@ -141,7 +141,10 @@ public class MsgIndexAction extends BaseAction {
                 msgRecord.status = 1;
                 msgRecord.created_at = date;
                 msgRecord.updated_at = date;
-                int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
+                RepeatCount msgRecordRepeat = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
+                if(msgRecordRepeat.count==0){
+                    int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
+                }
 
                 List<String> childrenId = channelClient.getChildrenId(String.valueOf(msgToBean.channelId), true);
                 AgentJobBean searchAgents = new AgentJobBean();
@@ -152,7 +155,18 @@ public class MsgIndexAction extends BaseAction {
                 if(agents!=null){
                     personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
                 }
-            }else if(msgToBean.toType==1){
+            }else if(msgToBean.toType!=0){
+                msgRecord.msg_id = addMsgRecord.messageId;
+                msgRecord.rec_id = msgToBean.channelId;
+                msgRecord.type = 5;
+                msgRecord.state = 1;
+                msgRecord.status = 1;
+                msgRecord.created_at = date;
+                msgRecord.updated_at = date;
+                RepeatCount repeatCounts = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
+                if(repeatCounts.count==0){
+                    int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
+                }
                 msgRecord.msg_id = addMsgRecord.messageId;
                 msgRecord.rec_id = msgToBean.toId;
                 msgRecord.type = msgToBean.toType;
@@ -160,13 +174,14 @@ public class MsgIndexAction extends BaseAction {
                 msgRecord.status = 1;
                 msgRecord.created_at = date;
                 msgRecord.updated_at = date;
-                int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
-
+                RepeatCount repeatCount = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
+                if(repeatCount.count==0){
+                    int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
+                }
                 AgentJobBean agentJobBean = agentJobClient.getAgentById(msgToBean.toId);
                 if(agentJobBean!=null){
                     personIds.add(agentJobBean.person_id);
                 }
-
             }
         }
         List<Long> uniquePList = ListKit.toUnique(personIds);
@@ -177,7 +192,6 @@ public class MsgIndexAction extends BaseAction {
                 accountUuids.add(accountBean.accountUuid);
             }
         }
-
         for (String accountUuid : accountUuids) {
             MsgToRecord msgToRecord = new MsgToRecord();
             msgToRecord.account_uuid = accountUuid;
@@ -187,7 +201,10 @@ public class MsgIndexAction extends BaseAction {
             msgToRecord.state = 1;
             msgToRecord.created_at = date;
             msgToRecord.updated_at = date;
-            int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
+            RepeatCount repeatCountToRecord = msgIndexDAO.findMessageToRecordRepeat(msgToRecord);//用户记录表
+            if(repeatCountToRecord.count==0){
+                int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
+            }
         }
         return json(BaseResponse.CODE_FAILURE, "操作失败", response);
     }

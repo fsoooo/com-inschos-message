@@ -147,13 +147,12 @@ public class MsgInboxAction extends BaseAction {
             msgSys.id = msgInboxRes.msg_id;
             msgSys.manager_uuid = bean.managerUuid;
             msgSys.account_uuid = bean.accountUuid;
-            List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
+            List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
             List<MsgToBean> MsgToBeans = new ArrayList<>();
-            for (MsgTo to : msgTo) {
+            for (MsgRecord msgRecord : msgRecords) {
                 MsgToBean msgToBean = new MsgToBean();
-                msgToBean.toId = to.to_id;
-                msgToBean.toType = to.to_type;
-                msgToBean.channelId = to.channel_id;
+                msgToBean.toId = msgRecord.rec_id;
+                msgToBean.toType = msgRecord.type;
                 MsgToBeans.add(msgToBean);
             }
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
@@ -220,13 +219,12 @@ public class MsgInboxAction extends BaseAction {
         msgSys.id = msgInfo.msg_id;
         msgSys.manager_uuid = actionBean.managerUuid;
         msgSys.account_uuid = actionBean.accountUuid;
-        List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
+        List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
         List<MsgToBean> MsgToBeans = new ArrayList<>();
-        for (MsgTo to : msgTo) {
+        for (MsgRecord msgRecord : msgRecords) {
             MsgToBean msgToBean = new MsgToBean();
-            msgToBean.toId = to.to_id;
-            msgToBean.toType = to.to_type;
-            msgToBean.channelId = to.channel_id;
+            msgToBean.toId = msgRecord.rec_id;
+            msgToBean.toType = msgRecord.type;
             MsgToBeans.add(msgToBean);
         }
         msgInboxInfoBean.msgToBean = MsgToBeans;
@@ -384,7 +382,7 @@ public class MsgInboxAction extends BaseAction {
         msgSys.type = request.messageType;
         msgSys.account_uuid = actionBean.accountUuid;
         msgSys.manager_uuid = actionBean.managerUuid;
-        List<MsgSys> msgResList = msgInboxDAO.findMsgSysListByType(msgSys);
+        List<MsgSys> msgResList = msgInboxDAO.findMsgSysListByType(msgSys);//获取当前分类下的消息主体信息
         long newLastId = 0;
         if(msgResList==null){
             return json(BaseResponse.CODE_FAILURE, "操作失败", response);
@@ -392,16 +390,14 @@ public class MsgInboxAction extends BaseAction {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
         for (MsgSys sys : msgResList) {
-            msgSys.account_uuid = actionBean.accountUuid;
-            msgSys.manager_uuid = actionBean.managerUuid;
             msgSys.id = sys.id;
-            List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
+            List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);//获取此消息的发送对象信息
+            //todo 一个发件箱的发件人分为代理人和渠道
             List<MsgToBean> MsgToBeans = new ArrayList<>();
-            for (MsgTo to : msgTo) {
+            for (MsgRecord msgRecord : msgRecords) {
                 MsgToBean msgToBean = new MsgToBean();
-                msgToBean.toId = to.to_id;
-                msgToBean.toType = to.to_type;
-                msgToBean.channelId = to.channel_id;
+                msgToBean.toId = msgRecord.rec_id;
+                msgToBean.toType = msgRecord.type;
                 MsgToBeans.add(msgToBean);
             }
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
@@ -463,13 +459,12 @@ public class MsgInboxAction extends BaseAction {
         msgInboxInfoBean.readFlag = msgSysInfo.status;
         msgInboxInfoBean.time = msgSysInfo.created_at;
         msgInboxInfoBean.timeTxt = sdf.format(new Date(Long.valueOf(msgSysInfo.created_at)));
-        List<MsgTo> msgTo = msgInboxDAO.findMsgTo(msgSys);
+        List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
         List<MsgToBean> MsgToBeans = new ArrayList<>();
-        for (MsgTo to : msgTo) {
+        for (MsgRecord msgRecord : msgRecords) {
             MsgToBean msgToBean = new MsgToBean();
-            msgToBean.toId = to.to_id;
-            msgToBean.toType = to.to_type;
-            msgToBean.channelId = to.channel_id;
+            msgToBean.toId = msgRecord.rec_id;
+            msgToBean.toType = msgRecord.type;
             MsgToBeans.add(msgToBean);
         }
         msgInboxInfoBean.msgToBean = MsgToBeans;

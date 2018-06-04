@@ -48,8 +48,6 @@ public interface MsgInboxMapper {
     //某一分类的发件箱的数
     int findMsgSysCountByType(MsgSys msgSys);
 
-
-
     //发件箱详情
     MsgSys findMsgSysInfo(MsgSys msgSys);
 
@@ -57,6 +55,8 @@ public interface MsgInboxMapper {
     MsgRec findMsgInfo(MsgRec msgRec);
 
     List<MsgTo> findMsgTo(MsgSys msgSys);
+
+    List<MsgRecord> findMsgRecords(MsgSys msgSys);
 
     // 删除/读取消息 (updateMsgRec)
     int updateMsgRecStatus(MsgUpdate msgUpdate);

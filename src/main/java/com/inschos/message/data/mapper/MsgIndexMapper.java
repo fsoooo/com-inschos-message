@@ -10,5 +10,10 @@ public interface MsgIndexMapper {
 
     int addMessageRecord(MsgRecord msgRecord);
 
+    RepeatCount findAddMsgRecordRepeat(MsgRecord msgRecord);
+
     int addMessageToRecord(MsgToRecord msgToRecord);
+
+    RepeatCount findMessageToRecordRepeat(MsgToRecord msgToRecord);
+
 }

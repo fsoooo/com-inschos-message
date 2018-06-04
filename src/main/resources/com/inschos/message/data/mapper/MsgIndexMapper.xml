@@ -34,4 +34,14 @@
          values(#{msg_id},#{manager_uuid},#{account_uuid},#{status},#{created_at},#{updated_at})
     </insert>
 
+    <select id="findAddMsgRecordRepeat" parameterType="MsgRecord" resultType="RepeatCount">
+        select count(`id`) as count from msg_record
+        where  msg_id =#{msg_id} AND rec_id =#{rec_id} AND type =#{type} AND status =#{status};
+    </select>
+
+    <select id="findMessageToRecordRepeat" parameterType="MsgRecord" resultType="RepeatCount">
+        select count(`id`) as count from msg_to_record
+        where  msg_id =#{msg_id} AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND status =#{status};
+    </select>
+
 </mapper>

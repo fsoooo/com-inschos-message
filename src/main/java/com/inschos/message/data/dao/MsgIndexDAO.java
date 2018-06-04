@@ -38,8 +38,16 @@ public class MsgIndexDAO {
         return msgIndexMapper.addMessageRecord(msgRecord);
     }
 
+    public RepeatCount findAddMsgRecordRepeat(MsgRecord msgRecord){
+        return msgIndexMapper.findAddMsgRecordRepeat(msgRecord);
+    }
+
     public int addMessageToRecord(MsgToRecord msgToRecord){
         return msgIndexMapper.addMessageToRecord(msgToRecord);
+    }
+
+    public RepeatCount findMessageToRecordRepeat(MsgToRecord msgToRecord){
+        return msgIndexMapper.findMessageToRecordRepeat(msgToRecord);
     }
 
 }

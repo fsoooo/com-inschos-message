@@ -168,8 +168,8 @@ public class MsgInboxDAO {
      * @params msgSys
      * @return
      */
-    public List<MsgTo> findMsgTo(MsgSys msgSys){
-        return msgInboxMapper.findMsgTo(msgSys);
+    public List<MsgRecord> findMsgTo(MsgSys msgSys){
+        return  msgInboxMapper.findMsgRecords(msgSys);
     }
 
     /**
