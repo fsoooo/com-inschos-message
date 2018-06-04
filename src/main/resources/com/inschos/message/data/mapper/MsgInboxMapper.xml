@@ -13,7 +13,7 @@
 
     <!--msg_rec表查询字段-->
     <sql id="Rec_Column_List">
-        `id`,`msg_id`,`user_id`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`
+        `id`,`manager_uuid`,`account_uuid`,`channel_id`,`msg_id`,`user_id`,`type`,`user_type`,`sys_status`,`state`,`created_at`,`updated_at`
     </sql>
 
     <!--msg_sys查询字段-->
