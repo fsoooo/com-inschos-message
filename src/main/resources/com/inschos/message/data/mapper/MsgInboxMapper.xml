@@ -18,7 +18,7 @@
 
     <!--msg_sys查询字段-->
     <sql id="Sys_Column_List">
-        `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`to_id`,`to_type`,`status`,`send_time`,`state`,`created_at`,`updated_at`
+        `id`,`title`,`content`,`attachment`,`type`,`from_id`,`from_type`,`status`,`send_time`,`state`,`created_at`,`updated_at`
     </sql>
 
     <!--获取收件列表 TODO 收件箱总列表，返回按messageType  GroupBy 之后返回(类型，数量，和最大时间值)-->
