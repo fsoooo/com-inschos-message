@@ -274,10 +274,6 @@ public class MsgInboxAction extends BaseAction {
         }
         //TODO 查询消息发送对象表里的数据
         List<MsgSys> MsgSys = msgInboxDAO.findMsgToRecord(msgRec);
-//        $table->string('manager_uuid')->comment('业管uuid');
-//        $table->string('account_uuid')->comment('账户uuid');
-//        $table->integer('status')->comment('消息状态：默认为未读1/已读2')->default(1);
-
         //todo 查询消息 系统表有没有未插入的数据，没有的话，返回执行结束，有的话继续执行（赋值，插入，改变状态）
         //List<MsgSys> MsgSys = msgInboxDAO.findUserMsgRes(msgRec);
         //判断集合是否为空

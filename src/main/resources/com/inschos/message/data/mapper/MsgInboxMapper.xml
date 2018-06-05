@@ -110,7 +110,7 @@
     <select id="findMsgToRecord" parameterType="MsgRec" resultType="MsgSys">
         select `msg_id` as id
         from  msg_to_record
-        where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
+        where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND status = 1
     </select>
 
     <!--收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）-->
