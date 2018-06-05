@@ -8,7 +8,7 @@ public class MsgInboxInfoBean {
 
     public String title;
 
-    public String content;
+    public List<String> content;
 
     public int messageType;//消息类型
 

@@ -276,7 +276,7 @@
 
     <select id="findMsgRecords" parameterType="MsgSys" resultType="MsgRecord">
          select `rec_id`,`type` from msg_record
-        where  msg_id =#{msg_id};
+        where  msg_id =#{id};
     </select>
 
 </mapper>

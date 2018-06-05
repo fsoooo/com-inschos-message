@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -143,22 +144,34 @@ public class MsgInboxAction extends BaseAction {
         List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
         long newLastId = 0;
         for (MsgRec msgInboxRes : msgRecList) {
-            MsgSys msgSys = new MsgSys();
-            msgSys.id = msgInboxRes.msg_id;
-            msgSys.manager_uuid = bean.managerUuid;
-            msgSys.account_uuid = bean.accountUuid;
-            List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
+//            MsgSys msgSys = new MsgSys();
+//            msgSys.id = msgInboxRes.msg_id;
+//            msgSys.manager_uuid = bean.managerUuid;
+//            msgSys.account_uuid = bean.accountUuid;
+//            List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
+//            List<MsgToBean> MsgToBeans = new ArrayList<>();
+//            for (MsgRecord msgRecord : msgRecords) {
+//                MsgToBean msgToBean = new MsgToBean();
+//                //TODO RPC获取收件人的渠道信息？？
+//                msgToBean.toId = msgRecord.rec_id;
+//                msgToBean.toType = msgRecord.type;
+//                MsgToBeans.add(msgToBean);
+//            }
             List<MsgToBean> MsgToBeans = new ArrayList<>();
-            for (MsgRecord msgRecord : msgRecords) {
-                MsgToBean msgToBean = new MsgToBean();
-                msgToBean.toId = msgRecord.rec_id;
-                msgToBean.toType = msgRecord.type;
-                MsgToBeans.add(msgToBean);
-            }
+            MsgToBean msgToBean = new MsgToBean();
+            msgToBean.toType = bean.userType;
+            msgToBean.toId =  Integer.parseInt(bean.managerUuid);//Long.valueOf(bean.userId);
+            MsgToBeans.add(msgToBean);
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
             msgInboxListType.id = msgInboxRes.id;
             msgInboxListType.title = msgInboxRes.msgSys.title;
-            msgInboxListType.content = msgInboxRes.msgSys.content;
+
+            List<String> list = new ArrayList<>();
+            String str[] =  msgInboxRes.msgSys.content.split("\n");
+            list = Arrays.asList(str);
+            //msgInboxListType.content = msgInboxRes.msgSys.content;
+            msgInboxListType.content = list;
+
             msgInboxListType.messageType = msgInboxRes.type;
             msgInboxListType.messageTypeText = MsgStatus.getMsgType(msgInboxRes.type);
             msgInboxListType.readFlag = msgInboxRes.sys_status;
@@ -207,26 +220,38 @@ public class MsgInboxAction extends BaseAction {
         if(msgInfo==null){
             return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
         }
+
         MsgInboxInfoBean msgInboxInfoBean = new MsgInboxInfoBean();
         msgInboxInfoBean.id = msgInfo.id;
         msgInboxInfoBean.title = msgInfo.msgSys.title;
-        msgInboxInfoBean.content = msgInfo.msgSys.content;
+
+        List<String> list = new ArrayList<>();
+        String str[] =  msgInfo.msgSys.content.split("\n");
+        list = Arrays.asList(str);
+        //msgInboxInfoBean.content = msgInfo.msgSys.content;
+        msgInboxInfoBean.content = list;
+
         msgInboxInfoBean.messageType = msgInfo.type;
         msgInboxInfoBean.messageTypeText = MsgStatus.getMsgType(msgInfo.type);
         msgInboxInfoBean.readFlag = msgInfo.sys_status;
         msgInboxInfoBean.time = msgInfo.created_at;
         msgInboxInfoBean.timeTxt = TimeKit.format("yyyy-MM-dd HH:mm:ss",msgInfo.created_at);
-        msgSys.id = msgInfo.msg_id;
-        msgSys.manager_uuid = actionBean.managerUuid;
-        msgSys.account_uuid = actionBean.accountUuid;
-        List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
+//        msgSys.id = msgInfo.msg_id;
+//        msgSys.manager_uuid = actionBean.managerUuid;
+//        msgSys.account_uuid = actionBean.accountUuid;
+//        List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
+//        List<MsgToBean> MsgToBeans = new ArrayList<>();
+//        for (MsgRecord msgRecord : msgRecords) {
+//            MsgToBean msgToBean = new MsgToBean();
+//            msgToBean.toId = msgRecord.rec_id;
+//            msgToBean.toType = msgRecord.type;
+//            MsgToBeans.add(msgToBean);
+//        }
         List<MsgToBean> MsgToBeans = new ArrayList<>();
-        for (MsgRecord msgRecord : msgRecords) {
-            MsgToBean msgToBean = new MsgToBean();
-            msgToBean.toId = msgRecord.rec_id;
-            msgToBean.toType = msgRecord.type;
-            MsgToBeans.add(msgToBean);
-        }
+        MsgToBean msgToBean = new MsgToBean();
+        msgToBean.toType = actionBean.userType;
+        msgToBean.toId =  Integer.parseInt(actionBean.managerUuid);//Long.valueOf(bean.userId);
+        MsgToBeans.add(msgToBean);
         msgInboxInfoBean.msgToBean = MsgToBeans;
         response.data = msgInboxInfoBean;
         return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
@@ -403,7 +428,13 @@ public class MsgInboxAction extends BaseAction {
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
             msgInboxListType.id = sys.id;
             msgInboxListType.title = sys.title;
-            msgInboxListType.content = sys.content;
+
+            List<String> list = new ArrayList<>();
+            String str[] =  sys.content.split("\n");
+            list = Arrays.asList(str);
+            //msgInboxListType.content = sys.content;
+            msgInboxListType.content = list;
+
             msgInboxListType.messageType = sys.type;
             msgInboxListType.messageTypeText = MsgStatus.getMsgType(sys.type);
             msgInboxListType.readFlag = sys.status;
@@ -453,7 +484,15 @@ public class MsgInboxAction extends BaseAction {
         MsgInboxInfoBean msgInboxInfoBean = new MsgInboxInfoBean();
         msgInboxInfoBean.id = msgSysInfo.id;
         msgInboxInfoBean.title = msgSysInfo.title;
-        msgInboxInfoBean.content = msgSysInfo.content;
+
+
+
+        List<String> list = new ArrayList<>();
+        String str[] =  msgSysInfo.content.split("\n");
+        list = Arrays.asList(str);
+        //msgInboxInfoBean.content = msgSysInfo.content;
+        msgInboxInfoBean.content = list;
+
         msgInboxInfoBean.messageType = msgSysInfo.type;
         msgInboxInfoBean.messageTypeText = MsgStatus.getMsgType(msgSysInfo.type);
         msgInboxInfoBean.readFlag = msgSysInfo.status;
