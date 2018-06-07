@@ -130,12 +130,12 @@ public class MsgIndexAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         long date = new Date().getTime();
         List<Long> personIds = new ArrayList<>();
-        for (MsgToBean msgToBean : addMsgRecord.toUser) {
+        for (AddMsgToBean addMsgToBean : addMsgRecord.toUser) {
             MsgRecord msgRecord = new MsgRecord();
-            if(msgToBean.toId==0||msgToBean.toType==0){//没有代理人，只有渠道id
+            if(addMsgToBean.toId==0||addMsgToBean.toType==0){//没有代理人，只有渠道id
 
                 msgRecord.msg_id = addMsgRecord.messageId;
-                msgRecord.rec_id = msgToBean.channelId;
+                msgRecord.rec_id = addMsgToBean.channelId;
                 msgRecord.type = 5;
                 msgRecord.state = 1;
                 msgRecord.status = 1;
@@ -146,7 +146,7 @@ public class MsgIndexAction extends BaseAction {
                     int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
                 }
 
-                List<String> childrenId = channelClient.getChildrenId(String.valueOf(msgToBean.channelId), true);
+                List<String> childrenId = channelClient.getChildrenId(String.valueOf(addMsgToBean.channelId), true);
                 AgentJobBean searchAgents = new AgentJobBean();
                 searchAgents.channelIdList = childrenId;
                 searchAgents.manager_uuid = managerUuid;
@@ -155,9 +155,9 @@ public class MsgIndexAction extends BaseAction {
                 if(agents!=null){
                     personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
                 }
-            }else if(msgToBean.toType!=0){
+            }else if(addMsgToBean.toType!=0){
                 msgRecord.msg_id = addMsgRecord.messageId;
-                msgRecord.rec_id = msgToBean.channelId;
+                msgRecord.rec_id = addMsgToBean.channelId;
                 msgRecord.type = 5;
                 msgRecord.state = 1;
                 msgRecord.status = 1;
@@ -168,8 +168,8 @@ public class MsgIndexAction extends BaseAction {
                     int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
                 }
                 msgRecord.msg_id = addMsgRecord.messageId;
-                msgRecord.rec_id = msgToBean.toId;
-                msgRecord.type = msgToBean.toType;
+                msgRecord.rec_id = addMsgToBean.toId;
+                msgRecord.type = addMsgToBean.toType;
                 msgRecord.state = 1;
                 msgRecord.status = 1;
                 msgRecord.created_at = date;
@@ -178,7 +178,7 @@ public class MsgIndexAction extends BaseAction {
                 if(repeatCount.count==0){
                     int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
                 }
-                AgentJobBean agentJobBean = agentJobClient.getAgentById(msgToBean.toId);
+                AgentJobBean agentJobBean = agentJobClient.getAgentById(addMsgToBean.toId);
                 if(agentJobBean!=null){
                     personIds.add(agentJobBean.person_id);
                 }

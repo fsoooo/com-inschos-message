@@ -4,7 +4,7 @@ import java.util.List;
 
 public class AddMsgRecord {
 
-    public List<MsgToBean> toUser;
+    public List<AddMsgToBean> toUser;
 
     public long messageId;
 }

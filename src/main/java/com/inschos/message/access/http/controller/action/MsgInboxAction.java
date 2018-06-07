@@ -1,6 +1,11 @@
 package com.inschos.message.access.http.controller.action;
 
 import com.inschos.message.access.http.controller.bean.*;
+import com.inschos.message.access.rpc.bean.AgentJobBean;
+import com.inschos.message.access.rpc.bean.ChannelBean;
+import com.inschos.message.access.rpc.client.AccountClient;
+import com.inschos.message.access.rpc.client.AgentJobClient;
+import com.inschos.message.access.rpc.client.ChannelClient;
 import com.inschos.message.assist.kit.StringKit;
 import com.inschos.message.assist.kit.TimeKit;
 import com.inschos.message.data.dao.MsgInboxDAO;
@@ -21,6 +26,13 @@ public class MsgInboxAction extends BaseAction {
     private static final Logger logger = Logger.getLogger(MsgInboxAction.class);
     @Autowired
     private MsgInboxDAO msgInboxDAO;
+
+    @Autowired
+    private ChannelClient channelClient;
+    @Autowired
+    private AgentJobClient agentJobClient;
+    @Autowired
+    private AccountClient accountClient;
 
     /**
      * 消息 收件箱列表(获取所有类型的列表)
@@ -144,45 +156,22 @@ public class MsgInboxAction extends BaseAction {
         List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
         long newLastId = 0;
         for (MsgRec msgInboxRes : msgRecList) {
-//            MsgSys msgSys = new MsgSys();
-//            msgSys.id = msgInboxRes.msg_id;
-//            msgSys.manager_uuid = bean.managerUuid;
-//            msgSys.account_uuid = bean.accountUuid;
-//            List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
-//            List<MsgToBean> MsgToBeans = new ArrayList<>();
-//            for (MsgRecord msgRecord : msgRecords) {
-//                MsgToBean msgToBean = new MsgToBean();
-//                //TODO RPC获取收件人的渠道信息？？
-//                msgToBean.toId = msgRecord.rec_id;
-//                msgToBean.toType = msgRecord.type;
-//                MsgToBeans.add(msgToBean);
-//            }
-            List<MsgToBean> MsgToBeans = new ArrayList<>();
-            MsgToBean msgToBean = new MsgToBean();
-            msgToBean.toType = bean.userType;
-            msgToBean.toId =  Integer.parseInt(bean.managerUuid);//Long.valueOf(bean.userId);
-            MsgToBeans.add(msgToBean);
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
             msgInboxListType.id = msgInboxRes.id;
             msgInboxListType.title = msgInboxRes.msgSys.title;
-
             List<String> list = new ArrayList<>();
             String str[] =  msgInboxRes.msgSys.content.split("\n");
             list = Arrays.asList(str);
-            //msgInboxListType.content = msgInboxRes.msgSys.content;
             msgInboxListType.content = list;
-
             msgInboxListType.messageType = msgInboxRes.type;
             msgInboxListType.messageTypeText = MsgStatus.getMsgType(msgInboxRes.type);
             msgInboxListType.readFlag = msgInboxRes.sys_status;
             msgInboxListType.time = msgInboxRes.created_at;
             msgInboxListType.timeTxt = TimeKit.format("yyyy-MM-dd HH:mm:ss",msgInboxRes.created_at);
-            msgInboxListType.msgToBean = MsgToBeans;
             newLastId = msgInboxRes.id;
             msgInboxListTypeBeans.add(msgInboxListType);
         }
         response.data = msgInboxListTypeBeans;
-
         int size = msgInboxListTypeBeans.size();
         if (StringKit.isInteger(request.pageNum)) {
             response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
@@ -220,39 +209,18 @@ public class MsgInboxAction extends BaseAction {
         if(msgInfo==null){
             return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
         }
-
         MsgInboxInfoBean msgInboxInfoBean = new MsgInboxInfoBean();
         msgInboxInfoBean.id = msgInfo.id;
         msgInboxInfoBean.title = msgInfo.msgSys.title;
-
         List<String> list = new ArrayList<>();
         String str[] =  msgInfo.msgSys.content.split("\n");
         list = Arrays.asList(str);
-        //msgInboxInfoBean.content = msgInfo.msgSys.content;
         msgInboxInfoBean.content = list;
-
         msgInboxInfoBean.messageType = msgInfo.type;
         msgInboxInfoBean.messageTypeText = MsgStatus.getMsgType(msgInfo.type);
         msgInboxInfoBean.readFlag = msgInfo.sys_status;
         msgInboxInfoBean.time = msgInfo.created_at;
         msgInboxInfoBean.timeTxt = TimeKit.format("yyyy-MM-dd HH:mm:ss",msgInfo.created_at);
-//        msgSys.id = msgInfo.msg_id;
-//        msgSys.manager_uuid = actionBean.managerUuid;
-//        msgSys.account_uuid = actionBean.accountUuid;
-//        List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
-//        List<MsgToBean> MsgToBeans = new ArrayList<>();
-//        for (MsgRecord msgRecord : msgRecords) {
-//            MsgToBean msgToBean = new MsgToBean();
-//            msgToBean.toId = msgRecord.rec_id;
-//            msgToBean.toType = msgRecord.type;
-//            MsgToBeans.add(msgToBean);
-//        }
-        List<MsgToBean> MsgToBeans = new ArrayList<>();
-        MsgToBean msgToBean = new MsgToBean();
-        msgToBean.toType = actionBean.userType;
-        msgToBean.toId =  Integer.parseInt(actionBean.managerUuid);//Long.valueOf(bean.userId);
-        MsgToBeans.add(msgToBean);
-        msgInboxInfoBean.msgToBean = MsgToBeans;
         response.data = msgInboxInfoBean;
         return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
     }
@@ -419,18 +387,31 @@ public class MsgInboxAction extends BaseAction {
                 MsgToBean msgToBean = new MsgToBean();
                 msgToBean.toId = msgRecord.rec_id;
                 msgToBean.toType = msgRecord.type;
+                switch(msgRecord.type){
+                    case 4://代理人
+                        AgentJobBean agentJobBean = agentJobClient.getAgentById(msgRecord.rec_id);
+                        if(agentJobBean!=null){
+                            logger.info("代理人姓名是"+agentJobBean.name);
+                            msgToBean.toName = agentJobBean.name;
+                        }
+                        break;
+                    case 5://渠道
+                        ChannelBean channelBean = channelClient.getChannel(msgRecord.rec_id+"");
+                        if(channelBean!=null){
+                            logger.info("渠道姓名是"+channelBean.name);
+                            msgToBean.toName = channelBean.name;
+                        }
+                        break;
+                }
                 MsgToBeans.add(msgToBean);
             }
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
             msgInboxListType.id = sys.id;
             msgInboxListType.title = sys.title;
-
             List<String> list = new ArrayList<>();
             String str[] =  sys.content.split("\n");
             list = Arrays.asList(str);
-            //msgInboxListType.content = sys.content;
             msgInboxListType.content = list;
-
             msgInboxListType.messageType = sys.type;
             msgInboxListType.messageTypeText = MsgStatus.getMsgType(sys.type);
             msgInboxListType.readFlag = sys.status;
@@ -480,15 +461,10 @@ public class MsgInboxAction extends BaseAction {
         MsgInboxInfoBean msgInboxInfoBean = new MsgInboxInfoBean();
         msgInboxInfoBean.id = msgSysInfo.id;
         msgInboxInfoBean.title = msgSysInfo.title;
-
-
-
         List<String> list = new ArrayList<>();
         String str[] =  msgSysInfo.content.split("\n");
         list = Arrays.asList(str);
-        //msgInboxInfoBean.content = msgSysInfo.content;
         msgInboxInfoBean.content = list;
-
         msgInboxInfoBean.messageType = msgSysInfo.type;
         msgInboxInfoBean.messageTypeText = MsgStatus.getMsgType(msgSysInfo.type);
         msgInboxInfoBean.readFlag = msgSysInfo.status;
@@ -500,6 +476,22 @@ public class MsgInboxAction extends BaseAction {
             MsgToBean msgToBean = new MsgToBean();
             msgToBean.toId = msgRecord.rec_id;
             msgToBean.toType = msgRecord.type;
+            switch(msgRecord.type){
+                case 4://代理人
+                    AgentJobBean agentJobBean = agentJobClient.getAgentById(msgRecord.rec_id);
+                    if(agentJobBean!=null){
+                        logger.info("代理人姓名是"+agentJobBean.name);
+                        msgToBean.toName = agentJobBean.name;
+                    }
+                    break;
+                case 5://渠道
+                    ChannelBean channelBean = channelClient.getChannel(msgRecord.rec_id+"");
+                    if(channelBean!=null){
+                        logger.info("渠道姓名是"+channelBean.name);
+                        msgToBean.toName = channelBean.name;
+                    }
+                    break;
+            }
             MsgToBeans.add(msgToBean);
         }
         msgInboxInfoBean.msgToBean = MsgToBeans;

@@ -21,7 +21,7 @@ public class MsgIndexBean {
     @CheckParams(stringType = CheckParams.StringType.NUMBER, minLen = 1)
     public int fromType;//'发件人类型，个人1/企业2/代理人3/业管4
 
-    public List<MsgToBean> toUser;
+    public List<AddMsgToBean> toUser;
 
     public String sendTime;//'发送时间:可为空。需要延时发送的，发送时间不为空'
 
