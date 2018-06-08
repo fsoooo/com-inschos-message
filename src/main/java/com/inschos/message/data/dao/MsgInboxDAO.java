@@ -62,6 +62,9 @@ public class MsgInboxDAO {
         return msgInboxMapper.findMsgRecListByType(msgRec);
     }
 
+    public int findMsgRecCountByType(MsgRec msgRec) {
+        return msgInboxMapper.findMsgRecCountByType(msgRec);
+    }
     /**
      * 收取消息 （系统把消息 同步到用户收件箱,同时修改系统发件表的状态）
      *

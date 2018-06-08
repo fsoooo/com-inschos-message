@@ -192,6 +192,16 @@
         </where>
     </select>
 
+    <select id="findMsgRecCountByType" parameterType="MsgRec" resultType="int">
+        select
+        count(1)
+        from msg_rec
+        <where>
+            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type}
+        </where>
+    </select>
+
+
     <!--获取消息 详情，TODO 需要两表联查-->
     <select id="findMsgInfo" parameterType="MsgRec" resultMap="MsgRecAndSysInfo">
         select `msg_rec`.`id`, `msg_rec`.`msg_id`, `msg_rec`.`user_id`, `msg_rec`.`user_type`, `msg_rec`.`sys_status`, `msg_rec`.`state`, `msg_rec`.`created_at`, `msg_rec`.`updated_at`, `msg_sys`.`title`,`msg_sys`.`content`,`msg_sys`.`attachment`, `msg_sys`.`type`, `msg_sys`.`from_id`,`msg_sys`.`from_type`,`msg_sys`.`status`,`msg_sys`.`send_time`,`msg_sys`.`state`

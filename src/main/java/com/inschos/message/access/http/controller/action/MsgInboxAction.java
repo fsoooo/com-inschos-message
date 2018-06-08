@@ -80,6 +80,7 @@ public class MsgInboxAction extends BaseAction {
         List<MsgInboxListBean> msgInboxLists = new ArrayList<>();
         long newLastId = 0;
         for (MsgTypeLists msgTypeLists : msgInboxList) {
+            newLastId = msgTypeLists.mid;
             MsgInboxListBean msgInboxListBean = new MsgInboxListBean();
             msgInboxListBean.messageType = msgTypeLists.type;
             msgInboxListBean.messageTypeText = MsgStatus.getMsgType(msgTypeLists.type);
@@ -158,6 +159,7 @@ public class MsgInboxAction extends BaseAction {
         for (MsgRec msgInboxRes : msgRecList) {
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
             msgInboxListType.id = msgInboxRes.id;
+            newLastId = msgInboxRes.id;
             msgInboxListType.title = msgInboxRes.msgSys.title;
             List<String> list = new ArrayList<>();
             String str[] =  msgInboxRes.msgSys.content.split("\n");
@@ -174,7 +176,8 @@ public class MsgInboxAction extends BaseAction {
         response.data = msgInboxListTypeBeans;
         int size = msgInboxListTypeBeans.size();
         if (StringKit.isInteger(request.pageNum)) {
-            response.page = setPageBean(request.pageNum, request.pageSize, 0, size);
+            int total = msgInboxDAO.findMsgRecCountByType(msgRec);
+            response.page = setPageBean(request.pageNum, request.pageSize, total, size);
         } else if (StringKit.isInteger(request.lastId)) {
             response.page = setPageBean(newLastId, request.pageSize, 0, size);
         }
@@ -312,6 +315,7 @@ public class MsgInboxAction extends BaseAction {
         for (MsgTypeLists msgOutbox : msgOutboxs) {
             MsgInboxListBean msgInboxListBean = new MsgInboxListBean();
             msgInboxListBean.messageType = msgOutbox.type;
+            newLastId = msgOutbox.mid;
             msgInboxListBean.messageTypeText = MsgStatus.getMsgType(msgOutbox.type);
             msgInboxListBean.unReadCount = msgOutbox.count;
             msgInboxListBean.unReadCountText = msgOutbox.count + "条新消息";
@@ -407,6 +411,7 @@ public class MsgInboxAction extends BaseAction {
             }
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
             msgInboxListType.id = sys.id;
+            newLastId = sys.id;
             msgInboxListType.title = sys.title;
             List<String> list = new ArrayList<>();
             String str[] =  sys.content.split("\n");

@@ -48,6 +48,8 @@ public interface MsgInboxMapper {
     //某一分类的发件箱的数
     int findMsgSysCountByType(MsgSys msgSys);
 
+    int findMsgRecCountByType(MsgRec msgRec);
+
     //发件箱详情
     MsgSys findMsgSysInfo(MsgSys msgSys);
 
