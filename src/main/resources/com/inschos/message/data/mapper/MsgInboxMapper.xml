@@ -78,8 +78,10 @@
                 </otherwise>
             </choose>
             AND msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.state = 1
-            AND msg_rec.type =#{type} limit #{page.offset}
+            AND msg_rec.type =#{type}
         </where>
+        order by `msg_rec`.`created_at` desc
+        limit #{page.offset}
     </select>
     <!--联查映射-->
     <resultMap id="selectMsgRecAndSys" type="MsgRec" autoMapping="true">
@@ -178,9 +180,10 @@
                     1=1
                 </otherwise>
             </choose>
-            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type} limit
-            #{page.offset}
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type}
         </where>
+        order by created_at desc
+        limit #{page.offset}
     </select>
 
     <select id="findMsgSysCountByType" parameterType="MsgSys" resultType="int">
