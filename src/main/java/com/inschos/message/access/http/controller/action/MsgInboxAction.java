@@ -65,7 +65,7 @@ public class MsgInboxAction extends BaseAction {
         MsgRec msgRec = new MsgRec();
         msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
         msgRec.sys_status = request.messageStatus;
-        msgRec.user_id = Integer.parseInt(bean.managerUuid);//Long.valueOf(bean.userId)
+        msgRec.user_id = Long.valueOf(bean.userId);//Long.valueOf(bean.userId)
         msgRec.user_type = bean.userType;
         msgRec.manager_uuid = bean.managerUuid;
         msgRec.account_uuid = bean.accountUuid;
