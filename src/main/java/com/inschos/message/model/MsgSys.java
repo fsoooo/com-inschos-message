@@ -43,4 +43,6 @@ public class MsgSys {
 
     public long updated_at;//'更新时间，毫秒'
 
+
+
 }

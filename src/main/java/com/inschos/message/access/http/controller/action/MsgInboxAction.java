@@ -429,9 +429,9 @@ public class MsgInboxAction extends BaseAction {
         int size = msgInboxListTypeBeans.size();
         if (StringKit.isInteger(request.pageNum)) {
             int total = msgInboxDAO.findMsgSysCountByType(msgSys);
-            response.page = setPageBean(request.pageNum, request.pageSize, total, size);
+            response.page = setPageBean(request.pageNum, request.limit, total, size);
         } else if (StringKit.isInteger(request.lastId)) {
-            response.page = setPageBean(newLastId, request.pageSize, 0, size);
+            response.page = setPageBean(newLastId, request.limit, 0, size);
         }
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);

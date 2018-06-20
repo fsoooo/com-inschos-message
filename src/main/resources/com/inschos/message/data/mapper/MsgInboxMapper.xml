@@ -68,20 +68,15 @@
                     msg_rec.id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    msg_rec.id&gt;=(select id from msg_rec where msg_rec.manager_uuid =#{manager_uuid} AND
-                    msg_rec.account_uuid =#{account_uuid} AND msg_rec.sys_status=#{sys_status} AND msg_rec.state=1
-                    limit #{page.start},1
-                    )
+                    msg_rec.id&gt;=(select id from msg_rec where msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.sys_status=#{sys_status} AND msg_rec.state=1 limit #{page.start},1)
                 </when>
                 <otherwise>
                     1=1
                 </otherwise>
             </choose>
-            AND msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.state = 1
-            AND msg_rec.type =#{type}
+            AND msg_rec.manager_uuid =#{manager_uuid} AND msg_rec.account_uuid =#{account_uuid} AND msg_rec.state = 1 AND msg_rec.type =#{type} AND msg_rec.sys_status=#{sys_status}
         </where>
-        order by `msg_rec`.`created_at` desc
-        limit #{page.offset}
+        order by `msg_rec`.`created_at` desc limit #{page.offset}
     </select>
     <!--联查映射-->
     <resultMap id="selectMsgRecAndSys" type="MsgRec" autoMapping="true">
@@ -172,18 +167,15 @@
                     id&gt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    id&gt;=(select id from msg_sys where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
-                    status=#{status} AND state=1 AND type =#{type} limit
-                    #{page.start},1)
+                    id>=(select id from msg_sys where manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND status=#{status} AND state=1 AND type =#{type} limit #{page.start},1)
                 </when>
                 <otherwise>
                     1=1
                 </otherwise>
             </choose>
-            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type}
+            AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type} AND status=#{status}
         </where>
-        order by created_at desc
-        limit #{page.offset}
+        order by created_at desc limit #{page.offset}
     </select>
 
     <select id="findMsgSysCountByType" parameterType="MsgSys" resultType="int">
@@ -191,7 +183,7 @@
           count(1)
         from msg_sys
         <where>
-            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type}
+            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type} AND status=#{status}
         </where>
     </select>
 
@@ -200,7 +192,7 @@
         count(1)
         from msg_rec
         <where>
-            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type}
+            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type} AND status=#{status}
         </where>
     </select>
 
