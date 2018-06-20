@@ -20,7 +20,7 @@ public class MsgInboxBean {
 
         public String lastId;//分页数据
 
-        public String limit = "10";//分页数据
+        public String pageSize = "10";//分页数据
 
 
     }
@@ -40,7 +40,7 @@ public class MsgInboxBean {
 
         public String lastId;//分页数据
 
-        public String limit = "10";//分页数据
+        public String pageSize = "10";//分页数据
 
     }
 

@@ -79,7 +79,7 @@ public class MsgModelAction extends BaseAction {
      *
      * @paramss pageNum     当前页码 ，可不传，默认为1
      * @paramss lastId      上一页最大id ，可不传，默认为
-     * @paramss limit       每页显示行数，可不传，默认为
+     * @paramss pageSize       每页显示行数，可不传，默认为
      * @paramss modelStatus 模板状态（审核通过0/未通过1/已删除2）
      * @paramss modelSype   模板类型
      * @return json
@@ -94,7 +94,7 @@ public class MsgModelAction extends BaseAction {
         }
         //调用DAO
         MsgModelList msgModelList = new MsgModelList();
-        msgModelList.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgModelList.page = setPage(request.lastId, request.pageNum, request.pageSize);
         MsgModel msgModel = new MsgModel();
         msgModel.status = request.modelStatus;
         msgModel.model_type = request.modelType;

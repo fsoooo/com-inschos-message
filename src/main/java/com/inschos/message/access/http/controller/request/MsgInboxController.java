@@ -38,7 +38,7 @@ public class MsgInboxController {
      * @params messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
      * @params pageNum       当前页码 ，可不传，默认为1
      * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
+     * @params pageSize         每页显示行数，可不传，默认为
      * @access public
      */
     @GetActionBeanAnnotation
@@ -58,7 +58,7 @@ public class MsgInboxController {
      * @params messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
      * @params pageNum       当前页码 ，可不传，默认为1
      * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
+     * @params pageSize         每页显示行数，可不传，默认为
      * @access public
      */
     @GetActionBeanAnnotation
@@ -91,7 +91,7 @@ public class MsgInboxController {
      * @params messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
      * @params pageNum       当前页码 ，可不传，默认为1
      * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
+     * @params pageSize         每页显示行数，可不传，默认为
      * @access public
      */
     @GetActionBeanAnnotation
@@ -111,7 +111,7 @@ public class MsgInboxController {
      * @params messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
      * @params pageNum       当前页码 ，可不传，默认为1
      * @params lastId        上一页最大id ，可不传，默认为
-     * @params limit         每页显示行数，可不传，默认为
+     * @params pageSize         每页显示行数，可不传，默认为
      * @access public
      */
     @GetActionBeanAnnotation

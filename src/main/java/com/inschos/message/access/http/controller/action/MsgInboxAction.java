@@ -42,7 +42,7 @@ public class MsgInboxAction extends BaseAction {
      * @paramss messageStatus 消息 状态:未读1/已读2/全部3/删除4（非必传，默认为1）
      * @paramss pageNum       当前页码 ，可不传，默认为1
      * @paramss lastId        上一页最大id ，可不传，默认为
-     * @paramss limit         每页显示行数，可不传，默认为
+     * @paramss pageSize         每页显示行数，可不传，默认为
      * @return json
      * <p>
      * 业管可以查看所有人、所有类型的消息，返回按消息分类展示
@@ -63,7 +63,7 @@ public class MsgInboxAction extends BaseAction {
         }
         //调用DAO
         MsgRec msgRec = new MsgRec();
-        msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgRec.page = setPage(request.lastId, request.pageNum, request.pageSize);
         msgRec.sys_status = request.messageStatus;
         msgRec.user_id = Long.valueOf(bean.userId);//Long.valueOf(bean.userId)
         msgRec.user_type = bean.userType;
@@ -118,7 +118,7 @@ public class MsgInboxAction extends BaseAction {
      * @paramss messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
      * @paramss pageNum       当前页码 ，可不传，默认为1
      * @paramss lastId        上一页最大id ，可不传，默认为
-     * @paramss limit         每页显示行数，可不传，默认为
+     * @paramss pageSize         每页显示行数，可不传，默认为
      * @return json
      * 消息 列表组成：消息 系统表里收件人id为-1的（系统消息）+ 消息 系统表里收件人id为user_id的（订阅消息、私信）
      * 匹配消息 系统表和消息 收件箱表，向用户收件箱里插入相应的数据，并修改消息 系统表的状态
@@ -137,7 +137,7 @@ public class MsgInboxAction extends BaseAction {
         }
         //调用DAO
         MsgRec msgRec = new MsgRec();
-        msgRec.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgRec.page = setPage(request.lastId, request.pageNum, request.pageSize);
         if (request.messageStatus != 0) {
             msgRec.sys_status = request.messageStatus;
         }
@@ -287,7 +287,7 @@ public class MsgInboxAction extends BaseAction {
      * @paramss messageStatus 消息 状态:未读 1/已读 2/全部 3/删除 4 （非必传，默认为1）
      * @paramss pageNum       当前页码 ，可不传，默认为1
      * @paramss lastId        上一页最大id ，可不传，默认为
-     * @paramss limit         每页显示行数，可不传，默认为
+     * @paramss pageSize         每页显示行数，可不传，默认为
      * @return json
      * @access public
      * TODO 发件箱要不要按分类展示
@@ -301,7 +301,7 @@ public class MsgInboxAction extends BaseAction {
         }
         //调用DAO
         MsgSys msgSys = new MsgSys();
-        msgSys.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgSys.page = setPage(request.lastId, request.pageNum, request.pageSize);
         msgSys.status = request.messageStatus;
         msgSys.account_uuid = actionBean.accountUuid;
         msgSys.manager_uuid = actionBean.managerUuid;
@@ -350,7 +350,7 @@ public class MsgInboxAction extends BaseAction {
      * @paramss messageType   消息 类型:系统通知1/保单助手2/理赔进度3/最新任务4/客户消息5/活动消息6/顾问消息7/'
      * @paramss pageNum       当前页码 ，可不传，默认为1
      * @paramss lastId        上一页最大id ，可不传，默认为
-     * @paramss limit         每页显示行数，可不传，默认为
+     * @paramss pageSize         每页显示行数，可不传，默认为
      * @return json
      * @access public
      */
@@ -366,7 +366,7 @@ public class MsgInboxAction extends BaseAction {
         }
         //调用DAO
         MsgSys msgSys = new MsgSys();
-        msgSys.page = setPage(request.lastId, request.pageNum, request.limit);
+        msgSys.page = setPage(request.lastId, request.pageNum, request.pageSize);
         logger.info( msgSys.page.lastId);
         logger.info( msgSys.page.offset);
         logger.info( msgSys.page.start);
@@ -432,9 +432,9 @@ public class MsgInboxAction extends BaseAction {
         int size = msgInboxListTypeBeans.size();
         if (StringKit.isInteger(request.pageNum)) {
             int total = msgInboxDAO.findMsgSysCountByType(msgSys);
-            response.page = setPageBean(request.pageNum, request.limit, total, size);
+            response.page = setPageBean(request.pageNum, request.pageSize, total, size);
         } else if (StringKit.isInteger(request.lastId)) {
-            response.page = setPageBean(newLastId, request.limit, 0, size);
+            response.page = setPageBean(newLastId, request.pageSize, 0, size);
         }
         if (response.data != null) {
             return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
