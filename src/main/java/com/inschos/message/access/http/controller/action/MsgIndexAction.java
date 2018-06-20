@@ -65,19 +65,19 @@ public class MsgIndexAction extends BaseAction {
     public String addMessage(ActionBean actionBean){
         MsgIndexBean request = JsonKit.json2Bean(actionBean.body, MsgIndexBean.class);
         BaseResponse response = new BaseResponse();
-        //判空
-        if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
-        }
-        if (request.title.isEmpty() || request.content.isEmpty()) {
-            return json(BaseResponse.CODE_FAILURE, "title or content is empty", response);
-        }
-        if(request.type == 0){
-            return json(BaseResponse.CODE_FAILURE, "type is empty", response);
-        }
-        if (request.toUser == null || request.toUser.size() == 0) {
-            return json(BaseResponse.CODE_FAILURE, "to_user is empty", response);
-        }
+            //判空
+            if (request == null) {
+                return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            }
+            if (request.title.isEmpty() || request.content.isEmpty()) {
+                return json(BaseResponse.CODE_FAILURE, "title or content is empty", response);
+            }
+            if(request.type == 0){
+                return json(BaseResponse.CODE_FAILURE, "type is empty", response);
+            }
+            if (request.toUser == null || request.toUser.size() == 0) {
+                return json(BaseResponse.CODE_FAILURE, "to_user is empty", response);
+            }
         //消息配置
         MsgStatus msgStatus = new MsgStatus();
         //TODO 权限判断 个人1/企业2/代理人3/业管4
