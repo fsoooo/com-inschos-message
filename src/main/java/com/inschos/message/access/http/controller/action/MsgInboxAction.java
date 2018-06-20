@@ -405,7 +405,7 @@ public class MsgInboxAction extends BaseAction {
                     case 5://渠道
                         ChannelBean channelBean = channelClient.getChannel(msgRecord.rec_id+"");
                         if(channelBean!=null){
-//                            logger.info("渠道姓名是"+channelBean.name);
+                            logger.info("渠道姓名是"+channelBean.name);
                             msgToBean.toName = channelBean.name;
                         }
                         break;

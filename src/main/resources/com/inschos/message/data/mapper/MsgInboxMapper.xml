@@ -192,7 +192,7 @@
         count(1)
         from msg_rec
         <where>
-            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type} AND status=#{status}
+            manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND state = 1 AND type =#{type} AND sys_status=#{sys_status}
         </where>
     </select>
 
