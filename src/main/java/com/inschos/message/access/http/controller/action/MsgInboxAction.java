@@ -367,6 +367,9 @@ public class MsgInboxAction extends BaseAction {
         //调用DAO
         MsgSys msgSys = new MsgSys();
         msgSys.page = setPage(request.lastId, request.pageNum, request.limit);
+        logger.info( msgSys.page.lastId);
+        logger.info( msgSys.page.offset);
+        logger.info( msgSys.page.start);
         if (request.messageStatus != 0) {
             msgSys.status = request.messageStatus;
         }
@@ -402,7 +405,7 @@ public class MsgInboxAction extends BaseAction {
                     case 5://渠道
                         ChannelBean channelBean = channelClient.getChannel(msgRecord.rec_id+"");
                         if(channelBean!=null){
-                            logger.info("渠道姓名是"+channelBean.name);
+//                            logger.info("渠道姓名是"+channelBean.name);
                             msgToBean.toName = channelBean.name;
                         }
                         break;

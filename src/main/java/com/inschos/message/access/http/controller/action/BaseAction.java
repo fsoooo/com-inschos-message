@@ -6,11 +6,13 @@ import com.inschos.message.annotation.CheckParamsKit;
 import com.inschos.message.assist.kit.JsonKit;
 import com.inschos.message.assist.kit.StringKit;
 import com.inschos.message.model.Page;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseAction {
+    private static final Logger logger = Logger.getLogger(BaseAction.class);
     public <T> T requst2Bean(String body, Class<T> clazz) {
         T bean = JsonKit.json2Bean(body, clazz);
         if (bean == null) {

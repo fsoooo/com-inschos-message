@@ -18,7 +18,7 @@ public class MsgInboxBean {
 
         public String pageNum = "1";//分页数据
 
-        public String lastId = "0";//分页数据
+        public String lastId;//分页数据
 
         public String limit = "10";//分页数据
 
@@ -38,7 +38,7 @@ public class MsgInboxBean {
 
         public String pageNum = "1";//分页数据
 
-        public String lastId = "0";//分页数据
+        public String lastId;//分页数据
 
         public String limit = "10";//分页数据
 
