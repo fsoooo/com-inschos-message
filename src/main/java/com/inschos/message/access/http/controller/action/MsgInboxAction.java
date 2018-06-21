@@ -56,7 +56,7 @@ public class MsgInboxAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         if(bean.managerUuid==null){
             bean.managerUuid = "-1";
@@ -75,7 +75,7 @@ public class MsgInboxAction extends BaseAction {
         String insertRes = insertMsgRec(msgRec);
         List<MsgTypeLists> msgInboxList = msgInboxDAO.findMsgRecList(msgRec);
         if(msgInboxList==null){
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "获取列表失败", response);
         }
         List<MsgInboxListBean> msgInboxLists = new ArrayList<>();
         long newLastId = 0;
@@ -103,9 +103,9 @@ public class MsgInboxAction extends BaseAction {
             response.page = setPageBean(newLastId, request.pageSize, 0, size);
         }
         if (response.data != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
         } else {
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "获取列表失败", response);
         }
     }
 
@@ -130,10 +130,10 @@ public class MsgInboxAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         if (request.messageType == 0) {
-            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "消息类型不能为空", response);
         }
         //调用DAO
         MsgRec msgRec = new MsgRec();
@@ -152,7 +152,7 @@ public class MsgInboxAction extends BaseAction {
         String insertRes = insertMsgRec(msgRec);
         List<MsgRec> msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
         if(msgRecList==null){
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "获取列表失败", response);
         }
         List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
         long newLastId = 0;
@@ -181,7 +181,7 @@ public class MsgInboxAction extends BaseAction {
         } else if (StringKit.isInteger(request.lastId)) {
             response.page = setPageBean(newLastId, request.pageSize, 0, size);
         }
-        return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
     }
 
     /**
@@ -196,7 +196,7 @@ public class MsgInboxAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         MsgRec msgRec = new MsgRec();
         MsgSys msgSys = new MsgSys();
@@ -210,7 +210,7 @@ public class MsgInboxAction extends BaseAction {
         msgRec.account_uuid = actionBean.accountUuid;
         MsgRec msgInfo = msgInboxDAO.findMsgInfo(msgRec);
         if(msgInfo==null){
-            return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
+            return json(BaseResponse.CODE_FAILURE, "获取详情失败", response);
         }
         MsgInboxInfoBean msgInboxInfoBean = new MsgInboxInfoBean();
         msgInboxInfoBean.id = msgInfo.id;
@@ -225,7 +225,7 @@ public class MsgInboxAction extends BaseAction {
         msgInboxInfoBean.time = msgInfo.created_at;
         msgInboxInfoBean.timeTxt = TimeKit.format("yyyy-MM-dd HH:mm:ss",msgInfo.created_at);
         response.data = msgInboxInfoBean;
-        return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+        return json(BaseResponse.CODE_SUCCESS, "获取详情成功", response);
     }
 
     /**
@@ -241,7 +241,7 @@ public class MsgInboxAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         //判空
         if (msgRec==null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         //TODO 查询消息发送对象表里的数据
         List<MsgSys> MsgSys = msgInboxDAO.findMsgToRecord(msgRec);
@@ -297,7 +297,7 @@ public class MsgInboxAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         //调用DAO
         MsgSys msgSys = new MsgSys();
@@ -309,7 +309,7 @@ public class MsgInboxAction extends BaseAction {
         List<MsgTypeLists>  msgOutboxs = msgInboxDAO.findMsgSysList(msgSys);
         long newLastId = 0;
         if(msgOutboxs==null){
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "获取列表失败", response);
         }
         List<MsgInboxListBean> msgInboxLists = new ArrayList<>();
         for (MsgTypeLists msgOutbox : msgOutboxs) {
@@ -335,9 +335,9 @@ public class MsgInboxAction extends BaseAction {
             response.page = setPageBean(newLastId, request.pageSize, 0, size);
         }
         if (msgInboxLists != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
         } else {
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "获取列表失败", response);
         }
     }
 
@@ -359,10 +359,10 @@ public class MsgInboxAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         if (request.messageType == 0) {
-            return json(BaseResponse.CODE_FAILURE, "messageType is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "消息类型不能为空", response);
         }
         //调用DAO
         MsgSys msgSys = new MsgSys();
@@ -381,7 +381,7 @@ public class MsgInboxAction extends BaseAction {
         List<MsgSys> msgResList = msgInboxDAO.findMsgSysListByType(msgSys);//获取当前分类下的消息主体信息
         long newLastId = 0;
         if(msgResList==null){
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "获取列表失败", response);
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
@@ -437,9 +437,9 @@ public class MsgInboxAction extends BaseAction {
             response.page = setPageBean(newLastId, request.pageSize, 0, size);
         }
         if (response.data != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
         } else {
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "获取列表失败", response);
         }
     }
 
@@ -455,7 +455,7 @@ public class MsgInboxAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         MsgSys msgSys = new MsgSys();
         msgSys.id = request.messageId;
@@ -463,7 +463,7 @@ public class MsgInboxAction extends BaseAction {
         msgSys.account_uuid = actionBean.accountUuid;
         MsgSys msgSysInfo = msgInboxDAO.findMsgSysInfo(msgSys);
         if(msgSysInfo==null){
-            return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
+            return json(BaseResponse.CODE_FAILURE, "获取详情失败", response);
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         MsgInboxInfoBean msgInboxInfoBean = new MsgInboxInfoBean();
@@ -505,9 +505,9 @@ public class MsgInboxAction extends BaseAction {
         msgInboxInfoBean.msgToBean = MsgToBeans;
         response.data = msgInboxInfoBean;
         if (msgSysInfo != null) {
-            return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+            return json(BaseResponse.CODE_SUCCESS, "获取详情成功", response);
         } else {
-            return json(BaseResponse.CODE_FAILURE, "not found msgInfo", response);
+            return json(BaseResponse.CODE_FAILURE, "获取详情失败", response);
         }
     }
 

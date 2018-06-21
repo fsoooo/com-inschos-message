@@ -67,23 +67,23 @@ public class MsgIndexAction extends BaseAction {
         BaseResponse response = new BaseResponse();
             //判空
             if (request == null) {
-                return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+                return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
             }
             if (request.title.isEmpty() || request.content.isEmpty()) {
-                return json(BaseResponse.CODE_FAILURE, "title or content is empty", response);
+                return json(BaseResponse.CODE_FAILURE, "标题和内容不能为空", response);
             }
             if(request.type == 0){
-                return json(BaseResponse.CODE_FAILURE, "type is empty", response);
+                return json(BaseResponse.CODE_FAILURE, "类型不能为空", response);
             }
             if (request.toUser == null || request.toUser.size() == 0) {
-                return json(BaseResponse.CODE_FAILURE, "to_user is empty", response);
+                return json(BaseResponse.CODE_FAILURE, "发送对象不能为空", response);
             }
         //消息配置
         MsgStatus msgStatus = new MsgStatus();
         //TODO 权限判断 个人1/企业2/代理人3/业管4
         //只有个人用户不能发送多条和系统消息
         if (request.toUser.size() > 1 && request.fromType == msgStatus.USER_PERSON) {
-            return json(BaseResponse.CODE_FAILURE, "no permission", response);
+            return json(BaseResponse.CODE_FAILURE, "您没有权限执行这项操作", response);
         }
         long date = new Date().getTime();
         if(actionBean.managerUuid==null){
@@ -112,12 +112,12 @@ public class MsgIndexAction extends BaseAction {
             addMsgRecord.messageId = msgSys.id;
             String add_record =  addMsgRecord(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
             if(add_record!=null){
-                return json(BaseResponse.CODE_SUCCESS, "操作成功", response);
+                return json(BaseResponse.CODE_SUCCESS, "发送成功", response);
             }else{
-                return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+                return json(BaseResponse.CODE_FAILURE, "发送失败", response);
             }
         }else{
-            return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+            return json(BaseResponse.CODE_FAILURE, "发送失败", response);
         }
     }
 
@@ -206,7 +206,7 @@ public class MsgIndexAction extends BaseAction {
                 int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
             }
         }
-        return json(BaseResponse.CODE_FAILURE, "操作失败", response);
+        return json(BaseResponse.CODE_FAILURE, "添加发送记录失败", response);
     }
 
     /**
@@ -223,11 +223,11 @@ public class MsgIndexAction extends BaseAction {
         BaseResponse response = new BaseResponse();
         //判空
         if (request == null) {
-            return json(BaseResponse.CODE_FAILURE, "params is empty", response);
+            return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         if(request.operateAll==0){//批量操作
             if (request.messageIds == null || request.messageIds.size() == 0) {
-                return json(BaseResponse.CODE_FAILURE, "messageIds is empty", response);
+                return json(BaseResponse.CODE_FAILURE, "请选择您要操作的消息", response);
             }
             List<MsgUpdateResBean> msgUpdateResList = new ArrayList<>();
             MsgUpdateResBean msgUpdateRes = new MsgUpdateResBean();
