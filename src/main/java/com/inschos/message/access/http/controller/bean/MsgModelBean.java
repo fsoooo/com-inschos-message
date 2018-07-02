@@ -25,7 +25,7 @@ public class MsgModelBean {
 
         public String lastId;//分页数据
 
-        public String limit;//分页数据
+        public String pageSize;//分页数据
 
         public int modelStatus = 0;//模板状态（审核通过0/未通过1/已删除2）
 

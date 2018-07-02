@@ -45,7 +45,7 @@ public class MsgModelController {
      *
      * @params pageNum     当前页码 ，可不传，默认为1
      * @params lastId      上一页最大id ，可不传，默认为
-     * @params limit       每页显示行数，可不传，默认为
+     * @params pageSize       每页显示行数，可不传，默认为
      * @params modelStatus 模板状态（审核通过0/未通过1/已删除2）
      * @params modelSype   模板类型
      * @return json
