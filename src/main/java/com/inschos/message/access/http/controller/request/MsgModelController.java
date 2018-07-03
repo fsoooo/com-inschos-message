@@ -3,15 +3,11 @@ package com.inschos.message.access.http.controller.request;
 import com.inschos.message.access.http.controller.action.MsgModelAction;
 import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
-import com.inschos.message.assist.kit.HttpKit;
-import com.inschos.message.model.MsgModel;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * User: wangsl
@@ -20,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * 消息 模板管理主要功能：添加，查询列表，查询详情，操作（审核通过，删除）
  */
 @Controller
-@RequestMapping("/message/model")
+@RequestMapping("/web/message/model")
 public class MsgModelController {
     private static final Logger logger = Logger.getLogger(MsgModelController.class);
     @Autowired

@@ -1,17 +1,13 @@
 package com.inschos.message.access.http.controller.request;
 
 import com.inschos.message.access.http.controller.action.MsgIndexAction;
-import com.inschos.message.access.http.controller.action.MsgInboxAction;
 import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
-import com.inschos.message.assist.kit.HttpKit;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * User: wangsl
@@ -20,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * 发送消息逻辑:系统消息，订阅消息，私信，可以上传附件
  */
 @Controller
-@RequestMapping("/message")
+@RequestMapping("/web/message")
 //TODO 路由统一也用小驼峰命名规则
 public class MsgIndexController {
 

@@ -1,20 +1,13 @@
 package com.inschos.message.access.http.controller.request;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.inschos.message.access.http.controller.action.MsgInboxAction;
 import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
-import com.inschos.message.assist.kit.HttpKit;
-import com.inschos.message.model.*;
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.jar.JarEntry;
 
 /**
  * User: wangsl
@@ -23,7 +16,7 @@ import java.util.jar.JarEntry;
  * 消息 收件箱主要功能：查询列表(收件箱、发件箱)，查询详情，操作（已读，删除）
  */
 @Controller
-@RequestMapping("/message")
+@RequestMapping("/web/message")
 public class MsgInboxController {
     private static final Logger logger = Logger.getLogger(MsgInboxController.class);
     @Autowired

@@ -13,7 +13,7 @@
   </context-param>
   <context-param>
     <param-name>webAppRootKey</param-name>
-    <param-value>inschos.message.trading</param-value>
+    <param-value>inschos.message</param-value>
   </context-param>
   <listener>
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>

@@ -2,7 +2,6 @@ package com.inschos.message.access.http.controller.request;
 
 import com.inschos.message.access.http.controller.action.WorkOrderAction;
 import com.inschos.message.access.http.controller.bean.ActionBean;
-import com.inschos.message.access.http.controller.bean.BaseResponse;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
 import com.inschos.message.assist.kit.StringKit;
 import org.apache.log4j.Logger;
@@ -12,9 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-
 
 /**
  * User: changyy
@@ -23,7 +19,7 @@ import java.util.Map;
  * 工单管理主要功能：创建工单，工单列表，工单详情，回复工单（关闭），工单状态流转
  */
 @Controller
-@RequestMapping("/work/")
+@RequestMapping("/web/work/")
 public class WorkOrderController {
     private static final Logger logger = Logger.getLogger(WorkOrderController.class);
     @Autowired
