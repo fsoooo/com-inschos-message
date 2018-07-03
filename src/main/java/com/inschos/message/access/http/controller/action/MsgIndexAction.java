@@ -101,7 +101,7 @@ public class MsgIndexAction extends BaseAction {
         }
         msgSys.attachment = request.attachment;
         msgSys.send_time = request.sendTime;
-        msgSys.from_id =  Integer.parseInt(actionBean.managerUuid);
+        msgSys.from_id =  Long.valueOf(actionBean.userId);
         msgSys.from_type = actionBean.userType;
         msgSys.created_at = date;
         msgSys.updated_at = date;
