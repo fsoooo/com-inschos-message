@@ -144,7 +144,7 @@ public class MsgInboxAction extends BaseAction {
         if(bean.managerUuid==null){
             bean.managerUuid = "-1";
         }
-        msgRec.user_id = Integer.parseInt(bean.managerUuid);//Long.valueOf(bean.userId);
+        msgRec.user_id = Long.valueOf(bean.userId);
         msgRec.user_type = bean.userType;
         msgRec.type = request.messageType;
         msgRec.manager_uuid = bean.managerUuid;
@@ -204,7 +204,7 @@ public class MsgInboxAction extends BaseAction {
         if(actionBean.managerUuid==null){
             actionBean.managerUuid = "-1";
         }
-        msgRec.user_id = Integer.parseInt(actionBean.managerUuid);
+        msgRec.user_id = Long.valueOf(actionBean.userId);
         msgRec.user_type = actionBean.userType;
         msgRec.manager_uuid = actionBean.managerUuid;
         msgRec.account_uuid = actionBean.accountUuid;
