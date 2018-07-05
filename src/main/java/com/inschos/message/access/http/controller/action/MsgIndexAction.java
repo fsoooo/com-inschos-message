@@ -105,11 +105,15 @@ public class MsgIndexAction extends BaseAction {
         msgSys.from_type = actionBean.userType;
         msgSys.created_at = date;
         msgSys.updated_at = date;
-        int send_result = msgIndexDAO.addMessage(msgSys);
         AddMsgRecord addMsgRecord = new AddMsgRecord();
+        addMsgRecord.toUser = request.toUser;
+        addMsgRecord.messageId = msgSys.id;
+        boolean addStatus = findChannelUser(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
+        if(!addStatus){
+            return json(BaseResponse.CODE_FAILURE, "消息接收人为空,发送失败", response);
+        }
+        int send_result = msgIndexDAO.addMessage(msgSys);
         if(send_result>0){
-            addMsgRecord.toUser = request.toUser;
-            addMsgRecord.messageId = msgSys.id;
             String add_record =  addMsgRecord(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
             if(add_record!=null){
                 return json(BaseResponse.CODE_SUCCESS, "发送成功", response);
@@ -122,8 +126,47 @@ public class MsgIndexAction extends BaseAction {
     }
 
     /**
+     * 判断当前渠道项目有没有用户
+     * @param addMsgRecord
+     * @param sysId
+     * @param managerUuid
+     * @return
+     */
+    public boolean findChannelUser(AddMsgRecord addMsgRecord,int sysId,String managerUuid){
+        List<Long> personIds = new ArrayList<>();
+        for (AddMsgToBean addMsgToBean : addMsgRecord.toUser) {
+            MsgRecord msgRecord = new MsgRecord();
+            if(addMsgToBean.toId==0||addMsgToBean.toType==0){//没有代理人，只有渠道id
+                List<String> childrenId = channelClient.getChildrenId(String.valueOf(addMsgToBean.channelId), true);
+                AgentJobBean searchAgents = new AgentJobBean();
+                searchAgents.channelIdList = childrenId;
+                searchAgents.manager_uuid = managerUuid;
+                searchAgents.search_cur_time = TimeKit.curTimeMillis2Str();
+                List<AgentJobBean> agents = agentJobClient.getAgentsByChannels(searchAgents);
+                if(agents!=null){
+                    personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
+                }
+            }else if(addMsgToBean.toType!=0){
+                AgentJobBean agentJobBean = agentJobClient.getAgentById(addMsgToBean.toId);
+                if(agentJobBean!=null){
+                    personIds.add(agentJobBean.person_id);
+                }
+            }
+        }
+        if(personIds==null){
+            return false;
+        }
+        if(personIds.size()==0){
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * 处理没有收件人的发送操作
      * @param addMsgRecord
+     * @param sysId
+     * @param managerUuid
      * @return
      */
     public String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid){
