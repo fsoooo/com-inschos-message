@@ -144,7 +144,7 @@ public class MsgIndexAction extends BaseAction {
                 if(agents!=null){
                     personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
                 }
-            }else if(addMsgToBean.toType!=0){
+            }else if(addMsgToBean.toType==4){
                 AgentJobBean agentJobBean = agentJobClient.getAgentById(addMsgToBean.toId);
                 if(agentJobBean!=null){
                     personIds.add(agentJobBean.person_id);
