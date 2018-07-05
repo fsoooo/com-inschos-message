@@ -104,14 +104,15 @@ public class MsgIndexAction extends BaseAction {
         msgSys.updated_at = date;
         AddMsgRecord addMsgRecord = new AddMsgRecord();
         addMsgRecord.toUser = request.toUser;
-        addMsgRecord.messageId = msgSys.id;
         List<Long> personIds = findChannelUser(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
         if(personIds.size()==0){
             return json(BaseResponse.CODE_FAILURE, "消息接收人为空,发送失败", response);
         }
         int send_result = msgIndexDAO.addMessage(msgSys);
+
         if(send_result>0){
-            String add_record =  addMsgRecord(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
+            addMsgRecord.messageId = msgSys.id;
+            String add_record =  addMsgRecord(addMsgRecord,actionBean.sysId,actionBean.managerUuid,personIds);
             if(add_record!=null){
                 return json(BaseResponse.CODE_SUCCESS, "发送成功", response);
             }else{
@@ -164,12 +165,9 @@ public class MsgIndexAction extends BaseAction {
      * @param managerUuid
      * @return
      */
-    public String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid){
+    private String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid,List<Long> personIds){
         BaseResponse response = new BaseResponse();
-        List<Long> personIds = findChannelUser(addMsgRecord,sysId,managerUuid);
-        if(personIds.size()==0){
-            return json(BaseResponse.CODE_FAILURE, "消息接收人为空,发送失败", response);
-        }
+
         long date = new Date().getTime();
         for (AddMsgToBean addMsgToBean : addMsgRecord.toUser) {
             MsgRecord msgRecord = new MsgRecord();

@@ -39,7 +39,7 @@
         where  msg_id =#{msg_id} AND rec_id =#{rec_id} AND type =#{type} AND status =#{status};
     </select>
 
-    <select id="findMessageToRecordRepeat" parameterType="MsgRecord" resultType="RepeatCount">
+    <select id="findMessageToRecordRepeat" parameterType="MsgToRecord" resultType="RepeatCount">
         select count(`id`) as count from msg_to_record
         where  msg_id =#{msg_id} AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid} AND status =#{status};
     </select>
