@@ -7,6 +7,7 @@ import com.inschos.message.access.rpc.bean.AgentJobBean;
 import com.inschos.message.access.rpc.client.AccountClient;
 import com.inschos.message.access.rpc.client.AgentJobClient;
 import com.inschos.message.access.rpc.client.ChannelClient;
+import com.inschos.message.assist.kit.L;
 import com.inschos.message.assist.kit.ListKit;
 import com.inschos.message.assist.kit.TimeKit;
 import com.inschos.message.data.dao.MsgInboxDAO;
@@ -108,8 +109,8 @@ public class MsgIndexAction extends BaseAction {
         AddMsgRecord addMsgRecord = new AddMsgRecord();
         addMsgRecord.toUser = request.toUser;
         addMsgRecord.messageId = msgSys.id;
-        boolean addStatus = findChannelUser(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
-        if(!addStatus){
+        List<Long> personIds = findChannelUser(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
+        if(personIds.size()==0){
             return json(BaseResponse.CODE_FAILURE, "消息接收人为空,发送失败", response);
         }
         int send_result = msgIndexDAO.addMessage(msgSys);
@@ -132,7 +133,7 @@ public class MsgIndexAction extends BaseAction {
      * @param managerUuid
      * @return
      */
-    public boolean findChannelUser(AddMsgRecord addMsgRecord,int sysId,String managerUuid){
+    public List<Long> findChannelUser(AddMsgRecord addMsgRecord, int sysId, String managerUuid){
         List<Long> personIds = new ArrayList<>();
         for (AddMsgToBean addMsgToBean : addMsgRecord.toUser) {
             MsgRecord msgRecord = new MsgRecord();
@@ -153,13 +154,11 @@ public class MsgIndexAction extends BaseAction {
                 }
             }
         }
-        if(personIds==null){
-            return false;
+        if(personIds.size()>0){
+            ListKit.toUnique(personIds);
+            ListKit.toRemoveO(personIds,0l);
         }
-        if(personIds.size()==0){
-            return false;
-        }
-        return true;
+        return personIds;
     }
 
     /**
@@ -171,12 +170,14 @@ public class MsgIndexAction extends BaseAction {
      */
     public String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid){
         BaseResponse response = new BaseResponse();
+        List<Long> personIds = findChannelUser(addMsgRecord,sysId,managerUuid);
+        if(personIds.size()==0){
+            return json(BaseResponse.CODE_FAILURE, "消息接收人为空,发送失败", response);
+        }
         long date = new Date().getTime();
-        List<Long> personIds = new ArrayList<>();
         for (AddMsgToBean addMsgToBean : addMsgRecord.toUser) {
             MsgRecord msgRecord = new MsgRecord();
             if(addMsgToBean.toId==0||addMsgToBean.toType==0){//没有代理人，只有渠道id
-
                 msgRecord.msg_id = addMsgRecord.messageId;
                 msgRecord.rec_id = addMsgToBean.channelId;
                 msgRecord.type = 5;
@@ -187,16 +188,6 @@ public class MsgIndexAction extends BaseAction {
                 RepeatCount msgRecordRepeat = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
                 if(msgRecordRepeat.count==0){
                     int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
-                }
-
-                List<String> childrenId = channelClient.getChildrenId(String.valueOf(addMsgToBean.channelId), true);
-                AgentJobBean searchAgents = new AgentJobBean();
-                searchAgents.channelIdList = childrenId;
-                searchAgents.manager_uuid = managerUuid;
-                searchAgents.search_cur_time = TimeKit.curTimeMillis2Str();
-                List<AgentJobBean> agents = agentJobClient.getAgentsByChannels(searchAgents);
-                if(agents!=null){
-                    personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
                 }
             }else if(addMsgToBean.toType!=0){
                 msgRecord.msg_id = addMsgRecord.messageId;
@@ -220,10 +211,6 @@ public class MsgIndexAction extends BaseAction {
                 RepeatCount repeatCount = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
                 if(repeatCount.count==0){
                     int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
-                }
-                AgentJobBean agentJobBean = agentJobClient.getAgentById(addMsgToBean.toId);
-                if(agentJobBean!=null){
-                    personIds.add(agentJobBean.person_id);
                 }
             }
         }
