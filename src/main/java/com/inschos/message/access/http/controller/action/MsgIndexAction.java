@@ -105,6 +105,7 @@ public class MsgIndexAction extends BaseAction {
         AddMsgRecord addMsgRecord = new AddMsgRecord();
         addMsgRecord.toUser = request.toUser;
         List<Long> personIds = findChannelUser(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
+        logger.info(personIds.size());
         if(personIds.size()==0){
             return json(BaseResponse.CODE_FAILURE, "消息接收人为空,发送失败", response);
         }
@@ -144,11 +145,13 @@ public class MsgIndexAction extends BaseAction {
                 if(agents!=null){
                     personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
                 }
+                logger.info(5);
             }else if(addMsgToBean.toType==4){
                 AgentJobBean agentJobBean = agentJobClient.getAgentById(addMsgToBean.toId);
                 if(agentJobBean!=null){
                     personIds.add(agentJobBean.person_id);
                 }
+                logger.info(4);
             }
         }
         if(personIds.size()>0){
