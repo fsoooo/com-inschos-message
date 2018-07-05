@@ -66,15 +66,11 @@ public class MsgIndexAction extends BaseAction {
     public String addMessage(ActionBean actionBean){
         MsgIndexBean request = JsonKit.json2Bean(actionBean.body, MsgIndexBean.class);
         BaseResponse response = new BaseResponse();
-            //判空
             if (request == null) {
                 return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
             }
-            if (request.title.isEmpty() || request.content.isEmpty()) {
+            if (request.title== null || request.content== null) {
                 return json(BaseResponse.CODE_FAILURE, "标题和内容不能为空", response);
-            }
-            if(request.type == 0){
-                return json(BaseResponse.CODE_FAILURE, "类型不能为空", response);
             }
             if (request.toUser == null || request.toUser.size() == 0) {
                 return json(BaseResponse.CODE_FAILURE, "发送对象不能为空", response);
