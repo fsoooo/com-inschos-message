@@ -218,7 +218,9 @@ public class MsgIndexAction extends BaseAction {
                 accountUuids.add(accountBean.accountUuid);
             }
         }
+        L.log.debug("accountUuid  size {}",accountUuids.size());
         for (String accountUuid : accountUuids) {
+            L.log.debug("accountUuid {}",accountUuid);
             MsgToRecord msgToRecord = new MsgToRecord();
             msgToRecord.account_uuid = accountUuid;
             msgToRecord.manager_uuid = managerUuid;
