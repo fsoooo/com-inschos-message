@@ -134,7 +134,7 @@ public class MsgIndexAction extends BaseAction {
         List<Long> personIds = new ArrayList<>();
         for (AddMsgToBean addMsgToBean : addMsgRecord.toUser) {
             MsgRecord msgRecord = new MsgRecord();
-            if(addMsgToBean.toId==0||addMsgToBean.toType==0){//没有代理人，只有渠道id
+            if(addMsgToBean.toId==0||addMsgToBean.toType==0||addMsgToBean.toType==5){//没有代理人，只有渠道id
                 List<String> childrenId = channelClient.getChildrenId(String.valueOf(addMsgToBean.channelId), true);
                 AgentJobBean searchAgents = new AgentJobBean();
                 searchAgents.channelIdList = childrenId;
