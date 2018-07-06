@@ -284,4 +284,8 @@
         where  msg_id =#{id};
     </select>
 
+    <select id="findMsgToRecords" parameterType="MsgSys" resultType="MsgToRecord">
+         select `account_uuid`,`manager_uuid` from msg_to_record
+        where  msg_id =#{id};
+    </select>
 </mapper>

@@ -60,6 +60,8 @@ public interface MsgInboxMapper {
 
     List<MsgRecord> findMsgRecords(MsgSys msgSys);
 
+    List<MsgToRecord> findMsgToRecords(MsgSys msgSys);
+
     // 删除/读取消息 (updateMsgRec)
     int updateMsgRecStatus(MsgUpdate msgUpdate);
 

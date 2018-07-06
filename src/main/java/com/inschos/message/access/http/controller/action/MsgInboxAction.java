@@ -1,11 +1,13 @@
 package com.inschos.message.access.http.controller.action;
 
 import com.inschos.message.access.http.controller.bean.*;
+import com.inschos.message.access.rpc.bean.AccountBean;
 import com.inschos.message.access.rpc.bean.AgentJobBean;
 import com.inschos.message.access.rpc.bean.ChannelBean;
 import com.inschos.message.access.rpc.client.AccountClient;
 import com.inschos.message.access.rpc.client.AgentJobClient;
 import com.inschos.message.access.rpc.client.ChannelClient;
+import com.inschos.message.assist.kit.ListKit;
 import com.inschos.message.assist.kit.StringKit;
 import com.inschos.message.assist.kit.TimeKit;
 import com.inschos.message.data.dao.MsgInboxDAO;
@@ -367,9 +369,6 @@ public class MsgInboxAction extends BaseAction {
         //调用DAO
         MsgSys msgSys = new MsgSys();
         msgSys.page = setPage(request.lastId, request.pageNum, request.pageSize);
-        logger.info( msgSys.page.lastId);
-        logger.info( msgSys.page.offset);
-        logger.info( msgSys.page.start);
         if (request.messageStatus != 0) {
             msgSys.status = request.messageStatus;
         }
@@ -387,31 +386,9 @@ public class MsgInboxAction extends BaseAction {
         List<MsgInboxListTypeBean> msgInboxListTypeBeans = new ArrayList<>();
         for (MsgSys sys : msgResList) {
             msgSys.id = sys.id;
-            List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);//获取此消息的发送对象信息
-            //todo 一个发件箱的发件人分为代理人和渠道
-            List<MsgToBean> MsgToBeans = new ArrayList<>();
-            for (MsgRecord msgRecord : msgRecords) {
-                MsgToBean msgToBean = new MsgToBean();
-                msgToBean.toId = msgRecord.rec_id;
-                msgToBean.toType = msgRecord.type;
-                switch(msgRecord.type){
-                    case 4://代理人
-                        AgentJobBean agentJobBean = agentJobClient.getAgentById(msgRecord.rec_id);
-                        if(agentJobBean!=null){
-                            logger.info("代理人姓名是"+agentJobBean.name);
-                            msgToBean.toName = agentJobBean.name;
-                        }
-                        break;
-                    case 5://渠道
-                        ChannelBean channelBean = channelClient.getChannel(msgRecord.rec_id+"");
-                        if(channelBean!=null){
-                            logger.info("渠道姓名是"+channelBean.name);
-                            msgToBean.toName = channelBean.name;
-                        }
-                        break;
-                }
-                MsgToBeans.add(msgToBean);
-            }
+            //TODO 获取发送对象,从msg_to_record表里取数据
+            //todo 消息的发送对象只是 代理人
+            List<MsgToRecord> msgToRecords = msgInboxDAO.findMsgToRecord(msgSys);//获取此消息的发送对象信息
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
             msgInboxListType.id = sys.id;
             newLastId = sys.id;
@@ -425,7 +402,7 @@ public class MsgInboxAction extends BaseAction {
             msgInboxListType.readFlag = sys.status;
             msgInboxListType.time = sys.created_at;
             msgInboxListType.timeTxt = sdf.format(new Date(Long.valueOf(sys.created_at)));
-            msgInboxListType.msgToBean = MsgToBeans;
+            msgInboxListType.msgToBean = msgToRecords.size();
             msgInboxListTypeBeans.add(msgInboxListType);
         }
         response.data = msgInboxListTypeBeans;
@@ -478,8 +455,10 @@ public class MsgInboxAction extends BaseAction {
         msgInboxInfoBean.readFlag = msgSysInfo.status;
         msgInboxInfoBean.time = msgSysInfo.created_at;
         msgInboxInfoBean.timeTxt = sdf.format(new Date(Long.valueOf(msgSysInfo.created_at)));
-        List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);
         List<MsgToBean> MsgToBeans = new ArrayList<>();
+        //TODO 获取 渠道信息和代理人信息
+        List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);//获取了userId  userType
+        logger.info(JsonKit.bean2Json(msgRecords));
         for (MsgRecord msgRecord : msgRecords) {
             MsgToBean msgToBean = new MsgToBean();
             msgToBean.toId = msgRecord.rec_id;
@@ -502,6 +481,25 @@ public class MsgInboxAction extends BaseAction {
             }
             MsgToBeans.add(msgToBean);
         }
+        logger.info(JsonKit.bean2Json(MsgToBeans));
+        List<MsgToRecord> msgToRecords = msgInboxDAO.findMsgToRecord(msgSys);//获取了 managerUuid accountUuid
+        logger.info(JsonKit.bean2Json(msgToRecords));
+        for (MsgToRecord msgToRecord : msgToRecords) {
+            MsgToBean msgToBean = new MsgToBean();
+            AccountBean accountBean =  accountClient.findByUuid(msgToRecord.account_uuid);
+            if(accountBean!=null){
+                AgentJobBean agentJobBean = agentJobClient.getAgent(msgToRecord.account_uuid,Long.valueOf(accountBean.userId));
+                if(agentJobBean!=null){
+                    logger.info("代理人姓名是"+agentJobBean.name);
+                    msgToBean.toName = agentJobBean.name;
+                }
+            }
+            msgToBean.toId = Long.valueOf(accountBean.userId);
+            msgToBean.toType = 4;
+            MsgToBeans.add(msgToBean);
+        }
+        logger.info(JsonKit.bean2Json(MsgToBeans));
+        ListKit.toUnique(MsgToBeans);
         msgInboxInfoBean.msgToBean = MsgToBeans;
         response.data = msgInboxInfoBean;
         if (msgSysInfo != null) {
