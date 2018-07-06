@@ -104,16 +104,16 @@ public class MsgIndexAction extends BaseAction {
         msgSys.updated_at = date;
         AddMsgRecord addMsgRecord = new AddMsgRecord();
         addMsgRecord.toUser = request.toUser;
-        List<Long> personIds = findChannelUser(addMsgRecord,actionBean.sysId,actionBean.managerUuid);
-        logger.info(personIds.size());
-        if(personIds.size()==0){
+        List<AgentJobBean> agentJobBeans = findChannelUser(addMsgRecord, actionBean.sysId, actionBean.managerUuid);
+        logger.info(agentJobBeans.size());
+        if(agentJobBeans.size()==0){
             return json(BaseResponse.CODE_FAILURE, "消息接收人为空,发送失败", response);
         }
         int send_result = msgIndexDAO.addMessage(msgSys);
 
         if(send_result>0){
             addMsgRecord.messageId = msgSys.id;
-            String add_record =  addMsgRecord(addMsgRecord,actionBean.sysId,actionBean.managerUuid,personIds);
+            String add_record =  addMsgRecord(addMsgRecord,actionBean.sysId,actionBean.managerUuid,agentJobBeans);
             if(add_record!=null){
                 return json(BaseResponse.CODE_SUCCESS, "发送成功", response);
             }else{
@@ -131,8 +131,8 @@ public class MsgIndexAction extends BaseAction {
      * @param managerUuid
      * @return
      */
-    public List<Long> findChannelUser(AddMsgRecord addMsgRecord, int sysId, String managerUuid){
-        List<Long> personIds = new ArrayList<>();
+    public List<AgentJobBean> findChannelUser(AddMsgRecord addMsgRecord, int sysId, String managerUuid){
+        List<AgentJobBean> agentJobBeans = new ArrayList<>();
         for (AddMsgToBean addMsgToBean : addMsgRecord.toUser) {
             MsgRecord msgRecord = new MsgRecord();
             if(addMsgToBean.toId==0||addMsgToBean.toType==0||addMsgToBean.toType==5){//没有代理人，只有渠道id
@@ -143,22 +143,23 @@ public class MsgIndexAction extends BaseAction {
                 searchAgents.search_cur_time = TimeKit.curTimeMillis2Str();
                 List<AgentJobBean> agents = agentJobClient.getAgentsByChannels(searchAgents);
                 if(agents!=null){
-                    personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
+                    agentJobBeans.addAll(agents);
+//                    personIds.addAll(ListKit.toColumnList(agents,v->v.person_id));
                 }
                 logger.info(5);
             }else if(addMsgToBean.toType==4){
                 AgentJobBean agentJobBean = agentJobClient.getAgentById(addMsgToBean.toId);
                 if(agentJobBean!=null){
-                    personIds.add(agentJobBean.person_id);
+                    agentJobBeans.add(agentJobBean);
                 }
                 logger.info(4);
             }
         }
-        if(personIds.size()>0){
-            ListKit.toUnique(personIds);
-            ListKit.toRemoveO(personIds,0l);
-        }
-        return personIds;
+//        if(personIds.size()>0){
+//            ListKit.toUnique(personIds);
+//            ListKit.toRemoveO(personIds,0l);
+//        }
+        return agentJobBeans;
     }
 
     /**
@@ -168,53 +169,24 @@ public class MsgIndexAction extends BaseAction {
      * @param managerUuid
      * @return
      */
-    private String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid,List<Long> personIds){
+    private String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid,List<AgentJobBean> agentJobBeans){
         BaseResponse response = new BaseResponse();
-
         long date = new Date().getTime();
-        for (AddMsgToBean addMsgToBean : addMsgRecord.toUser) {
-            MsgRecord msgRecord = new MsgRecord();
-            if(addMsgToBean.toId==0||addMsgToBean.toType==0){//没有代理人，只有渠道id
-                msgRecord.msg_id = addMsgRecord.messageId;
-                msgRecord.rec_id = addMsgToBean.channelId;
-                msgRecord.type = 5;
-                msgRecord.state = 1;
-                msgRecord.status = 1;
-                msgRecord.created_at = date;
-                msgRecord.updated_at = date;
-                RepeatCount msgRecordRepeat = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
-                if(msgRecordRepeat.count==0){
-                    int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
-                }
-            }else if(addMsgToBean.toType!=0){
-                msgRecord.msg_id = addMsgRecord.messageId;
-                msgRecord.rec_id = addMsgToBean.channelId;
-                msgRecord.type = 5;
-                msgRecord.state = 1;
-                msgRecord.status = 1;
-                msgRecord.created_at = date;
-                msgRecord.updated_at = date;
-                RepeatCount repeatCounts = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
-                if(repeatCounts.count==0){
-                    int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
-                }
-                msgRecord.msg_id = addMsgRecord.messageId;
-                msgRecord.rec_id = addMsgToBean.toId;
-                msgRecord.type = addMsgToBean.toType;
-                msgRecord.state = 1;
-                msgRecord.status = 1;
-                msgRecord.created_at = date;
-                msgRecord.updated_at = date;
-                RepeatCount repeatCount = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
-                if(repeatCount.count==0){
-                    int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
-                }
-            }
-        }
-        List<Long> uniquePList = ListKit.toUnique(personIds);
         List<String> accountUuids = new ArrayList<>();
-        for (Long personId : uniquePList) {
-            AccountBean accountBean = accountClient.findByUser(sysId, AccountBean.USER_TYPE_AGENT, String.valueOf(personId));
+        for (AgentJobBean agentJobBean : agentJobBeans) {
+            MsgRecord msgRecord = new MsgRecord();
+            msgRecord.msg_id = addMsgRecord.messageId;
+            msgRecord.rec_id = agentJobBean.id;
+            msgRecord.type = 4;
+            msgRecord.state = 1;
+            msgRecord.status = 1;
+            msgRecord.created_at = date;
+            msgRecord.updated_at = date;
+            RepeatCount msgRecordRepeat = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
+            if(msgRecordRepeat.count==0){
+                int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
+            }
+            AccountBean accountBean = accountClient.findByUser(sysId, AccountBean.USER_TYPE_AGENT, String.valueOf(agentJobBean.person_id));
             if(accountBean!=null){
                 accountUuids.add(accountBean.accountUuid);
             }

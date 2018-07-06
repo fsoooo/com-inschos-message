@@ -388,7 +388,7 @@ public class MsgInboxAction extends BaseAction {
             msgSys.id = sys.id;
             //TODO 获取发送对象,从msg_to_record表里取数据
             //todo 消息的发送对象只是 代理人
-            List<MsgToRecord> msgToRecords = msgInboxDAO.findMsgToRecord(msgSys);//获取此消息的发送对象信息
+            List<MsgToBean> MsgToBeans  = findMsgToUser(msgSys);
             MsgInboxListTypeBean msgInboxListType = new MsgInboxListTypeBean();
             msgInboxListType.id = sys.id;
             newLastId = sys.id;
@@ -402,7 +402,7 @@ public class MsgInboxAction extends BaseAction {
             msgInboxListType.readFlag = sys.status;
             msgInboxListType.time = sys.created_at;
             msgInboxListType.timeTxt = sdf.format(new Date(Long.valueOf(sys.created_at)));
-            msgInboxListType.msgToBean = msgToRecords.size();
+            msgInboxListType.msgToBean = MsgToBeans.size();
             msgInboxListTypeBeans.add(msgInboxListType);
         }
         response.data = msgInboxListTypeBeans;
@@ -455,6 +455,18 @@ public class MsgInboxAction extends BaseAction {
         msgInboxInfoBean.readFlag = msgSysInfo.status;
         msgInboxInfoBean.time = msgSysInfo.created_at;
         msgInboxInfoBean.timeTxt = sdf.format(new Date(Long.valueOf(msgSysInfo.created_at)));
+        List<MsgToBean> MsgToBeans  = findMsgToUser(msgSys);
+        msgInboxInfoBean.msgToBean = MsgToBeans;
+        response.data = msgInboxInfoBean;
+        if (msgSysInfo != null) {
+            return json(BaseResponse.CODE_SUCCESS, "获取详情成功", response);
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "获取详情失败", response);
+        }
+    }
+
+
+    private List<MsgToBean> findMsgToUser(MsgSys msgSys){
         List<MsgToBean> MsgToBeans = new ArrayList<>();
         //TODO 获取 渠道信息和代理人信息
         List<MsgRecord> msgRecords = msgInboxDAO.findMsgTo(msgSys);//获取了userId  userType
@@ -500,13 +512,7 @@ public class MsgInboxAction extends BaseAction {
         }
         logger.info(JsonKit.bean2Json(MsgToBeans));
         ListKit.toUnique(MsgToBeans);
-        msgInboxInfoBean.msgToBean = MsgToBeans;
-        response.data = msgInboxInfoBean;
-        if (msgSysInfo != null) {
-            return json(BaseResponse.CODE_SUCCESS, "获取详情成功", response);
-        } else {
-            return json(BaseResponse.CODE_FAILURE, "获取详情失败", response);
-        }
+        return MsgToBeans;
     }
 
 }
