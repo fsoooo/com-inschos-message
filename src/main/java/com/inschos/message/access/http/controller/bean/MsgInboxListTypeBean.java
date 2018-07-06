@@ -20,6 +20,6 @@ public class MsgInboxListTypeBean {
 
     public String timeTxt;//最新消息时间文案
 
-    public List<MsgToBean> msgToBean;//收件人详细信息
+    public long msgToBean;//收件人详细信息
 
 }

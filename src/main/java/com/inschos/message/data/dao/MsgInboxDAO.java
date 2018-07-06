@@ -176,6 +176,15 @@ public class MsgInboxDAO {
     }
 
     /**
+     *
+     * @params msgSys
+     * @return
+     */
+    public List<MsgToRecord> findMsgToRecord(MsgSys msgSys){
+        return  msgInboxMapper.findMsgToRecords(msgSys);
+    }
+
+    /**
      * 删除/读取消息 （update）
      *
      * @params msgUpdate
