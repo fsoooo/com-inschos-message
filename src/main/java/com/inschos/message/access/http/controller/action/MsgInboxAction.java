@@ -56,12 +56,8 @@ public class MsgInboxAction extends BaseAction {
     public String findMsgRecList(ActionBean bean) {
         MsgInboxBean.InboxListRequest request = requst2Bean(bean.body, MsgInboxBean.InboxListRequest.class);
         BaseResponse response = new BaseResponse();
-        //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
-        }
-        if(bean.managerUuid==null){
-            bean.managerUuid = "-1";
         }
         //调用DAO
         MsgRec msgRec = new MsgRec();
@@ -128,23 +124,23 @@ public class MsgInboxAction extends BaseAction {
      * @access public
      */
     public String findMsgResListByType(ActionBean bean) {
+        logger.info(bean.body);
         MsgInboxBean.InboxListRequest request = JsonKit.json2Bean(bean.body, MsgInboxBean.InboxListRequest.class);
         BaseResponse response = new BaseResponse();
-        //判空
         if (request == null) {
             return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
         if (request.messageType == 0) {
             return json(BaseResponse.CODE_FAILURE, "消息类型不能为空", response);
         }
-        //调用DAO
+        logger.info("accountUuid:"+bean.accountUuid);
+        logger.info("managerUuid:"+bean.managerUuid);
+        logger.info("userId:"+bean.userId);
+        logger.info("userType:"+bean.userType);
         MsgRec msgRec = new MsgRec();
         msgRec.page = setPage(request.lastId, request.pageNum, request.pageSize);
         if (request.messageStatus != 0) {
             msgRec.sys_status = request.messageStatus;
-        }
-        if(bean.managerUuid==null){
-            bean.managerUuid = "-1";
         }
         msgRec.user_id = Long.valueOf(bean.userId);
         msgRec.user_type = bean.userType;
@@ -152,7 +148,10 @@ public class MsgInboxAction extends BaseAction {
         msgRec.manager_uuid = bean.managerUuid;
         msgRec.account_uuid = bean.accountUuid;
         String insertRes = insertMsgRec(msgRec);
+        logger.info("收件结果:"+insertRes);
+        logger.info("msgRec:"+JsonKit.bean2Json(msgRec));
         List<MsgRec> msgRecList = msgInboxDAO.findMsgRecListByType(msgRec);
+        logger.info(msgRecList.size());
         if(msgRecList==null){
             return json(BaseResponse.CODE_FAILURE, "获取列表失败", response);
         }
@@ -241,22 +240,34 @@ public class MsgInboxAction extends BaseAction {
      */
     private String insertMsgRec(MsgRec msgRec) {
         BaseResponse response = new BaseResponse();
-        //判空
         if (msgRec==null) {
             return json(BaseResponse.CODE_FAILURE, "参数解析失败", response);
         }
+        //查询消息 系统表有没有未插入的数据，没有的话，返回执行结束，有的话继续执行（赋值，插入，改变状态）
+//        List<MsgSys> MsgSys = msgInboxDAO.findUserMsgRes(msgRec);
+//        if (MsgSys.size()==0) {
+//            return json(BaseResponse.CODE_SUCCESS, "未查看消息为空", response);
+//        }
+        logger.info("msgRec:"+JsonKit.bean2Json(msgRec));
+        List<MsgSys> MsgIds = new ArrayList<>();
         //TODO 查询消息发送对象表里的数据
-        List<MsgSys> MsgSys = msgInboxDAO.findMsgToRecord(msgRec);
-        //todo 查询消息 系统表有没有未插入的数据，没有的话，返回执行结束，有的话继续执行（赋值，插入，改变状态）
-        //List<MsgSys> MsgSys = msgInboxDAO.findUserMsgRes(msgRec);
+        List<MsgSys> msgToRecords = msgInboxDAO.findMsgToRecord(msgRec);
+        List<MsgSys> msgRecords = msgInboxDAO.findMsgRecordId(msgRec);
+        logger.info("msgids:"+JsonKit.bean2Json(msgRecords));
+        if(msgToRecords.size()!=0){
+            MsgIds.addAll(msgToRecords);
+        }
+        if(msgRecords.size()!=0){
+            MsgIds.addAll(msgRecords);
+        }
         //判断集合是否为空
-        if (null == MsgSys || MsgSys.size() == 0) {
+        if (null == MsgIds || MsgIds.size() == 0) {
             return json(BaseResponse.CODE_SUCCESS, "未查看消息为空", response);
         }
         //获取当前时间戳(毫秒值)
         long date = new Date().getTime();
         List<Integer> insertResList = new ArrayList();
-        for (MsgSys sys : MsgSys) {
+        for (MsgSys sys : MsgIds) {
             msgRec.msg_id = sys.id;
             MsgSys msgSysRes = msgInboxDAO.findMsgSysRes(sys);
             msgRec.type = msgSysRes.type;
@@ -264,18 +275,23 @@ public class MsgInboxAction extends BaseAction {
             msgRec.state = 1;//未读
             msgRec.created_at = date;
             msgRec.updated_at = date;
-            int insertRes = msgInboxDAO.insertMsgRec(msgRec);
-            if (insertRes != 0) {
-                MsgSys updateSys = new MsgSys();
-                updateSys.id = sys.id;
-                updateSys.status = 2;//已读
-                updateSys.manager_uuid = msgRec.manager_uuid;
-                updateSys.account_uuid = msgRec.account_uuid;
-                int updateRes = msgInboxDAO.updateMsgToRecord(updateSys);
-                //int updateRes = msgInboxDAO.updateMsgSysStatus(updateSys);
+            long repeatRes = msgInboxDAO.findMsgRecRepeat(msgRec);
+            if(repeatRes==0){
+                int insertRes = msgInboxDAO.insertMsgRec(msgRec);
+                if (insertRes != 0) {
+                    MsgSys updateSys = new MsgSys();
+                    updateSys.id = sys.id;
+                    updateSys.status = 2;//已读
+                    updateSys.manager_uuid = msgRec.manager_uuid;
+                    updateSys.account_uuid = msgRec.account_uuid;
+                    updateSys.to_id = msgRec.user_id;
+                    updateSys.to_type = msgRec.user_type;
+                    msgInboxDAO.updateMsgRecord(updateSys);
+                    msgInboxDAO.updateMsgToRecord(updateSys);
+                }
+                //TODO  更改msg_sys消息读取状态
+                insertResList.add(insertRes);
             }
-            //TODO  更改msg_sys消息读取状态
-            insertResList.add(insertRes);
         }
         response.data = insertResList;
         return json(BaseResponse.CODE_SUCCESS, "操作成功", response);

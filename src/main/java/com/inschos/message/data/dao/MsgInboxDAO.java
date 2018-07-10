@@ -91,6 +91,9 @@ public class MsgInboxDAO {
         return msgInboxMapper.updateMsgToRecord(msgSys);
     }
 
+    public int updateMsgRecord(MsgSys msgSys) {
+        return msgInboxMapper.updateMsgRecord(msgSys);
+    }
 
     /**
      * 用户未收件(用户登录之后，查询系统收件箱，用户为读取的消息)
@@ -112,6 +115,10 @@ public class MsgInboxDAO {
      */
     public List<MsgSys> findMsgToRecord(MsgRec msgRec){
         return msgInboxMapper.findMsgToRecord(msgRec);
+    }
+
+    public List<MsgSys> findMsgRecordId(MsgRec msgRec){
+        return msgInboxMapper.findMsgRecordId(msgRec);
     }
 
     public MsgSys findMsgSysRes(MsgSys msgSys){
@@ -226,6 +233,10 @@ public class MsgInboxDAO {
      */
     public int updateAllMsgRecState(MsgUpdate msgUpdate) {
         return msgInboxMapper.updateAllMsgRecState(msgUpdate);
+    }
+
+    public long findMsgRecRepeat(MsgRec msgRec){
+        return msgInboxMapper.findMsgRecRepeat(msgRec);
     }
 
 

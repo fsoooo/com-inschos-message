@@ -23,6 +23,8 @@ public interface MsgInboxMapper {
     //从消息发送对象表获取未读消息
     List<MsgSys> findMsgToRecord(MsgRec msgRec);
 
+    List<MsgSys> findMsgRecord(MsgRec msgRec);
+
     //获取消息主体表信息
     MsgSys findMsgSysRec(MsgSys msgSys);
 
@@ -35,6 +37,8 @@ public interface MsgInboxMapper {
     int updateMsgSysStatus(MsgSys msgSys);
 
     int updateMsgToRecord(MsgSys msgSys);
+
+    int updateMsgRecord(MsgSys msgSys);
 
 
     MsgCount findMsgSysCount(MsgSys msgSys);
@@ -60,6 +64,8 @@ public interface MsgInboxMapper {
 
     List<MsgRecord> findMsgRecords(MsgSys msgSys);
 
+    List<MsgSys> findMsgRecordId(MsgRec msgRec);
+
     List<MsgToRecord> findMsgToRecords(MsgSys msgSys);
 
     // 删除/读取消息 (updateMsgRec)
@@ -73,5 +79,7 @@ public interface MsgInboxMapper {
 
     // 删除/读取消息 (updateMsgRec)
     int updateAllMsgRecState(MsgUpdate msgUpdate);
+
+    long findMsgRecRepeat(MsgRec msgRec);
 
 }

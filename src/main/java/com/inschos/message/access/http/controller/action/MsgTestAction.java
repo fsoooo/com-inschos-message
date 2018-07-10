@@ -46,8 +46,8 @@ public class MsgTestAction extends BaseAction {
         messageRequest.sysId = 1;
         List<AddMsgToBean> toUser = new ArrayList<>();
         AddMsgToBean addMsgToBean = new AddMsgToBean();
-        addMsgToBean.toId = 2;
-        addMsgToBean.toType = 4;
+        addMsgToBean.toId = 13;
+        addMsgToBean.toType = 3;
         addMsgToBean.toName = "";
         addMsgToBean.channelId = 0;
         addMsgToBean.channelName = "";

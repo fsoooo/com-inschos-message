@@ -136,6 +136,12 @@
             where `msg_id`=#{id} AND manager_uuid =#{manager_uuid} AND account_uuid =#{account_uuid}
     </update>
 
+    <update id="updateMsgRecord" parameterType="MsgSys">
+     update msg_record set
+              `status`=#{status}
+            where msg_id =#{id} AND rec_id =#{to_id} AND type =#{to_type}
+    </update>
+
     <!--获取发件箱列表-->
     <select id="findMsgSysList" parameterType="MsgSys" resultType="MsgTypeLists">
         select `type`,count(`id`) as count, max(`send_time`) as time from msg_sys
@@ -279,6 +285,11 @@
         </where>
     </update>
 
+    <select id="findMsgRecordId" parameterType="MsgRec" resultType="MsgSys">
+         select `msg_id` as id from msg_record
+        where  rec_id =#{user_id} AND type =#{user_type};
+    </select>
+
     <select id="findMsgRecords" parameterType="MsgSys" resultType="MsgRecord">
          select `rec_id`,`type` from msg_record
         where  msg_id =#{id};
@@ -288,4 +299,15 @@
          select `account_uuid`,`manager_uuid` from msg_to_record
         where  msg_id =#{id};
     </select>
+
+    <select id="findMsgRecRepeat" parameterType="MsgRec" resultType="long">
+         select
+         count(1)
+        from msg_rec
+        <where>
+            msg_id =#{msg_id} AND account_uuid =#{account_uuid} AND  manager_uuid =#{manager_uuid};
+        </where>
+    </select>
+
+
 </mapper>
