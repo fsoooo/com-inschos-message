@@ -1,5 +1,7 @@
 package com.inschos.message.access.rpc.bean;
 
+import com.inschos.message.access.http.controller.bean.AddMsgToBean;
+
 import java.util.List;
 
 public class MessageBean {
@@ -18,13 +20,13 @@ public class MessageBean {
         public int sysId;//系统id
     }
 
-    public static class AddMsgToBean {
-        public long toId;//'收件人id'
-        public int toType;//'收件人类型，，个人1/企业2/代理人3/业管4/渠道5/渠道6
-        public String toName ;//收件人姓名
-        public long channelId ;//渠道id
-        public String channelName ;//渠道姓名
-    }
+//    public static class AddMsgToBean {
+//        public long toId;//'收件人id'
+//        public int toType;//'收件人类型，，个人1/企业2/代理人3/业管4/渠道5/渠道6
+//        public String toName ;//收件人姓名
+//        public long channelId ;//渠道id
+//        public String channelName ;//渠道姓名
+//    }
 
     public static class Response {
         public long code;//200:发送成功,500:发送失败
