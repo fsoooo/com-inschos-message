@@ -12,8 +12,7 @@ import org.springframework.stereotype.Component;
 public class MessageClient {
     private static final Logger logger = Logger.getLogger(MessageClient.class);
     private final String uri = "/rpc/message";
-    @Value("${rpc.remote.message.host}")
-    private String host;
+    private String host = "http://127.0.0.1:8080";
 
     private MessageService getService() {
         return new HproseHttpClient(host + uri).useService(MessageService.class);
