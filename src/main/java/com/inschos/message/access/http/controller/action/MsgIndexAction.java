@@ -169,7 +169,7 @@ public class MsgIndexAction extends BaseAction {
      * @param managerUuid
      * @return
      */
-    private String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid,List<AgentJobBean> agentJobBeans){
+    public String addMsgRecord(AddMsgRecord addMsgRecord,int sysId,String managerUuid,List<AgentJobBean> agentJobBeans){
         BaseResponse response = new BaseResponse();
         long date = new Date().getTime();
         List<String> accountUuids = new ArrayList<>();
@@ -207,7 +207,7 @@ public class MsgIndexAction extends BaseAction {
                 int addToRec = msgIndexDAO.addMessageToRecord(msgToRecord);//用户记录表
             }
         }
-        return json(BaseResponse.CODE_FAILURE, "添加发送记录失败", response);
+        return json(BaseResponse.CODE_SUCCESS, "添加发送记录成功", response);
     }
 
     /**
