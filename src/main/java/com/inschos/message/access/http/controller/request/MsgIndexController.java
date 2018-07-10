@@ -1,6 +1,7 @@
 package com.inschos.message.access.http.controller.request;
 
 import com.inschos.message.access.http.controller.action.MsgIndexAction;
+import com.inschos.message.access.http.controller.action.MsgTestAction;
 import com.inschos.message.access.http.controller.bean.ActionBean;
 import com.inschos.message.annotation.GetActionBeanAnnotation;
 import org.apache.log4j.Logger;
@@ -23,10 +24,13 @@ public class MsgIndexController {
     private static final Logger logger = Logger.getLogger(MsgModelController.class);
     @Autowired
     private MsgIndexAction msgIndexAction;
+    @Autowired
+    private MsgTestAction msgTestAction;
 
     /**
      * 发送消息
      *
+     * @return json
      * @params title|标题
      * @params content|内容
      * @params attachment|附件:上传附件的URL,可为空
@@ -39,7 +43,6 @@ public class MsgIndexController {
      * @params status|读取状态:标识消息                   是否已被读取,未读0/已读1.避免重复向收件箱表插入数据,默认为0
      * @params sendTime|发送时间:默认为空。需要延时发送的，发送时间不为空
      * @params parentId|消息父级id
-     * @return json
      * @access public
      */
     @GetActionBeanAnnotation
@@ -52,11 +55,11 @@ public class MsgIndexController {
     /**
      * 操作消息 （收件箱 读取和删除）
      *
+     * @return json
      * @params messageId   消息 id
      * @params operateId   操作代码:默认为1（删除/已读），2（还原/未读）
      * @params operateType 操作类型:read 更改读取状态，del 更改删除状态
      * @params operateAll  操作全部：1是，2否
-     * @return json
      * @access public
      */
     @GetActionBeanAnnotation
@@ -65,4 +68,19 @@ public class MsgIndexController {
     public String updateMessage(ActionBean actionBean) {
         return msgIndexAction.updateMsgRec(actionBean);
     }
+
+    /**
+     * RPC 测试发送邮件
+     *
+     * @return json
+     * @params actionBean
+     * @access public
+     */
+    @GetActionBeanAnnotation
+    @RequestMapping("/rpc/sendMessage**")
+    @ResponseBody
+    public String sendMessage(ActionBean actionBean) {
+        return msgTestAction.sendMessage(actionBean);
+    }
+
 }
