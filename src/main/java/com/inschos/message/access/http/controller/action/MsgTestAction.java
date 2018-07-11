@@ -44,7 +44,7 @@ public class MsgTestAction extends BaseAction {
         messageRequest.sysId = 1;
         List<MessageBean.AddMsgToBean> toUser = new ArrayList<>();
         MessageBean.AddMsgToBean addMsgToBean = new MessageBean.AddMsgToBean();
-        addMsgToBean.toId = 13;
+        addMsgToBean.toId = 13;//userId
         addMsgToBean.toType = 3;
         toUser.add(addMsgToBean);
         messageRequest.toUser = toUser;

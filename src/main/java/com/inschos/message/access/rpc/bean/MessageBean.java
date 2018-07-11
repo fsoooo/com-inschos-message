@@ -22,7 +22,7 @@ public class MessageBean {
     }
 
     public  static class AddMsgToBean {
-        public long toId;//'收件人id'
+        public long toId;//'收件人id' userId
         public int toType;//'收件人类型:个人1/企业2/代理人4/业管3/渠道5
     }
 
