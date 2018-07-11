@@ -2,7 +2,6 @@ package com.inschos.message.access.rpc.service.impl;
 
 import com.inschos.message.access.http.controller.action.MsgIndexAction;
 import com.inschos.message.access.http.controller.bean.AddMsgRecord;
-import com.inschos.message.access.http.controller.bean.AddMsgToBean;
 import com.inschos.message.access.http.controller.bean.BaseResponse;
 import com.inschos.message.access.rpc.bean.AccountBean;
 import com.inschos.message.access.rpc.bean.AgentJobBean;
@@ -60,15 +59,8 @@ public class MessageServiceImpl implements MessageService {
             response.message = "发送对象不能为空";
             return response;
         }
-        MsgStatus msgStatus = new MsgStatus();
-        //权限判断 个人1/企业2/代理人3/业管4/渠道5/系统6
-        if (request.toUser.size() > 1 && request.fromType == msgStatus.USER_PERSON) {
-            response.code = 500;
-            response.message = "您没有权限执行这项操作";
-            return response;
-        }
+        //通过rpc发送消息的现在只有系统触发
         logger.info("执行rpc中");
-        //TODO 当系统需要发送消息,managerUuid、accountUuid、都等于sysId.
         long date = new Date().getTime();
         MsgSys msgSys = new MsgSys();
         msgSys.manager_uuid = request.managerUuid;
@@ -87,25 +79,12 @@ public class MessageServiceImpl implements MessageService {
         msgSys.created_at = date;
         msgSys.updated_at = date;
         AddMsgRecord addMsgRecord = new AddMsgRecord();
-        addMsgRecord.toUser = request.toUser;
-        List<AgentJobBean> agentJobBeans = msgIndexAction.findChannelUser(addMsgRecord, request.sysId, request.managerUuid);
-        logger.info(agentJobBeans.size());
-        //不加消息接收人判断
-//        if (agentJobBeans.size() == 0) {
-//            response.code = 500;
-//            response.message = "消息接收人为空,发送失败";
-//            return response;
-//        }
-        int send_result = msgIndexDAO.addMessage(msgSys);
-        logger.info(send_result);
-        if (send_result > 0) {
+        int sendRes = msgIndexDAO.addMessage(msgSys);
+        logger.info(sendRes);
+        if (sendRes > 0) {
             addMsgRecord.messageId = msgSys.id;
             String addMsgRes = "";
-            if(agentJobBeans.size()!=0){
-                addMsgRes = msgIndexAction.addMsgRecord(addMsgRecord, request.sysId, request.managerUuid, agentJobBeans);
-            }else{
-                addMsgRes = addMsgRecord(addMsgRecord,request.toUser);
-            }
+            addMsgRes = addMsgRecord(addMsgRecord,request.toUser);
             logger.info(addMsgRes);
             if (addMsgRes != null) {
                 response.code = 200;
@@ -123,10 +102,10 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
-    private String addMsgRecord(AddMsgRecord addMsgRecord,List<AddMsgToBean> toUser){
+    private String addMsgRecord(AddMsgRecord addMsgRecord,List<MessageBean.AddMsgToBean> toUser){
         MessageBean.Response response = new MessageBean.Response();
         long date = new Date().getTime();
-        for (AddMsgToBean addMsgToBean : toUser) {
+        for (MessageBean.AddMsgToBean addMsgToBean : toUser) {
             MsgRecord msgRecord = new MsgRecord();
             msgRecord.msg_id = addMsgRecord.messageId;
             msgRecord.rec_id = addMsgToBean.toId;
@@ -138,6 +117,7 @@ public class MessageServiceImpl implements MessageService {
             RepeatCount msgRecordRepeat = msgIndexDAO.findAddMsgRecordRepeat(msgRecord);//发件记录表
             if(msgRecordRepeat.count==0){
                 int addMsgRec = msgIndexDAO.addMessageRecord(msgRecord);//发件记录表
+                logger.info("添加发件记录"+addMsgRec);
             }
         }
         response.code = 200;

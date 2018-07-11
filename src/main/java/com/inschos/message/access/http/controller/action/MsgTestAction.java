@@ -2,9 +2,7 @@ package com.inschos.message.access.http.controller.action;
 
 
 import com.inschos.message.access.http.controller.bean.*;
-import com.inschos.message.access.rpc.bean.AccountBean;
-import com.inschos.message.access.rpc.bean.AgentJobBean;
-import com.inschos.message.access.rpc.bean.MessageBean;
+import com.inschos.message.access.rpc.bean.*;
 import com.inschos.message.access.rpc.client.*;
 import com.inschos.message.access.rpc.client.AgentJobClient;
 import com.inschos.message.access.rpc.client.ChannelClient;
@@ -44,13 +42,10 @@ public class MsgTestAction extends BaseAction {
         messageRequest.managerUuid = "2";
         messageRequest.accountUuid = "2";
         messageRequest.sysId = 1;
-        List<AddMsgToBean> toUser = new ArrayList<>();
-        AddMsgToBean addMsgToBean = new AddMsgToBean();
+        List<MessageBean.AddMsgToBean> toUser = new ArrayList<>();
+        MessageBean.AddMsgToBean addMsgToBean = new MessageBean.AddMsgToBean();
         addMsgToBean.toId = 13;
         addMsgToBean.toType = 3;
-        addMsgToBean.toName = "";
-        addMsgToBean.channelId = 0;
-        addMsgToBean.channelName = "";
         toUser.add(addMsgToBean);
         messageRequest.toUser = toUser;
         MessageBean.Response messageResponse = messageClient.sendMessage(messageRequest);
